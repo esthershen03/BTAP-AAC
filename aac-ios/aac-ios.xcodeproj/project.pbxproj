@@ -14,6 +14,7 @@
 		8E3422BA2A990C8C000A3055 /* aac_iosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3422B92A990C8C000A3055 /* aac_iosTests.swift */; };
 		8E3422C42A990C8C000A3055 /* aac_iosUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3422C32A990C8C000A3055 /* aac_iosUITests.swift */; };
 		8E3422C62A990C8C000A3055 /* aac_iosUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3422C52A990C8C000A3055 /* aac_iosUITestsLaunchTests.swift */; };
+		8EB02D7B2ABDE21B0097CC0C /* NavigationButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB02D7A2ABDE21B0097CC0C /* NavigationButton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +45,7 @@
 		8E3422BF2A990C8C000A3055 /* aac-iosUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "aac-iosUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E3422C32A990C8C000A3055 /* aac_iosUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = aac_iosUITests.swift; sourceTree = "<group>"; };
 		8E3422C52A990C8C000A3055 /* aac_iosUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = aac_iosUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		8EB02D7A2ABDE21B0097CC0C /* NavigationButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +96,7 @@
 		8E3422A72A990C8B000A3055 /* aac-ios */ = {
 			isa = PBXGroup;
 			children = (
+				8EB02D772ABDE1DD0097CC0C /* UI */,
 				8E3422A82A990C8B000A3055 /* aac_iosApp.swift */,
 				8E3422AA2A990C8B000A3055 /* ContentView.swift */,
 				8E3422AC2A990C8C000A3055 /* Assets.xcassets */,
@@ -125,6 +128,30 @@
 				8E3422C52A990C8C000A3055 /* aac_iosUITestsLaunchTests.swift */,
 			);
 			path = "aac-iosUITests";
+			sourceTree = "<group>";
+		};
+		8EB02D772ABDE1DD0097CC0C /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				8EB02D792ABDE1ED0097CC0C /* Components */,
+				8EB02D782ABDE1E70097CC0C /* Views */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		8EB02D782ABDE1E70097CC0C /* Views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		8EB02D792ABDE1ED0097CC0C /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				8EB02D7A2ABDE21B0097CC0C /* NavigationButton.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -259,6 +286,7 @@
 			files = (
 				8E3422AB2A990C8B000A3055 /* ContentView.swift in Sources */,
 				8E3422A92A990C8B000A3055 /* aac_iosApp.swift in Sources */,
+				8EB02D7B2ABDE21B0097CC0C /* NavigationButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

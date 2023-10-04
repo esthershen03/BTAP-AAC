@@ -7,10 +7,14 @@
 
 import SwiftUI
 
+
+
 struct MainScreen: View {
     var body: some View {
-        VStack {
-            NavigationView {
+        HorizontalNavBar()
+        NavigationView {
+            VStack {
+                
                 VStack {
                     NavigationLink(destination: SceneDisplay()) {
                         NavigationButton(labelText: "Images",image: "eye")
@@ -27,10 +31,13 @@ struct MainScreen: View {
                     AddButton()
                 }
                 .navigationBarHidden(true)
+                
             }
         }
     }
 }
+
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {

@@ -7,13 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8E0EC37D2ACDD1D30019F3B4 /* SceneDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0EC37C2ACDD1D30019F3B4 /* SceneDisplay.swift */; };
+		8E0EC37F2ACDD2170019F3B4 /* WhiteBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0EC37E2ACDD2170019F3B4 /* WhiteBoard.swift */; };
+		8E0EC3812ACDD2340019F3B4 /* Build.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0EC3802ACDD2340019F3B4 /* Build.swift */; };
+		8E0EC3832ACDD25E0019F3B4 /* Scripts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0EC3822ACDD25E0019F3B4 /* Scripts.swift */; };
 		8E3422A92A990C8B000A3055 /* aac_iosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3422A82A990C8B000A3055 /* aac_iosApp.swift */; };
-		8E3422AB2A990C8B000A3055 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3422AA2A990C8B000A3055 /* ContentView.swift */; };
+		8E3422AB2A990C8B000A3055 /* MainScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3422AA2A990C8B000A3055 /* MainScreen.swift */; };
 		8E3422AD2A990C8C000A3055 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E3422AC2A990C8C000A3055 /* Assets.xcassets */; };
 		8E3422B02A990C8C000A3055 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E3422AF2A990C8C000A3055 /* Preview Assets.xcassets */; };
 		8E3422BA2A990C8C000A3055 /* aac_iosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3422B92A990C8C000A3055 /* aac_iosTests.swift */; };
 		8E3422C42A990C8C000A3055 /* aac_iosUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3422C32A990C8C000A3055 /* aac_iosUITests.swift */; };
 		8E3422C62A990C8C000A3055 /* aac_iosUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3422C52A990C8C000A3055 /* aac_iosUITestsLaunchTests.swift */; };
+		8E960F0A2ACDD4D200948CC5 /* AddButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E960F092ACDD4D200948CC5 /* AddButton.swift */; };
 		8EB02D7B2ABDE21B0097CC0C /* NavigationButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB02D7A2ABDE21B0097CC0C /* NavigationButton.swift */; };
 /* End PBXBuildFile section */
 
@@ -35,9 +40,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8E0EC37C2ACDD1D30019F3B4 /* SceneDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDisplay.swift; sourceTree = "<group>"; };
+		8E0EC37E2ACDD2170019F3B4 /* WhiteBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteBoard.swift; sourceTree = "<group>"; };
+		8E0EC3802ACDD2340019F3B4 /* Build.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Build.swift; sourceTree = "<group>"; };
+		8E0EC3822ACDD25E0019F3B4 /* Scripts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scripts.swift; sourceTree = "<group>"; };
 		8E3422A52A990C8B000A3055 /* aac-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "aac-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E3422A82A990C8B000A3055 /* aac_iosApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = aac_iosApp.swift; sourceTree = "<group>"; };
-		8E3422AA2A990C8B000A3055 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		8E3422AA2A990C8B000A3055 /* MainScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScreen.swift; sourceTree = "<group>"; };
 		8E3422AC2A990C8C000A3055 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8E3422AF2A990C8C000A3055 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		8E3422B52A990C8C000A3055 /* aac-iosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "aac-iosTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -45,6 +54,7 @@
 		8E3422BF2A990C8C000A3055 /* aac-iosUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "aac-iosUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E3422C32A990C8C000A3055 /* aac_iosUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = aac_iosUITests.swift; sourceTree = "<group>"; };
 		8E3422C52A990C8C000A3055 /* aac_iosUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = aac_iosUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		8E960F092ACDD4D200948CC5 /* AddButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddButton.swift; sourceTree = "<group>"; };
 		8EB02D7A2ABDE21B0097CC0C /* NavigationButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -98,7 +108,7 @@
 			children = (
 				8EB02D772ABDE1DD0097CC0C /* UI */,
 				8E3422A82A990C8B000A3055 /* aac_iosApp.swift */,
-				8E3422AA2A990C8B000A3055 /* ContentView.swift */,
+				8E3422AA2A990C8B000A3055 /* MainScreen.swift */,
 				8E3422AC2A990C8C000A3055 /* Assets.xcassets */,
 				8E3422AE2A990C8C000A3055 /* Preview Content */,
 			);
@@ -142,6 +152,10 @@
 		8EB02D782ABDE1E70097CC0C /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				8E0EC37C2ACDD1D30019F3B4 /* SceneDisplay.swift */,
+				8E0EC37E2ACDD2170019F3B4 /* WhiteBoard.swift */,
+				8E0EC3802ACDD2340019F3B4 /* Build.swift */,
+				8E0EC3822ACDD25E0019F3B4 /* Scripts.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -150,6 +164,7 @@
 			isa = PBXGroup;
 			children = (
 				8EB02D7A2ABDE21B0097CC0C /* NavigationButton.swift */,
+				8E960F092ACDD4D200948CC5 /* AddButton.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -284,9 +299,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8E3422AB2A990C8B000A3055 /* ContentView.swift in Sources */,
+				8E3422AB2A990C8B000A3055 /* MainScreen.swift in Sources */,
+				8E0EC37D2ACDD1D30019F3B4 /* SceneDisplay.swift in Sources */,
+				8E0EC3812ACDD2340019F3B4 /* Build.swift in Sources */,
 				8E3422A92A990C8B000A3055 /* aac_iosApp.swift in Sources */,
+				8E0EC37F2ACDD2170019F3B4 /* WhiteBoard.swift in Sources */,
 				8EB02D7B2ABDE21B0097CC0C /* NavigationButton.swift in Sources */,
+				8E0EC3832ACDD25E0019F3B4 /* Scripts.swift in Sources */,
+				8E960F0A2ACDD4D200948CC5 /* AddButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

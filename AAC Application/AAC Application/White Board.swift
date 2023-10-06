@@ -13,6 +13,6 @@ struct WhiteBoard: View {
     }
 }
 
-#Preview {
-    WhiteBoard()
-}
+//#Preview {
+//    WhiteBoard()
+//}

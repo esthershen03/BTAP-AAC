@@ -15,7 +15,6 @@ struct MainScreen: View {
         HorizontalNavBar()
         NavigationView {
             VStack {
-                
                 VStack {
                     NavigationLink(destination: SceneDisplay(), tag: "Images", selection: $selectedButton) {
                         NavigationButton(labelText: "Images", image: "eye")
@@ -47,7 +46,7 @@ struct MainScreen: View {
 
 
 
-struct ContentView_Previews: PreviewProvider {
+struct MainScreen_Previews: PreviewProvider {
     static var previews: some View {
         MainScreen()
             .previewInterfaceOrientation(.landscapeLeft)

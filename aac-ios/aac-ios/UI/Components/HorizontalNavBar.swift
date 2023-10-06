@@ -95,22 +95,9 @@ struct HorizontalNavBar: View {
     }
 }
 
-struct ContentView: View {
-    var body: some View {
-        NavigationView {
-            VStack {
-                // Horizontal navigation bar
-                Spacer()
-                HorizontalNavBar()
-                
-                
-            }
-        }
-    }
-}
 
 struct HorizontalNavBar_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        HorizontalNavBar().previewInterfaceOrientation(.landscapeLeft)
     }
 }

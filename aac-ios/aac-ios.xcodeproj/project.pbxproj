@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3F8303222AD5DA210012E832 /* LoginScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8303212AD5DA200012E832 /* LoginScreen.swift */; };
+		3F8303782AD628D40012E832 /* PopUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8303772AD628D40012E832 /* PopUp.swift */; };
 		68EA44442ACE0569008C3C69 /* HorizontalNavBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68EA44432ACE0569008C3C69 /* HorizontalNavBar.swift */; };
 		68EA44462ACE09F2008C3C69 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 68EA44452ACE09F2008C3C69 /* Images.xcassets */; };
 		8E0EC37D2ACDD1D30019F3B4 /* SceneDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0EC37C2ACDD1D30019F3B4 /* SceneDisplay.swift */; };
@@ -44,6 +45,7 @@
 
 /* Begin PBXFileReference section */
 		3F8303212AD5DA200012E832 /* LoginScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginScreen.swift; sourceTree = "<group>"; };
+		3F8303772AD628D40012E832 /* PopUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopUp.swift; sourceTree = "<group>"; };
 		68EA44432ACE0569008C3C69 /* HorizontalNavBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalNavBar.swift; sourceTree = "<group>"; };
 		68EA44452ACE09F2008C3C69 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		8E0EC37C2ACDD1D30019F3B4 /* SceneDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDisplay.swift; sourceTree = "<group>"; };
@@ -171,6 +173,7 @@
 		8EB02D792ABDE1ED0097CC0C /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				3F8303772AD628D40012E832 /* PopUp.swift */,
 				8EB02D7A2ABDE21B0097CC0C /* NavigationButton.swift */,
 				8E960F092ACDD4D200948CC5 /* AddButton.swift */,
 				68EA44432ACE0569008C3C69 /* HorizontalNavBar.swift */,
@@ -311,6 +314,7 @@
 			files = (
 				8E3422AB2A990C8B000A3055 /* MainScreen.swift in Sources */,
 				68EA44442ACE0569008C3C69 /* HorizontalNavBar.swift in Sources */,
+				3F8303782AD628D40012E832 /* PopUp.swift in Sources */,
 				8E0EC37D2ACDD1D30019F3B4 /* SceneDisplay.swift in Sources */,
 				8E0EC3812ACDD2340019F3B4 /* Build.swift in Sources */,
 				8E3422A92A990C8B000A3055 /* aac_iosApp.swift in Sources */,

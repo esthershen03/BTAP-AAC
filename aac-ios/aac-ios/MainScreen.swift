@@ -12,8 +12,10 @@ import SwiftUI
 struct MainScreen: View {
     @State private var selectedButton: String? = nil
     var body: some View {
-        HStack {
-            NavigationView {
+        VStack() {
+            HorizontalNavBar()
+            VStack(spacing: 0) {
+                NavigationView() {
                     VStack {
                         NavigationLink(destination: SceneDisplay(), tag: "Images", selection: $selectedButton) {
                             NavigationButton(labelText: "Images", image: "eye")
@@ -37,6 +39,7 @@ struct MainScreen: View {
                         AddButton()
                     }
                     .navigationBarHidden(true)
+                }
             }
         }
     }

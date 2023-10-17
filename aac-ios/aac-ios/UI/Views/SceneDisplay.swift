@@ -9,11 +9,13 @@ import SwiftUI
 
 struct SceneDisplay: View {
     var body: some View {
-        VStack {
-            HorizontalNavBar()
+        VStack() {
             Text("Scene Display Screen")
         }
-        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .topLeading)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .border(Color.red, width: 10)
+        .padding(.bottom, -21)
+        .navigationBarHidden(true)
     }
 }
 

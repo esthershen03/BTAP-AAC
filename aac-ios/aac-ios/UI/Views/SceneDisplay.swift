@@ -13,7 +13,6 @@ struct SceneDisplay: View {
             Text("Scene Display Screen")
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .border(Color.red, width: 10)
         .padding(.bottom, -21)
         .navigationBarHidden(true)
     }

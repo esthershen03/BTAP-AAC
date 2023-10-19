@@ -1,4 +1,11 @@
 //
+//  Login Screen.swift
+//  aac-ios
+//
+//  Created by Asma on 10/10/23.
+//
+
+//
 //  Login.swift
 //  AAC Application
 //
@@ -8,7 +15,7 @@
 import Foundation
 import SwiftUI
 
-struct Login: View {
+struct LoginScreen: View {
     @State private var username = ""
     @State private var password = ""
     @State private var wrongUsername: Float = 0
@@ -100,6 +107,6 @@ struct Login: View {
 
 struct Login_Previews: PreviewProvider {
     static var previews: some View {
-        Login()
+        LoginScreen()
     }
 }

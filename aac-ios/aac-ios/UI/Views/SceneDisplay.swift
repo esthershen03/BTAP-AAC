@@ -9,6 +9,18 @@ import SwiftUI
 
 struct SceneDisplay: View {
     var body: some View {
-        Text("Scene Display Screen")
+        VStack() {
+            Text("Scene Display Screen")
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.bottom, -21)
+        .navigationBarHidden(true)
+    }
+}
+
+struct SceneDisplay_Previews: PreviewProvider {
+    static var previews: some View {
+        SceneDisplay()
+            .previewInterfaceOrientation(.landscapeLeft)
     }
 }

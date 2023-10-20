@@ -9,12 +9,18 @@ import SwiftUI
 
 struct Scripts: View {
     var body: some View {
-        Text("Scripts Screen")
+        VStack() {
+            Text("Scripts Screen")
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.bottom, -21)
+        .navigationBarHidden(true)
     }
 }
 
 struct Scripts_Previews: PreviewProvider {
     static var previews: some View {
         Scripts()
+            .previewInterfaceOrientation(.landscapeLeft)
     }
 }

@@ -42,7 +42,7 @@ struct GridTile: View {
             }
             
         }
-        .frame(width:90,height:90)
+        .frame(width:100,height:100)
         .buttonStyle(GridTileStyle())
     }
 }

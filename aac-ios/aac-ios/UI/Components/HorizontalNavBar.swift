@@ -91,7 +91,8 @@ struct HorizontalNavBar: View {
                 }
             }
             .padding()
-            .frame(maxWidth: 1000)
+            .frame(maxWidth: 1048)
+            .border(/*@START_MENU_TOKEN@*/Color.black/*@END_MENU_TOKEN@*/, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
         }
         .frame(maxWidth: .infinity, alignment: Alignment.trailing)
     }

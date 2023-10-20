@@ -25,6 +25,7 @@ struct Build: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal)
         .padding(.bottom, -21)
+        .padding(.top)
         .navigationBarHidden(true)
     }
 }

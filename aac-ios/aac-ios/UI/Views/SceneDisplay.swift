@@ -52,7 +52,8 @@ struct TextFieldsView: View {
                 HStack {
                     TextField("Text", text: $textValues[index])
                         .font(.title)
-                        .padding(20)
+                        .padding(15)
+                        .background(Color(UIColor.systemGray.withAlphaComponent(0.4)))
                         .border(Color.black, width: 1)
                         .padding(10)
                     Image(systemName: "pencil")

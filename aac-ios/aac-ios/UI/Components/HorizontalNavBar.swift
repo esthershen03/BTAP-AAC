@@ -91,7 +91,7 @@ struct HorizontalNavBar: View {
                 }
             }
             .padding()
-            .frame(maxWidth: 1000)
+            .frame(maxWidth: 1048)
         }
         .frame(maxWidth: .infinity, alignment: Alignment.trailing)
     }

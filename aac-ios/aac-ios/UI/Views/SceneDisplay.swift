@@ -27,7 +27,7 @@ struct SceneDisplay: View {
         .navigationBarHidden(true)
     }
 }
-
+    
 struct PhotoUploadView: View {
     var body: some View {
         ZStack {

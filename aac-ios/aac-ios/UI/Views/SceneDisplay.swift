@@ -10,17 +10,18 @@ import CoreImage
 import CoreImage.CIFilterBuiltins
 
 struct SceneDisplay: View {
+    @State var galleryClicked = false
+    @State var cameraClicked = false
     var body: some View {
         HStack() {
-            PhotoUploadView()
+            PhotoUploadView(galleryClicked: $galleryClicked, cameraClicked: $cameraClicked)
             Divider()
             VStack {
                 TextFieldsView()
                 Divider()
                 HStack(spacing: 40) {
-                    ButtonWithIcon(systemName: "camera")
-                    //change to gallery icon
-                    ButtonWithIcon(systemName: "rectangle")
+                    PhotoUploadView.ButtonWithIcon(systemName: "camera", galleryClicked: $galleryClicked, cameraClicked: $cameraClicked)
+                    PhotoUploadView.ButtonWithIcon(systemName: "photo", galleryClicked: $galleryClicked, cameraClicked: $cameraClicked)
                 }
             }
         }
@@ -30,12 +31,14 @@ struct SceneDisplay: View {
     }
 }
     
-struct PhotoUploadView: View {
-    @State private var image: Image?
-    @State private var galleryClicked = false
-    @State private var inputImage: UIImage?
-    let context = CIContext()
+struct PhotoUploadView: View { //includes the left rectangle
+    @Binding var galleryClicked: Bool
+    @Binding var cameraClicked: Bool
+    @State var image: Image?
+    @State var inputImage: UIImage?
 
+    let context = CIContext()
+    
     var body: some View {
             ZStack {
                 Rectangle()
@@ -51,9 +54,11 @@ struct PhotoUploadView: View {
                     .scaledToFit()
                     .padding(30)
             }
+            //we can remove this so that clicking the image doesn't allow the user to choose new image
             .onTapGesture {
                 galleryClicked = true
             }
+            //makes the image picker pop up show when gallery is clicked
             .sheet(isPresented: $galleryClicked) {
                 ImagePicker(image: $inputImage)
             }
@@ -66,6 +71,31 @@ struct PhotoUploadView: View {
             return
         }
         image = Image(uiImage: inputImage)
+    }
+    
+    struct ButtonWithIcon: View { //includes the bottom right buttons
+        let systemName: String
+        //need to make it do a different thing based on whether camera or gallery clicked
+        @Binding var galleryClicked: Bool
+        @Binding var cameraClicked: Bool
+        var body: some View {
+            Button(action: {
+                if systemName == "photo" {
+                    galleryClicked = true
+                } else if systemName == "camera" {
+                    cameraClicked = true
+                }
+            }) {
+                Image(systemName: systemName)
+                    .resizable()
+                    .foregroundColor(.black)
+                    .frame(width: 80, height: 70, alignment: .center)
+                    .padding(20)
+            }
+            .background(Color(UIColor.systemGray.withAlphaComponent(0.4)))
+            .border(Color.black, width: 1)
+            .padding(30)
+        }
     }
 }
 

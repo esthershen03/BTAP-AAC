@@ -65,7 +65,6 @@ struct PhotoUploadView: View {
         guard let inputImage = inputImage else {
             return
         }
-        let beginImage = CIImage(image: inputImage)
         image = Image(uiImage: inputImage)
     }
 }
@@ -96,13 +95,12 @@ struct TextFieldsView: View {
 struct ButtonWithIcon: View {
     let systemName: String
     //need to make it do different thing based on whether camera or gallery clicked
-    @Binding var galleryClicked: Bool
     var body: some View {
         Button(action: {
             if systemName == "rectangle" {
-                galleryClicked = true
+                
             } else {
-                galleryClicked = false
+                
             }
         }) {
             Image(systemName: systemName)

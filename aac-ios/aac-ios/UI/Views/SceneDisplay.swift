@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import CoreImage
+import CoreImage.CIFilterBuiltins
 
 struct SceneDisplay: View {
     var body: some View {
@@ -29,17 +31,42 @@ struct SceneDisplay: View {
 }
     
 struct PhotoUploadView: View {
+    @State private var image: Image?
+    @State private var galleryClicked = false
+    @State private var inputImage: UIImage?
+    let context = CIContext()
+
     var body: some View {
-        ZStack {
-            Rectangle()
-                .fill(Color(UIColor.systemGray.withAlphaComponent(0.4)))
-                .border(Color.black)
-                .frame(maxWidth: .infinity)
-                .padding(30)
-            Text("Image will display here")
-                .font(.title)
-                .foregroundColor(Color.gray)
+            ZStack {
+                Rectangle()
+                    .fill(Color(UIColor.systemGray.withAlphaComponent(0.4)))
+                    .border(Color.black)
+                    .frame(maxWidth: .infinity)
+                    .padding(30)
+                Text("Image will display here")
+                    .font(.title)
+                    .foregroundColor(Color.gray)
+                image?
+                    .resizable()
+                    .scaledToFit()
+                    .padding(30)
+            }
+            .onTapGesture {
+                galleryClicked = true
+            }
+            .sheet(isPresented: $galleryClicked) {
+                ImagePicker(image: $inputImage)
+            }
+            .onChange(of: inputImage) { _ in loadImageFromGallery()
+            }
+    }
+    
+    func loadImageFromGallery() {
+        guard let inputImage = inputImage else {
+            return
         }
+        let beginImage = CIImage(image: inputImage)
+        image = Image(uiImage: inputImage)
     }
 }
 
@@ -69,9 +96,14 @@ struct TextFieldsView: View {
 struct ButtonWithIcon: View {
     let systemName: String
     //need to make it do different thing based on whether camera or gallery clicked
+    @Binding var galleryClicked: Bool
     var body: some View {
         Button(action: {
-
+            if systemName == "rectangle" {
+                galleryClicked = true
+            } else {
+                galleryClicked = false
+            }
         }) {
             Image(systemName: systemName)
                 .resizable()

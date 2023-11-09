@@ -122,29 +122,6 @@ struct TextFieldsView: View {
     }
 }
 
-struct ButtonWithIcon: View {
-    let systemName: String
-    //need to make it do different thing based on whether camera or gallery clicked
-    var body: some View {
-        Button(action: {
-            if systemName == "rectangle" {
-                
-            } else {
-                
-            }
-        }) {
-            Image(systemName: systemName)
-                .resizable()
-                .foregroundColor(.black)
-                .frame(width: 80, height: 70, alignment: .center)
-                .padding(20)
-        }
-        .background(Color(UIColor.systemGray.withAlphaComponent(0.4)))
-        .border(Color.black, width: 1)
-        .padding(30)
-    }
-}
-
 struct SceneDisplay_Previews: PreviewProvider {
     static var previews: some View {
         SceneDisplay()

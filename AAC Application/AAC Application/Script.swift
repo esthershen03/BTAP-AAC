@@ -13,6 +13,6 @@ struct Script: View {
     }
 }
 
-#Preview {
-    Script()
-}
+//#Preview {
+//    Script()
+//}

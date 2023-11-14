@@ -9,12 +9,18 @@ import SwiftUI
 
 struct WhiteBoard: View {
     var body: some View {
-        Text("Whiteboard Screen")
+        VStack() {
+            Text("White Board Screen")
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.bottom, -21)
+        .navigationBarHidden(true)
     }
 }
 
 struct WhiteBoard_Previews: PreviewProvider {
     static var previews: some View {
         WhiteBoard()
+            .previewInterfaceOrientation(.landscapeLeft)
     }
 }

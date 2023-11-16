@@ -36,7 +36,7 @@ struct MainScreen: View {
                             NavigationButton(labelText: "Scripts", image: "scroll")
                         }
                         .buttonStyle(CustomButtonStyle(selected: selectedButton == "Scripts"))
-                        AddButton()
+                        AddButton(action: {})
                     }
                     .navigationBarHidden(true)
                 }

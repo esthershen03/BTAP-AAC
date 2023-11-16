@@ -6,34 +6,63 @@
 //
 
 import SwiftUI
+import SymbolPicker
 
 struct Build: View {
+    @State private var data2: [(String,String)] = Array()
+    
     @State private var data: [String] = Array(1...20).map( {String($0)} )
     @State private var draggingItem: String?
+    @State private var showingAddPopup = false
     
     private let adaptiveColumns = [
         GridItem(.adaptive(minimum: 100))
     ]
     
     var body: some View {
-        ScrollView(.vertical) {
-            LazyVGrid(columns: adaptiveColumns, spacing: 20) {
-                ForEach(data, id: \.self) { number in
-                    GridTile(labelText: number, image: "eye")
-                        .onDrag {
-                            self.draggingItem = number
-                            return NSItemProvider()
+        if (!data2.isEmpty) {
+            VStack() {
+                ScrollView(.vertical) {
+                    LazyVGrid(columns: adaptiveColumns, spacing: 20) {
+                        ForEach(data2.indices, id: \.self) { index in
+                            let tuple = data2[index]
+                            GridTile(labelText: tuple.1, image: tuple.0)
+                                .onDrag {
+                                    self.draggingItem = tuple.1
+                                    return NSItemProvider()
+                                }
+                                .onDrop(of: [.text], delegate: DropViewDelegate(destinationItem: tuple.1, data: $data, draggedItem: $draggingItem)
+                                )
                         }
-                        .onDrop(of: [.text], delegate: DropViewDelegate(destinationItem: number, data: $data, draggedItem: $draggingItem)
-                        )
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(.horizontal)
+                .padding(.bottom, -21)
+                .padding(.top)
+                .navigationBarHidden(true)
+                
+                HStack {
+                    Spacer()
+                    AddButton {
+                        showingAddPopup.toggle()
+                    }
+                    .sheet(isPresented: $showingAddPopup) {
+                        BuildPopupView(isPresented: $showingAddPopup, data: $data2)
+                    }
+                }
+            }
+        } else {
+            VStack() {
+                Text("Add a tile:")
+                AddButton {
+                    showingAddPopup.toggle()
+                }
+                .sheet(isPresented: $showingAddPopup) {
+                    BuildPopupView(isPresented: $showingAddPopup, data: $data2)
                 }
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.horizontal)
-        .padding(.bottom, -21)
-        .padding(.top)
-        .navigationBarHidden(true)
     }
 }
 
@@ -72,5 +101,84 @@ struct DropViewDelegate: DropDelegate {
                 }
             }
         }
+    }
+}
+
+struct BuildPopupView: View {
+    @Binding var isPresented: Bool
+    @Binding var data: [(String,String)]
+    
+    @State private var iconPickerPresented = false
+    @State private var icon = "pencil"
+    @State private var textValue: String = ""
+    
+    var body: some View {
+        VStack {
+            Text("Add a new tile")
+                .padding()
+                .font(.system(size: 36))
+            
+            HStack(spacing: 0) {
+                
+                VStack {
+                    
+                    HStack {
+                        
+                        Text("Set icon: ")
+                            .font(.system(size: 36))
+                        
+                        Button {
+                            iconPickerPresented = true
+                        } label: {
+                            HStack {
+                                Image(systemName: icon)
+                                    .font(.system(size: 50))
+                                    .foregroundColor(.black)
+                            }
+                        }
+                        .sheet(isPresented: $iconPickerPresented) {
+                            SymbolPicker(symbol: $icon)
+                        }
+                        .padding()
+                        
+                        Spacer()
+                    }
+                    
+                    HStack {
+                        
+                        Text("Set label: ")
+                            .font(.system(size: 36))
+                        
+                        TextField("Enter text", text: $textValue)
+                            .padding()
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .frame(maxWidth: 200)
+                        
+                        Spacer()
+                    }
+                }
+                .frame(width: 400)
+                
+                GridTile(labelText: textValue, image: icon)
+                
+            }
+            
+            Button(action: {
+                isPresented = false
+                data.append((icon,textValue))
+                    }) {
+                        Text("Save")
+                            .font(.system(size: 20))
+                            .foregroundColor(.black)
+                            .padding()
+                            .frame(minWidth: 0, maxWidth: 100)
+                            .background(Color.green)
+                            .cornerRadius(20)
+                    }
+                    .padding()
+            
+            Spacer()
+        }
+        .frame(width: .infinity, height: .infinity)
     }
 }

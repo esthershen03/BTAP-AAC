@@ -7,9 +7,13 @@
 
 import Foundation
 import SwiftUI
+import AVFoundation
+
 
 struct HorizontalNavBar: View {
     @State private var searchText = ""
+    let speechSynthesizer = AVSpeechSynthesizer()
+
     var body: some View {
         ZStack {
             HStack(spacing: 20) {
@@ -27,6 +31,9 @@ struct HorizontalNavBar: View {
                 
                 HStack(spacing: 20) { // Adjust spacing as needed
                     Button(action: {
+                        let speechUtterance = AVSpeechUtterance(string: "STOP")
+                        speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
+                        self.speechSynthesizer.speak(speechUtterance)
                     }) {
                         Text("STOP")
                             .font(.system(size:30))
@@ -39,6 +46,9 @@ struct HorizontalNavBar: View {
                     }
                     
                     Button(action: {
+                        let speechUtterance = AVSpeechUtterance(string: "HELP")
+                        speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
+                        self.speechSynthesizer.speak(speechUtterance)
                     }) {
                         Text("HELP")
                             .font(.system(size:30))
@@ -54,6 +64,9 @@ struct HorizontalNavBar: View {
                 VStack {
                     HStack{
                         Button(action: {
+                            let speechUtterance = AVSpeechUtterance(string: "YES")
+                            speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
+                            self.speechSynthesizer.speak(speechUtterance)
                         }) {
                             Text("YES")
                                 .font(.system(size: 20))
@@ -72,6 +85,9 @@ struct HorizontalNavBar: View {
                     }
                     HStack{
                         Button(action: {
+                            let speechUtterance = AVSpeechUtterance(string: "NO")
+                            speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
+                            self.speechSynthesizer.speak(speechUtterance)
                         }) {
                             Text("NO")
                                 .font(.system(size: 20))

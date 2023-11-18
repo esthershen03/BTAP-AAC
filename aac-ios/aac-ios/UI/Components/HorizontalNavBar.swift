@@ -20,9 +20,14 @@ struct HorizontalNavBar: View {
                 Image(systemName: "speaker.wave.2.fill")
                     .resizable()
                     .frame(width: 30, height: 30)
+                    .onTapGesture {
+                        speakText()
+                    }
                 
                 VStack {
-                    TextField("Search", text: $searchText)
+                    TextField("Search", text: $searchText, onCommit:{
+                        speakText()
+                    })
                         .padding(10)
                         .background(Color(UIColor.systemGray.withAlphaComponent(0.4)))
                         .cornerRadius(10)
@@ -111,7 +116,13 @@ struct HorizontalNavBar: View {
         }
         .frame(maxWidth: .infinity, alignment: Alignment.trailing)
     }
+    func speakText() {
+        let speechUtterance = AVSpeechUtterance(string: searchText)
+        speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
+        speechSynthesizer.speak(speechUtterance)
+    }
 }
+
 
 
 struct HorizontalNavBar_Previews: PreviewProvider {

@@ -2,7 +2,7 @@
 //  Scripts.swift
 //  aac-ios
 //
-//  Created by Emily Wu on 10/04/23.
+//  Created by Emily Wu on 10/4/23.
 //
 
 import SwiftUI
@@ -20,6 +20,8 @@ struct Scripts: View {
                   "TV Shows", "Work"]
     
     @State private var tiles: [ScriptTile] = []
+    @State private var selectedTile: ScriptTile?
+    @State private var showPopover = false
     private let adaptiveColumns = [
         GridItem(.adaptive(minimum: 300))
     ]
@@ -27,7 +29,18 @@ struct Scripts: View {
     var body: some View {
         LazyVGrid(columns: adaptiveColumns, spacing: 40) {
             ForEach(tiles, id: \.label) { tile in
-                            GridTile(labelText: tile.label, image: tile.image)
+                Button(action: {
+                    selectedTile = tile
+                    showPopover.toggle()
+                }) {
+                    GridTile(labelText: tile.label, image: tile.image)
+                }
+                .popover(isPresented: Binding(
+                    get: { showPopover },
+                    set: { _ in }
+                ), content: {
+                    PopoverView(selectedTile: $selectedTile, sentences: selectedTile?.sentences)
+                })
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -40,13 +53,31 @@ struct Scripts: View {
     
     func createTiles() -> [ScriptTile] {
         var result: [ScriptTile] = []
+        let sentences = ["Script Sentence 1", "Script Sentence 2", "Script Sentence 3"]
         for label in labels {
-            let tile = ScriptTile(label: label, image: "eye")
+            let tile = ScriptTile(label: label, image: "eye", sentences: sentences)
             result.append(tile)
         }
         return result
     }
 }
+
+struct PopoverView: View {
+    @Binding var selectedTile: ScriptTile?
+    let sentences: [String]?
+    
+    var body: some View {
+        Button(action: {
+            dismiss()
+        }) {
+            Image(systemName: "xmark.circle.fill")
+                .foregroundColor(.black)
+                .imageScale(.large)
+        }
+        .padding()
+    }
+}
+
 
 struct Scripts_Previews: PreviewProvider {
     static var previews: some View {

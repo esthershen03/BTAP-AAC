@@ -36,6 +36,12 @@ struct MainScreen: View {
                             NavigationButton(labelText: "Scripts", image: "scroll")
                         }
                         .buttonStyle(CustomButtonStyle(selected: selectedButton == "Scripts"))
+                        
+                        NavigationLink(destination: RatingScale(), tag: "RatingScale", selection: $selectedButton) {
+                            NavigationButton(labelText: "Rating Scale", image: "smiley")
+                        }
+                        .buttonStyle(CustomButtonStyle(selected: selectedButton == "RatingScale"))
+                        
                         AddButton(action: {})
                     }
                     .navigationBarHidden(true)

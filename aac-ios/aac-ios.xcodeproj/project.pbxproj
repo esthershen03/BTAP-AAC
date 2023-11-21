@@ -27,6 +27,7 @@
 		8E732C962B06ADE00019CD06 /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = 8E732C952B06ADE00019CD06 /* SymbolPicker */; };
 		8E960F0A2ACDD4D200948CC5 /* AddButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E960F092ACDD4D200948CC5 /* AddButton.swift */; };
 		8EB02D7B2ABDE21B0097CC0C /* NavigationButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB02D7A2ABDE21B0097CC0C /* NavigationButton.swift */; };
+		DAF6F0632B0812B600E36C86 /* RatingScale.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAF6F0622B0812B600E36C86 /* RatingScale.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,6 +70,7 @@
 		8E3422C52A990C8C000A3055 /* aac_iosUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = aac_iosUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		8E960F092ACDD4D200948CC5 /* AddButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddButton.swift; sourceTree = "<group>"; };
 		8EB02D7A2ABDE21B0097CC0C /* NavigationButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationButton.swift; sourceTree = "<group>"; };
+		DAF6F0622B0812B600E36C86 /* RatingScale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingScale.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -172,6 +174,7 @@
 				8E0EC37E2ACDD2170019F3B4 /* WhiteBoard.swift */,
 				8E0EC3802ACDD2340019F3B4 /* Build.swift */,
 				8E0EC3822ACDD25E0019F3B4 /* Scripts.swift */,
+				DAF6F0622B0812B600E36C86 /* RatingScale.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -329,6 +332,7 @@
 				3F39A5C12AFC186A0092BF8F /* ImagePicker.swift in Sources */,
 				8E3422AB2A990C8B000A3055 /* MainScreen.swift in Sources */,
 				8E09CD9B2AE15B3300239660 /* GridTile.swift in Sources */,
+				DAF6F0632B0812B600E36C86 /* RatingScale.swift in Sources */,
 				68EA44442ACE0569008C3C69 /* HorizontalNavBar.swift in Sources */,
 				3F8303782AD628D40012E832 /* PopUp.swift in Sources */,
 				8E0EC37D2ACDD1D30019F3B4 /* SceneDisplay.swift in Sources */,

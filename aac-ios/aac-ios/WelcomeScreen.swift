@@ -41,6 +41,8 @@ struct WelcomeScreenView: View{
             VStack{
                 Spacer()
                 Image("logo")
+                    .resizable()
+                    .frame(width: 500, height: 500)
                 Spacer()
                 startButton(title: "Get Started")
                 

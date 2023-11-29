@@ -7,9 +7,13 @@
 
 import Foundation
 import SwiftUI
+import AVFoundation
+
 
 struct HorizontalNavBar: View {
     @State private var searchText = ""
+    let speechSynthesizer = AVSpeechSynthesizer()
+
     var body: some View {
         ZStack {
             HStack(spacing: 20) {
@@ -31,9 +35,14 @@ struct HorizontalNavBar: View {
                 Image(systemName: "speaker.wave.2.fill")
                     .resizable()
                     .frame(width: 30, height: 30)
+                    .onTapGesture {
+                        speakText()
+                    }
                 
                 VStack {
-                    TextField("Search", text: $searchText)
+                    TextField("Search", text: $searchText, onCommit:{
+                        speakText()
+                    })
                         .padding(10)
                         .background(Color(UIColor.systemGray.withAlphaComponent(0.4)))
                         .cornerRadius(10)
@@ -42,6 +51,9 @@ struct HorizontalNavBar: View {
                 
                 HStack(spacing: 20) { // Adjust spacing as needed
                     Button(action: {
+                        let speechUtterance = AVSpeechUtterance(string: "STOP")
+                        speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
+                        self.speechSynthesizer.speak(speechUtterance)
                     }) {
                         Text("STOP")
                             .font(.system(size:30))
@@ -54,6 +66,9 @@ struct HorizontalNavBar: View {
                     }
                     
                     Button(action: {
+                        let speechUtterance = AVSpeechUtterance(string: "HELP")
+                        speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
+                        self.speechSynthesizer.speak(speechUtterance)
                     }) {
                         Text("HELP")
                             .font(.system(size:30))
@@ -69,6 +84,9 @@ struct HorizontalNavBar: View {
                 VStack {
                     HStack{
                         Button(action: {
+                            let speechUtterance = AVSpeechUtterance(string: "YES")
+                            speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
+                            self.speechSynthesizer.speak(speechUtterance)
                         }) {
                             Text("YES")
                                 .font(.system(size: 20))
@@ -87,6 +105,9 @@ struct HorizontalNavBar: View {
                     }
                     HStack{
                         Button(action: {
+                            let speechUtterance = AVSpeechUtterance(string: "NO")
+                            speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
+                            self.speechSynthesizer.speak(speechUtterance)
                         }) {
                             Text("NO")
                                 .font(.system(size: 20))
@@ -110,7 +131,13 @@ struct HorizontalNavBar: View {
         }
         .frame(maxWidth: .infinity, alignment: Alignment.trailing)
     }
+    func speakText() {
+        let speechUtterance = AVSpeechUtterance(string: searchText)
+        speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
+        speechSynthesizer.speak(speechUtterance)
+    }
 }
+
 
 
 struct HorizontalNavBar_Previews: PreviewProvider {

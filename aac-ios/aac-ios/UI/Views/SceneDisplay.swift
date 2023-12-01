@@ -8,6 +8,7 @@
 import SwiftUI
 import CoreImage
 import CoreImage.CIFilterBuiltins
+import PhotosUI
 
 struct SceneDisplay: View {
     @State var galleryClicked = false
@@ -30,43 +31,46 @@ struct SceneDisplay: View {
     }
 }
     
-struct PhotoUploadView: View { //includes the left rectangle
+struct PhotoUploadView: View {
+    //includes the left rectangle
     @Binding var galleryClicked: Bool
     @Binding var cameraClicked: Bool
     @State var image: Image?
     @State var inputImage: UIImage?
+    @State private var isShowingImagePicker = false
 
     let context = CIContext()
     
     var body: some View {
-            ZStack {
-                Rectangle()
-                    .fill(Color(UIColor.systemGray.withAlphaComponent(0.4)))
-                    .border(Color.black)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding(15)
-                    .alignmentGuide(.top) { dimensions in
-                                        dimensions[VerticalAlignment.top]
-                                    }
-                Text("Image will display here")
-                    .font(.title)
-                    .foregroundColor(Color.gray)
-                image?
-                    .resizable()
-                    .scaledToFit()
-                    .padding(17)
-            }
-            //we can remove this so that clicking the image doesn't allow the user to choose new image
-            .onTapGesture {
-                galleryClicked = true
-            }
-            //makes the image picker pop up show when gallery is clicked
-            .sheet(isPresented: $galleryClicked) {
-                ImagePicker(image: $inputImage)
-            }
-            .onChange(of: inputImage) { _ in loadImageFromGallery()
-            }
-    }
+        ZStack {
+            Rectangle()
+                .fill(Color(UIColor.systemGray.withAlphaComponent(0.4)))
+                .border(Color.black)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(15)
+                .alignmentGuide(.top) { dimensions in
+                    dimensions[VerticalAlignment.top]
+                }
+            Text("Image will display here")
+                .font(.title)
+                .foregroundColor(Color.gray)
+            Image(uiImage: inputImage ?? UIImage())
+                .resizable()
+                .scaledToFit()
+                .padding(17)
+        }
+        //makes the image picker pop up show when gallery is clicked
+        .sheet(isPresented: $galleryClicked) {
+            ImagePicker(image: $inputImage, sourceType: .photoLibrary)
+        }
+        .onChange(of: inputImage) { _ in loadImageFromGallery()
+        }
+        .sheet(isPresented: $cameraClicked) {
+            ImagePicker(image: $inputImage, sourceType: .camera)
+        }
+
+
+    }//end of struct
     
     func loadImageFromGallery() {
         guard let inputImage = inputImage else {

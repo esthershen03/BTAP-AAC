@@ -117,9 +117,6 @@ struct TextFieldsView: View {
                     if #available(iOS 16.0, *) {
                         TextField("Text", text: $textValues[index], axis: .vertical)
                             .font(.title)
-                            .padding(.top, 5)
-                            .padding(.bottom, 50)
-                            .frame(height: 90)
                             .padding(15)
                             .background(Color(UIColor.systemGray.withAlphaComponent(0.4)))
                             .border(Color.black, width: 1)

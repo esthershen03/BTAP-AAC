@@ -1,0 +1,36 @@
+create table name_of_table ();
+
+//Here, create and table are keywords. All commands in SQL end with a ;
+//Ex:
+//Coding tutorial:
+
+create table student (
+	student_id INT,
+name VARCHAR(length of the name string),
+major VARCHAR(length of major string),
+PRIMARY KEY(student_id)
+);
+
+//Updating and deleting information:
+insert into student VALUES(1, 'Jack', 'Biology'); //creates table
+
+//You can add constraints to say that certain variables cannot be certain values. For example: you can say:
+
+name VARCHAR(20) NOT NULL
+
+UPDATE student
+SET major = 'Bio'
+WHERE major = 'Biology';
+
+//This sets the value of something when a certain constraint is true. This entire code block is one line since the semi colon is at the end of the three lines.
+
+//Querying Data:
+
+SELECT * FROM student;
+
+//SELECT means that we are getting information
+//* means every
+
+SELECT name FROM student; 
+
+//would get back all the names of the students. 

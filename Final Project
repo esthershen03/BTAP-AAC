@@ -1,0 +1,70 @@
+import SwiftUI
+import AVFoundation
+
+VStack {
+	Text("APHASIA AWARENESS")
+             .font(.largeTitle)
+             .padding()
+             .background(Color.black)
+Spacer()
+//Switch to scene 2
+NavigationLink(destination: DestinationView()) {
+    Button("LEARN MORE HERE", action: {// empty action}) {
+        // Button design
+    }
+}
+
+
+Spacer()    
+Image("aphasia").resizable().aspectRatio(contentMode:.fit)
+}//VStack1 ends
+
+//Screen 2
+VStack {
+      Text("What is Aphasia?")
+             .font(.largeTitle)
+             .padding()
+             .background(Color.black)
+      Spacer()
+      Text("BODY")
+      Spacer()
+      Text("Take this quiz to see if your symptoms match the aphasia symptoms")
+      Button("TAKE QUIZ", action : { 
+            //Switch to work in progress scene
+
+})
+
+
+
+struct ContentView: View {
+    @State private var input : String = ""
+    let synthesizer = AVSpeechSynthesizer()
+    var body: some View {
+        VStack {
+            TextField("Text", text: $input)
+            Button("Speak", action -> {
+                let utterance = AVSpeechUtterance(string: "\(input)")
+                let voice = AVSpeechSynthesisVoice(language: "en-US")
+                utterance.voice = voice
+                utterance.rate = 0.4
+                synthesizer.speak(utterance)
+            }
+            )
+        }.font(.largeTitle)
+         .padding()
+         .background(Color.black)
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}
+}//VStack2 ends here
+//Screen 3
+Text("WORK IN PROGRESS")
+.font(.largeTitle)
+.padding()
+.background(Color.black)
+

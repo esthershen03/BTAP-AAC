@@ -1,0 +1,119 @@
+Text("Hello World").padding()
+//This prints the words "Hello World." The point of the .padding() is so that the frame around doesn't seem too crowded around the word and there is enough spacing out
+
+Text("Hello world").padding().background(Color.green)
+
+//The above line does the following:
+//The first part prints "Hello World"
+//The second part forms a spacing between the words and the frame around it
+//The third part makes the background green (moreso like a green box around the words Hello World)
+
+Image("Image name")
+//.resizable() is a modifier to change the size of the image
+//.aspectRation() can zoom in/out
+
+ZStack {
+    Image("tower").resizable().aspectRatio(contentMode:.fit)
+    VStack {
+          Text("CN Tower")
+             .font(.largeTitle)
+             .padding()
+             .background(Color.black)
+          Text("Toronto")
+    }
+}
+
+//Template: var name:Type = value_in_var
+
+var className:String = "VIP"
+var numberOfPeople:Int = 10
+
+//Declaring a constant in Swift:
+let className:String = "Best VIP ever!"
+
+
+func name(parName:Type) { //defines the function
+	//body of function
+}
+name() //calls the function
+
+//Example
+func add(a:Int, b:Int) {
+	print(a + b)
+}
+add(a: 55, b:  45)
+
+//Challenge 1: The function should print out "Good Morning" in the console
+func goodMorning() {
+	print("Good Morning")
+}
+
+
+//Challenge 2: Calculate tax on subtotal (13% tax), and return it. Then call it on 100
+func getTotalWithTax(subtotal: Double) {
+	var num:Double = subtotal * 1.13
+	return num
+}
+var sub:Double = 100.0
+print(getTotalWithTax(sub))
+
+struct nameStruct {
+func goodMorning() {
+		print("Good Morning")
+	}
+func getTotalWithTax(subtotal: Double) {
+		var num:Double = subtotal * 1.13
+		return num
+	}
+	var sub:Double = 100.0
+	print(getTotalWithTax(sub))
+}
+
+struct happy() {
+	var feeling = "very glad"
+	func currentState() {
+		print(feeling)
+}
+}
+var state:happy = happy() //this created an instance of happy (the data type here is happy)
+state.feeling = "a bit sad" //this sets the variable feeling for this instance "state" to be a bit sad
+state.currentState() //this prints a bit sad since that is what we set the variable feeling equal to for this instance of happy (which is called state) 
+
+
+struct TaxCalculator() {
+	var tax:Double = 6
+	func totalWithTax(subtotal: Double) -> Double {
+		var total:Double = (1+(tax/100)) *  subtotal
+		return total
+      }
+}
+var calc:TaxCalculator = TaxCalculator()
+calc.tax = 8
+print(calc.totalWithTax(180))
+
+//How do you build a button using SwiftUI?
+Button("Text on button", action: () -> //what happens when you click the button?)
+
+//Example:
+Button("Click Me", action: {
+     print("Hey!")
+} )
+
+HStack {
+      Image("tower").resizable().aspectRatio(contentMode:.fit)
+      Spacer()      
+Button("CN Tower", action: {
+	    print("We are happy that you want to learn more about the CN Tower. To do so, visit cntower.com")
+      })
+}
+
+if (true && false) {
+	print("This won't print, because false and anything is always false")
+} else if (false || true) {
+	print("This will print since true or anything is true")
+} else {
+	print("We won't reach this statement")
+}
+
+
+

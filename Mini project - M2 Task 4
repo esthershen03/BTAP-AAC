@@ -1,0 +1,38 @@
+
+VStack {
+	Text("APHASIA AWARENESS")
+             .font(.largeTitle)
+             .padding()
+             .background(Color.black)
+      Spacer()
+//Switch to scene 2
+NavigationLink(destination: DestinationView()) {
+    Button("LEARN MORE HERE", action: {// empty action}) {
+        // Button design
+    }
+}
+
+
+      Spacer()    
+Image("aphasia").resizable().aspectRatio(contentMode:.fit)
+}
+VStack {
+      Text("What is Aphasia?")
+             .font(.largeTitle)
+             .padding()
+             .background(Color.black)
+      Spacer()
+      Text("BODY")
+      Spacer()
+      Text("Take this quiz to see if your symptoms match the aphasia symptoms")
+      Button("TAKE QUIZ", action : { 
+            //Switch to work in progress scene
+
+})
+      //Add text-to-speech stuff
+}
+Text("WORK IN PROGRESS")
+.font(.largeTitle)
+.padding()
+.background(Color.black)
+

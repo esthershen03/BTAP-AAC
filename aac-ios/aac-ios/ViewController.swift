@@ -32,7 +32,7 @@ extension ViewController {
             newValue.setValue(value, forKey: "testValue")
             do {
                 try context.save()
-                print("Saved: (value)")
+                print("Saved: \(value)")
             } catch {
                 print("Saving Error")
             }

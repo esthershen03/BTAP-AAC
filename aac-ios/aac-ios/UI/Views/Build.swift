@@ -7,12 +7,20 @@
 
 import SwiftUI
 import SymbolPicker
+import PhotosUI
+
+struct GridData: Equatable {
+    var image: Image
+    var text: String
+    
+    static func ==(lhs: GridData, rhs: GridData) -> Bool {
+        return lhs.text == rhs.text
+    }
+}
 
 struct Build: View {
-    @State private var data2: [(String,String)] = Array()
-    
-    @State private var data: [String] = Array(1...20).map( {String($0)} )
-    @State private var draggingItem: String?
+    @State private var data2: [GridData] = Array()
+    @State private var draggingItem: GridData?
     @State private var showingAddPopup = false
     
     private let adaptiveColumns = [
@@ -20,21 +28,19 @@ struct Build: View {
     ]
     
     var body: some View {
-        if (!data2.isEmpty) {
+        if (!$data2.isEmpty) {
             VStack() {
                 ScrollView(.vertical) {
-                    LazyVGrid(columns: adaptiveColumns, spacing: 20) {
-                        ForEach(data2.indices, id: \.self) { index in
-                            let tuple = data2[index]
-                            GridTile(labelText: tuple.1, image: tuple.0)
+                    LazyVGrid(columns: adaptiveColumns, content: {
+                        ForEach($data2, id: \.text ) {tuple in
+                            GridTile(labelText: tuple.wrappedValue.text, image: tuple.wrappedValue.image)
                                 .onDrag {
-                                    self.draggingItem = tuple.1
+                                    self.draggingItem = tuple.wrappedValue
                                     return NSItemProvider()
                                 }
-                                .onDrop(of: [.text], delegate: DropViewDelegate(destinationItem: tuple.1, data: $data, draggedItem: $draggingItem)
-                                )
+                                .onDrop(of: [.text], delegate: DropViewDelegate(destinationItem: tuple, data: $data2, draggedItem: $draggingItem))
                         }
-                    }
+                    })
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding(.horizontal)
@@ -66,18 +72,11 @@ struct Build: View {
     }
 }
 
-struct Build_Previews: PreviewProvider {
-    static var previews: some View {
-        Build()
-            .previewInterfaceOrientation(.landscapeLeft)
-    }
-}
-
 struct DropViewDelegate: DropDelegate {
     
-    let destinationItem: String
-    @Binding var data: [String]
-    @Binding var draggedItem: String?
+    @Binding var destinationItem: GridData
+    @Binding var data: [GridData]
+    @Binding var draggedItem: GridData?
     
     func dropUpdated(info: DropInfo) -> DropProposal? {
         return DropProposal(operation: .move)
@@ -106,11 +105,13 @@ struct DropViewDelegate: DropDelegate {
 
 struct BuildPopupView: View {
     @Binding var isPresented: Bool
-    @Binding var data: [(String,String)]
+    @Binding var data: [GridData]
     
     @State private var iconPickerPresented = false
-    @State private var icon = "pencil"
     @State private var textValue: String = ""
+    
+    @State private var avatarItem: PhotosPickerItem?
+    @State private var avatarImage: Image?
     
     var body: some View {
         VStack {
@@ -126,24 +127,22 @@ struct BuildPopupView: View {
                         
                         Text("Set icon: ")
                             .font(.system(size: 36))
-                        
-                        Button {
-                            iconPickerPresented = true
-                        } label: {
-                            HStack {
-                                Image(systemName: icon)
-                                    .font(.system(size: 50))
-                                    .foregroundColor(.black)
-                            }
-                        }
-                        .sheet(isPresented: $iconPickerPresented) {
-                            SymbolPicker(symbol: $icon)
+                        PhotosPicker(selection: $avatarItem, matching: .images) {
+                            Image(systemName: "pencil")
                         }
                         .padding()
                         
                         Spacer()
                     }
-                    
+                    .onChange(of: avatarItem) { avatarItem in
+                        Task {
+                            if let loaded = try? await avatarItem?.loadTransferable(type: Image.self) {
+                                avatarImage = loaded
+                            } else {
+                                print("Failed")
+                            }
+                        }
+                    }
                     HStack {
                         
                         Text("Set label: ")
@@ -159,13 +158,15 @@ struct BuildPopupView: View {
                 }
                 .frame(width: 400)
                 
-                GridTile(labelText: textValue, image: icon)
+                if (avatarImage != nil) {
+                    GridTile(labelText: textValue, image: avatarImage!)
+                }
                 
             }
             
             Button(action: {
                 isPresented = false
-                data.append((icon,textValue))
+                data.append(GridData(image: avatarImage!, text: textValue))
                     }) {
                         Text("Save")
                             .font(.system(size: 20))

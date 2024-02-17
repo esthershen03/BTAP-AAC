@@ -28,14 +28,21 @@ struct GridTileStyle: ButtonStyle {
 
 struct GridTile: View {
     let labelText: String
-    let image: String
+    let image: Image
     var body: some View {
         Button(action: {print("Hello World")}) {
             VStack {
-                Image(systemName: image)
+                image
                     .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 40, height: 40)
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 55, height: 55)
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 6)
+                          .stroke(.white, lineWidth: 3)
+                    }
+                    .shadow(radius: 6, y: 2)
+                    
                 
                 Text(labelText)
                     .fixedSize(horizontal: false, vertical: true)
@@ -47,11 +54,11 @@ struct GridTile: View {
     }
 }
 
-struct GridTile_Previews: PreviewProvider {
-    static var previews: some View {
-        VStack {
-            GridTile(labelText: "Images",image: "eye")
-        }
-        .previewInterfaceOrientation(.landscapeLeft)
-    }
-}
+//struct GridTile_Previews: PreviewProvider {
+//    static var previews: some View {
+//        VStack {
+//            GridTile(labelText: "Images",image: "eye")
+//        }
+//        .previewInterfaceOrientation(.landscapeLeft)
+//    }
+//}

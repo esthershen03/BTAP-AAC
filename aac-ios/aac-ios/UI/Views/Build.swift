@@ -12,6 +12,8 @@ import PhotosUI
 struct GridData: Equatable {
     var image: Image
     var text: String
+    var GridList: [GridData]
+    var type: String
     
     static func ==(lhs: GridData, rhs: GridData) -> Bool {
         return lhs.text == rhs.text
@@ -33,7 +35,11 @@ struct Build: View {
                 ScrollView(.vertical) {
                     LazyVGrid(columns: adaptiveColumns, content: {
                         ForEach($data2, id: \.text ) {tuple in
-                            GridTile(labelText: tuple.wrappedValue.text, image: tuple.wrappedValue.image)
+                            GridTile(labelText: tuple.wrappedValue.text, image: tuple.wrappedValue.image, onClick: {
+                                if (tuple.wrappedValue.type == "Folder") {
+                                    data2 = tuple.wrappedValue.GridList
+                                }
+                            })
                                 .onDrag {
                                     self.draggingItem = tuple.wrappedValue
                                     return NSItemProvider()
@@ -112,6 +118,7 @@ struct BuildPopupView: View {
     
     @State private var avatarItem: PhotosPickerItem?
     @State private var avatarImage: Image?
+    @State private var type: String = "Tiles"
     
     var body: some View {
         VStack {
@@ -155,18 +162,27 @@ struct BuildPopupView: View {
                         
                         Spacer()
                     }
+                    HStack {
+                        Text("Set type: ")
+                            .font(.system(size: 36))
+                        Picker("Types", selection: $type) {
+                            Text("Folder").tag("Folder")
+                            Text("Tiles").tag("Tiles")
+                        }
+                        Spacer()
+                    }
                 }
                 .frame(width: 400)
                 
                 if (avatarImage != nil) {
-                    GridTile(labelText: textValue, image: avatarImage!)
+                    GridTile(labelText: textValue, image: avatarImage!, onClick: {})
                 }
                 
             }
             
             Button(action: {
                 isPresented = false
-                data.append(GridData(image: avatarImage!, text: textValue))
+                data.append(GridData(image: avatarImage!, text: textValue, GridList: [GridData](), type: type))
                     }) {
                         Text("Save")
                             .font(.system(size: 20))

@@ -29,8 +29,10 @@ struct GridTileStyle: ButtonStyle {
 struct GridTile: View {
     let labelText: String
     let image: Image
+    let onClick: () -> Void
+    
     var body: some View {
-        Button(action: {print("Hello World")}) {
+        Button(action: onClick) {
             VStack {
                 image
                     .resizable()

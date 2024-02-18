@@ -26,7 +26,6 @@
 		8E3422BA2A990C8C000A3055 /* aac_iosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3422B92A990C8C000A3055 /* aac_iosTests.swift */; };
 		8E3422C42A990C8C000A3055 /* aac_iosUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3422C32A990C8C000A3055 /* aac_iosUITests.swift */; };
 		8E3422C62A990C8C000A3055 /* aac_iosUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3422C52A990C8C000A3055 /* aac_iosUITestsLaunchTests.swift */; };
-		8E732C962B06ADE00019CD06 /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = 8E732C952B06ADE00019CD06 /* SymbolPicker */; };
 		8E960F0A2ACDD4D200948CC5 /* AddButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E960F092ACDD4D200948CC5 /* AddButton.swift */; };
 		8EB02D7B2ABDE21B0097CC0C /* NavigationButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB02D7A2ABDE21B0097CC0C /* NavigationButton.swift */; };
 		D5E092652B168FAA002C5DE0 /* DrawingEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E092642B168FAA002C5DE0 /* DrawingEngine.swift */; };
@@ -86,7 +85,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8E732C962B06ADE00019CD06 /* SymbolPicker in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -221,7 +219,6 @@
 			);
 			name = "aac-ios";
 			packageProductDependencies = (
-				8E732C952B06ADE00019CD06 /* SymbolPicker */,
 			);
 			productName = "aac-ios";
 			productReference = 8E3422A52A990C8B000A3055 /* aac-ios.app */;
@@ -296,7 +293,6 @@
 			);
 			mainGroup = 8E34229C2A990C8B000A3055;
 			packageReferences = (
-				8E732C942B06ADE00019CD06 /* XCRemoteSwiftPackageReference "SymbolPicker" */,
 			);
 			productRefGroup = 8E3422A62A990C8B000A3055 /* Products */;
 			projectDirPath = "";
@@ -679,25 +675,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		8E732C942B06ADE00019CD06 /* XCRemoteSwiftPackageReference "SymbolPicker" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/xnth97/SymbolPicker.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		8E732C952B06ADE00019CD06 /* SymbolPicker */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 8E732C942B06ADE00019CD06 /* XCRemoteSwiftPackageReference "SymbolPicker" */;
-			productName = SymbolPicker;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 8E34229D2A990C8B000A3055 /* Project object */;
 }

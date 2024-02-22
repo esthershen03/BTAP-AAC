@@ -33,6 +33,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Fetch and print test values
         fetchAndPrintTestValues()
         
+        initializeGridDataIfNeeded()
+        
         return true
     }
 
@@ -73,4 +75,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("Could not fetch: \(error)")
         }
     }
+    
+    func initializeGridDataIfNeeded() {
+            let context = persistentContainer.viewContext
+            let fetchRequest: NSFetchRequest<GridTileEntity> = GridTileEntity.fetchRequest()
+            do {
+                let count = try context.count(for: fetchRequest)
+                if count == 0 {
+                    for i in 1...20 {
+                        let newItem = GridTileEntity(context: context)
+                        newItem.labelText = String(i)
+                        newItem.orderIndex = Int16(i - 1)
+                    }
+                    try context.save()
+                }
+            } catch {
+                print("Error initializing grid data: \(error)")
+            }
+        }
 }

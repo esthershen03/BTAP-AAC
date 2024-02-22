@@ -9,10 +9,14 @@ import SwiftUI
 import CoreImage
 import CoreImage.CIFilterBuiltins
 import PhotosUI
+import Foundation
+import AVFoundation
+
 
 struct SceneDisplay: View {
     @State var galleryClicked = false
     @State var cameraClicked = false
+
     var body: some View {
         HStack() {
             PhotoUploadView(galleryClicked: $galleryClicked, cameraClicked: $cameraClicked)
@@ -109,6 +113,8 @@ struct PhotoUploadView: View {
 
 struct TextFieldsView: View {
     @State private var textValues: [String] = Array(repeating: "", count: 4)
+    let speechSynthesizer = AVSpeechSynthesizer()
+
     
     var body: some View {
         List {
@@ -132,10 +138,22 @@ struct TextFieldsView: View {
                     }
                     Image(systemName: "pencil")
                         .resizable()
-                        .frame(width: 40, height: 40)
+                        .frame(width: 30, height: 40)
+                    Image(systemName: "speaker.wave.2.fill")
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                        .foregroundColor(.black) // Change the color to black
+                        .onTapGesture {
+                            speakText(text: textValues[index])
+                        }
                 }
             }
         }
+    }
+    func speakText(text: String) {
+        let speechUtterance = AVSpeechUtterance(string: text)
+        speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
+        speechSynthesizer.speak(speechUtterance)
     }
 }
 

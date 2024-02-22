@@ -17,6 +17,21 @@ struct HorizontalNavBar: View {
     var body: some View {
         ZStack {
             HStack(spacing: 20) {
+                
+                Button(action: {
+                            print("Logout button tapped")
+                        }) {
+                            Text("Logout")
+                                .font(.system(size: 20))
+                                .padding()
+                                .background(Color(UIColor.systemGray.withAlphaComponent(0.4)))
+                                .foregroundColor(.black)
+                                .cornerRadius(10)
+                        }
+                        .padding([.leading],100)
+                
+                Spacer(minLength: 100)
+                
                 Image(systemName: "speaker.wave.2.fill")
                     .resizable()
                     .frame(width: 30, height: 30)
@@ -112,7 +127,7 @@ struct HorizontalNavBar: View {
                 }
             }
             .padding()
-            .frame(maxWidth: 1048)
+            .frame(maxWidth: .infinity)
         }
         .frame(maxWidth: .infinity, alignment: Alignment.trailing)
     }

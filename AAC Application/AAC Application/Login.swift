@@ -14,35 +14,70 @@ struct Login: View {
     @State private var wrongUsername: Float = 0
     @State private var wrongPassword: Float = 0
     @State private var showingLoginScreen = false
+    @State private var forgotUserColor: Color = .black
+    @State private var forgotPassColor: Color = .black
+
     
     var body: some View {
         VStack {
-            Text("Login")
-                .font(.largeTitle)
-                .bold()
-                .padding()
-            TextField("Username", text: $username)
-                .padding()
-                .frame(width: 300, height: 50)
-                .background(Color.black.opacity(0.05))
-                .cornerRadius(10)
-                .border(.red, width: CGFloat(wrongUsername))
-            SecureField("Password", text: $password)
-                .padding()
-                .frame(width: 300, height: 50)
-                .background(Color.black.opacity(0.05))
-                .cornerRadius(10)
-                .border(.red, width: CGFloat(wrongPassword))
-            Button("Login") {
-                authenticateUser(username: username, password: password)
+            HStack {
+                Image("logo")
+                    .resizable()
+                    .frame(width: 150, height: 150)
+                Text("Welcome to AAC")
+                    .font(.largeTitle)
+                    .bold()
+                    .padding()
+            }
+            ZStack {
+                RoundedRectangle(cornerRadius: 30)
+                    .frame(width: 600, height: 350)
+                    .foregroundColor(Color.white)
+                    .border(.gray)
+                    .padding()
+                VStack {
+                    Text("Login")
+                        .font(.title)
+                        .padding()
+                    TextField("Username", text: $username)
+                        .padding()
+                        .frame(width: 350, height: 50)
+                        .background(Color.black.opacity(0.05))
+                        .cornerRadius(10)
+                        .border(.red, width: CGFloat(wrongUsername))
+                    SecureField("Password", text: $password)
+                        .padding()
+                        .frame(width: 350, height: 50)
+                        .background(Color.black.opacity(0.05))
+                        .cornerRadius(10)
+                        .border(.red, width: CGFloat(wrongPassword))
+                    Button("Login") {
+                        authenticateUser(username: username, password: password)
+                    }
+                    .foregroundColor(.white)
+                    .frame(width: 350, height: 50)
+                    .background(Color.teal)
+                    .cornerRadius(10)
+                    .padding()
+                    
+                    HStack {
+                        Text("Forgot username?")
+                            .foregroundColor(forgotUserColor)
+                            .onTapGesture {
+                                forgotUserColor = Color.blue
+                            }
+                        
+                        Text("Forgot password?")
+                            .foregroundColor(forgotPassColor)
+                            .onTapGesture {
+                                forgotPassColor = Color.blue
+                            }
+                    }
+                    
+                    NavigationLink(destination: Text("You are logged in @\(username)"), isActive: $showingLoginScreen) {
+                        EmptyView()
+                    }
                 }
-            .foregroundColor(.white)
-            .frame(width: 300, height: 50)
-            .background(Color.blue)
-            .cornerRadius(10)
-            
-            NavigationLink(destination: Text("You are logged in @\(username)"), isActive: $showingLoginScreen) {
-                EmptyView()
             }
             
         }

@@ -12,10 +12,9 @@ import SwiftUI
 struct MainScreen: View {
     @State private var selectedButton: String? = nil
     var body: some View {
-        HorizontalNavBar()
-        NavigationView {
-            VStack {
-                
+        VStack() {
+            HorizontalNavBar()
+            NavigationView() {
                 VStack {
                     NavigationLink(destination: SceneDisplay(), tag: "Images", selection: $selectedButton) {
                         NavigationButton(labelText: "Images", image: "eye")
@@ -36,10 +35,13 @@ struct MainScreen: View {
                         NavigationButton(labelText: "Scripts", image: "scroll")
                     }
                     .buttonStyle(CustomButtonStyle(selected: selectedButton == "Scripts"))
-                    AddButton()
+                    NavigationLink(destination: RatingScale(), tag: "RatingScale", selection: $selectedButton) {
+                        NavigationButton(labelText: "Rating Scale", image: "smiley")
+                    }
+                    .buttonStyle(CustomButtonStyle(selected: selectedButton == "RatingScale"))
+                    AddButton(action: {})
                 }
                 .navigationBarHidden(true)
-                
             }
         }
     }
@@ -47,7 +49,7 @@ struct MainScreen: View {
 
 
 
-struct ContentView_Previews: PreviewProvider {
+struct MainScreen_Previews: PreviewProvider {
     static var previews: some View {
         MainScreen()
             .previewInterfaceOrientation(.landscapeLeft)

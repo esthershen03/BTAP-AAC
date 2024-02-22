@@ -39,7 +39,7 @@ struct MainScreen: View {
                         NavigationButton(labelText: "Rating Scale", image: "smiley")
                     }
                     .buttonStyle(CustomButtonStyle(selected: selectedButton == "RatingScale"))
-                    AddButton()
+                    AddButton(action: {})
                 }
                 .navigationBarHidden(true)
             }

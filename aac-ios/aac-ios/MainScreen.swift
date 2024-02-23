@@ -17,29 +17,35 @@ struct MainScreen: View {
             NavigationView() {
                 VStack {
                     NavigationLink(destination: SceneDisplay(), tag: "Images", selection: $selectedButton) {
-                        NavigationButton(labelText: "Images", image: "eye")
-                    }
-                    .buttonStyle(CustomButtonStyle(selected: selectedButton == "Images"))
+                        NavigationButton(labelText: "Scene Display", image: "photo.circle", selected: selectedButton == "Images")
+                    }.buttonStyle(.plain)
+                    
+                    Spacer()
                     
                     NavigationLink(destination: WhiteBoard(), tag: "WhiteBoard", selection: $selectedButton) {
-                        NavigationButton(labelText: "White Board", image: "hand.draw")
-                    }
-                    .buttonStyle(CustomButtonStyle(selected: selectedButton == "WhiteBoard"))
+                        NavigationButton(labelText: "White Board", image: "square.and.pencil", selected: selectedButton == "WhiteBoard")
+                    }.buttonStyle(.plain)
+                    
+                    Spacer()
                     
                     NavigationLink(destination: Build(), tag: "Build", selection: $selectedButton) {
-                        NavigationButton(labelText: "Build", image: "pencil.line")
-                    }
-                    .buttonStyle(CustomButtonStyle(selected: selectedButton == "Build"))
+                        NavigationButton(labelText: "Build", image: "hammer", selected: selectedButton == "Build")
+                    }.buttonStyle(.plain)
+                    
+                    Spacer()
                     
                     NavigationLink(destination: Scripts(), tag: "Scripts", selection: $selectedButton) {
-                        NavigationButton(labelText: "Scripts", image: "scroll")
-                    }
-                    .buttonStyle(CustomButtonStyle(selected: selectedButton == "Scripts"))
+                        NavigationButton(labelText: "Scripts", image: "scroll", selected: selectedButton == "Scripts")
+                    }.buttonStyle(.plain)
+                    
+                    Spacer()
+                    
                     NavigationLink(destination: RatingScale(), tag: "RatingScale", selection: $selectedButton) {
-                        NavigationButton(labelText: "Rating Scale", image: "smiley")
-                    }
-                    .buttonStyle(CustomButtonStyle(selected: selectedButton == "RatingScale"))
-                    AddButton()
+                        NavigationButton(labelText: "Rating Scale", image: "face.smiling", selected: selectedButton == "RatingScale")
+                    }.buttonStyle(.plain)
+
+                    
+                    Spacer()
                 }
                 .navigationBarHidden(true)
             }
@@ -61,7 +67,7 @@ struct CustomButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .background(selected ? Color.blue : Color.clear)
+            .background(selected ? Color("AACBlueDark") : Color.clear)
             .cornerRadius(8)
     }
 }

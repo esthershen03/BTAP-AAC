@@ -12,6 +12,7 @@ import AVFoundation
 
 struct HorizontalNavBar: View {
     @State private var searchText = ""
+    @State private var selectedButton: String? = nil
     let speechSynthesizer = AVSpeechSynthesizer()
 
     var body: some View {
@@ -21,14 +22,34 @@ struct HorizontalNavBar: View {
                 Button(action: {
                             print("Logout button tapped")
                         }) {
-                            Text("Logout")
-                                .font(.system(size: 20))
+                            HStack {
+                                Image(systemName: "arrow.turn.up.left")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 38, height: 38)
+                                
+                                Spacer()
+                                    .frame(width: 18)
+                                
+                                Text("Log Out")
+                                    .font(.system(size: 24))
+                                    .multilineTextAlignment(.leading)
+                                    
+                            }.frame(width: 150, height: 80)
                                 .padding()
-                                .background(Color(UIColor.systemGray.withAlphaComponent(0.4)))
-                                .foregroundColor(.black)
+                                .background(selectedButton == "logout" ? Color("AACGreenDark") : Color("AACGreen"))
                                 .cornerRadius(10)
+                                .onTapGesture {
+                                    selectedButton = "logout"
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        selectedButton = nil
+                                    }
+                                }
+                            
                         }
-                        .padding([.leading],100)
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 2)        .shadow(color: Color.black, radius: selectedButton == "logout" ? CGFloat (15) : CGFloat(25), x: 0, y: 20))
+                        .buttonStyle(.plain)
+                        .padding([.leading],50)
                 
                 Spacer(minLength: 100)
                 

@@ -14,9 +14,11 @@ struct SceneDisplay: View {
     @State var galleryClicked = false
     @State var cameraClicked = false
     @State var imageText = true
+    @State var inputImage: UIImage? = nil
+
     var body: some View {
         HStack() {
-            PhotoUploadView(galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageDisplayText: $imageText)
+            PhotoUploadView(galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, inputImage: $inputImage, imageDisplayText: $imageText)
             VStack {
                 TextFieldsView()
                 Divider()
@@ -37,7 +39,7 @@ struct PhotoUploadView: View {
     @Binding var galleryClicked: Bool
     @Binding var cameraClicked: Bool
     @State var image: Image?
-    @State var inputImage: UIImage?
+    @Binding var inputImage: UIImage?
     @State private var isShowingImagePicker = false
     @Binding var imageDisplayText: Bool
 

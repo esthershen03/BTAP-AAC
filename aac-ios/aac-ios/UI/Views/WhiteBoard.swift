@@ -24,6 +24,7 @@ struct WhiteBoard: View {
     @State private var showConfirmation: Bool = false
     @State var galleryClicked = false
     @State var cameraClicked = false
+    @State var inputImage: UIImage? = nil
     @State var imageText = false
 
     let engine = DrawingEngine()
@@ -32,7 +33,7 @@ struct WhiteBoard: View {
         HStack(spacing: 50) {
             VStack() {
                 ZStack() {
-                    PhotoUploadView(galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageDisplayText: $imageText)
+                    PhotoUploadView(galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, inputImage: $inputImage, imageDisplayText: $imageText)
                     VStack(spacing: 50) {
                         Canvas { context, size in
                             for line in lines {
@@ -99,6 +100,7 @@ struct WhiteBoard: View {
                                 primaryButton: .destructive(Text("Delete")) {
                                     lines = [Line]()
                                     deletedLines = [Line]()
+                                    inputImage = nil
                                 },
                                 secondaryButton: .cancel()
                             )

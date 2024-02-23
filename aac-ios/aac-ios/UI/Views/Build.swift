@@ -1,14 +1,11 @@
-//
-//  Build.swift
-//  aac-ios
-//
-//  Created by Sydney DeFelice on 10/4/23.
-//
-
 import SwiftUI
 
+let tileOrderKey = "tileOrder"
+
 struct Build: View {
-    @State private var data: [String] = Array(1...20).map( {String($0)} )
+    @State private var data: [String] = {
+        UserDefaults.standard.stringArray(forKey: tileOrderKey) ?? Array(1...20).map { String($0) }
+    }()
     @State private var draggingItem: String?
     
     private let adaptiveColumns = [
@@ -24,8 +21,7 @@ struct Build: View {
                             self.draggingItem = number
                             return NSItemProvider()
                         }
-                        .onDrop(of: [.text], delegate: DropViewDelegate(destinationItem: number, data: $data, draggedItem: $draggingItem)
-                        )
+                        .onDrop(of: [.text], delegate: DropViewDelegate(destinationItem: number, data: $data, draggedItem: $draggingItem))
                 }
             }
         }
@@ -60,16 +56,10 @@ struct DropViewDelegate: DropDelegate {
     }
     
     func dropEntered(info: DropInfo) {
-        // Swap Items
-        if let draggedItem {
-            let fromIndex = data.firstIndex(of: draggedItem)
-            if let fromIndex {
-                let toIndex = data.firstIndex(of: destinationItem)
-                if let toIndex, fromIndex != toIndex {
-                    withAnimation {
-                        self.data.move(fromOffsets: IndexSet(integer: fromIndex), toOffset: (toIndex > fromIndex ? (toIndex + 1) : toIndex))
-                    }
-                }
+        if let draggedItem, let fromIndex = data.firstIndex(of: draggedItem), let toIndex = data.firstIndex(of: destinationItem), fromIndex != toIndex {
+            withAnimation {
+                data.move(fromOffsets: IndexSet(integer: fromIndex), toOffset: (toIndex > fromIndex ? (toIndex + 1) : toIndex))
+                UserDefaults.standard.set(data, forKey: tileOrderKey)
             }
         }
     }

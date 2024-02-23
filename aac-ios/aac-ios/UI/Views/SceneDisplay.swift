@@ -13,9 +13,10 @@ import PhotosUI
 struct SceneDisplay: View {
     @State var galleryClicked = false
     @State var cameraClicked = false
+    @State var imageText = true
     var body: some View {
         HStack() {
-            PhotoUploadView(galleryClicked: $galleryClicked, cameraClicked: $cameraClicked)
+            PhotoUploadView(galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageDisplayText: $imageText)
             VStack {
                 TextFieldsView()
                 Divider()
@@ -38,22 +39,17 @@ struct PhotoUploadView: View {
     @State var image: Image?
     @State var inputImage: UIImage?
     @State private var isShowingImagePicker = false
+    @Binding var imageDisplayText: Bool
 
     let context = CIContext()
     
     var body: some View {
         ZStack {
-            Rectangle()
-                .fill(Color(UIColor.systemGray.withAlphaComponent(0.4)))
-                .border(Color.black)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding(15)
-                .alignmentGuide(.top) { dimensions in
-                    dimensions[VerticalAlignment.top]
-                }
-            Text("Image will display here")
-                .font(.title)
-                .foregroundColor(Color.gray)
+            if imageDisplayText {
+                Text("Image will display here")
+                    .font(.title)
+                    .foregroundColor(Color.gray)
+            }
             Image(uiImage: inputImage ?? UIImage())
                 .resizable()
                 .scaledToFit()

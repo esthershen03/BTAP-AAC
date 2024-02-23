@@ -6,6 +6,9 @@
 //
 
 import SwiftUI
+import CoreImage
+import CoreImage.CIFilterBuiltins
+import PhotosUI
 
 struct Line {
     var points: [CGPoint]
@@ -19,37 +22,46 @@ struct WhiteBoard: View {
     @State private var selectedColor: Color = .black
     @State private var selectedLineWidth: CGFloat = 1
     @State private var showConfirmation: Bool = false
+    @State var galleryClicked = false
+    @State var cameraClicked = false
+    @State var imageText = false
+
     let engine = DrawingEngine()
 
-        var body: some View {
+    var body: some View {
+        HStack(spacing: 50) {
             VStack() {
-                Canvas { context, size in
-        
-                    for line in lines {
-        
-                        let path = engine.createPath(for: line.points)
-        
-                        context.stroke(path, with: .color(line.color), style: StrokeStyle(lineWidth: line.lineWidth, lineCap: .round, lineJoin: .round))
-        
-                    }
-                }
-                .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .local).onChanged({ value in
-                    let newPoint = value.location
-                    if value.translation.width + value.translation.height == 0 {
-                        lines.append(Line(points: [newPoint], color: selectedColor, lineWidth: selectedLineWidth))
-                    } else {
-                        let index = lines.count - 1
-                        lines[index].points.append(newPoint)
-                    }
+                ZStack() {
+                    PhotoUploadView(galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageDisplayText: $imageText)
+                    VStack(spacing: 50) {
+                        Canvas { context, size in
+                            for line in lines {
+                                
+                                let path = engine.createPath(for: line.points)
+                                
+                                context.stroke(path, with: .color(line.color), style: StrokeStyle(lineWidth: line.lineWidth, lineCap: .round, lineJoin: .round))
+                                
+                            }
+                        }
+                        .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .local).onChanged({ value in
+                            let newPoint = value.location
+                            if value.translation.width + value.translation.height == 0 {
+                                lines.append(Line(points: [newPoint], color: selectedColor, lineWidth: selectedLineWidth))
+                            } else {
+                                let index = lines.count - 1
+                                lines[index].points.append(newPoint)
+                            }
+                            
+                        }).onEnded({ value in
+                            if let last = lines.last?.points, last.isEmpty {
+                                lines.removeLast()
+                            }
+                        }))
+                    }.frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .padding()
+                        .navigationBarHidden(true)
                     
-                }).onEnded({ value in
-                    if let last = lines.last?.points, last.isEmpty {
-                        lines.removeLast()
-                    }
-                })
-                
-                )
-                
+                }.padding(30) // zstack end
                 HStack {
                     ColorPicker("line color", selection: $selectedColor)
                         .labelsHidden()
@@ -74,9 +86,9 @@ struct WhiteBoard: View {
                         Image(systemName: "arrow.uturn.forward.circle")
                             .imageScale(.large)
                     }.disabled(deletedLines.count == 0)
-
+                    
                     Button(action: {
-                       showConfirmation = true
+                        showConfirmation = true
                     }) {
                         Text("Delete All")
                     }.foregroundColor(.red)
@@ -91,14 +103,15 @@ struct WhiteBoard: View {
                                 secondaryButton: .cancel()
                             )
                         }
-                }.padding()
-                
-            }.frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding()
-                .navigationBarHidden(true)
+                }
+            }
             
-        }
-        
+            VStack() {
+                PhotoUploadView.ButtonWithIcon(systemName: "photo", galleryClicked: $galleryClicked, cameraClicked: $cameraClicked)
+                PhotoUploadView.ButtonWithIcon(systemName: "camera", galleryClicked: $galleryClicked, cameraClicked: $cameraClicked)
+            }
+        }.padding(30)
+    }
 }
 
 struct WhiteBoard_Previews: PreviewProvider {

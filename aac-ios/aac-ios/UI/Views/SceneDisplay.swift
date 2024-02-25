@@ -12,36 +12,46 @@ import PhotosUI
 import Foundation
 import AVFoundation
 
+class ViewStateData: ObservableObject {
+    @Published var imageData: Data?
+
+    init(imageData: Data? = nil) {
+        self.imageData = imageData
+    }
+}
 
 struct SceneDisplay: View {
-    @State var galleryClicked = false
-    @State var cameraClicked = false
+        @StateObject private var viewState = ViewStateData()
+        @State var galleryClicked = false
+        @State var cameraClicked = false
+    
 
-    var body: some View {
-        HStack() {
-            PhotoUploadView(galleryClicked: $galleryClicked, cameraClicked: $cameraClicked)
-            VStack {
-                TextFieldsView()
-                Divider()
-                HStack(spacing: 50) {
-                    PhotoUploadView.ButtonWithIcon(systemName: "camera", galleryClicked: $galleryClicked, cameraClicked: $cameraClicked)
-                    PhotoUploadView.ButtonWithIcon(systemName: "photo", galleryClicked: $galleryClicked, cameraClicked: $cameraClicked)
+        var body: some View {
+            HStack() {
+                PhotoUploadView(galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData)
+                VStack {
+                    TextFieldsView()
+                    Divider()
+                    HStack(spacing: 50) {
+                        PhotoUploadView.ButtonWithIcon(systemName: "camera", galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData)
+                        PhotoUploadView.ButtonWithIcon(systemName: "photo", galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData)
+                    }
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding(.bottom, -21)
+            .navigationBarHidden(true)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.bottom, -21)
-        .navigationBarHidden(true)
-    }
 }
     
 struct PhotoUploadView: View {
     //includes the left rectangle
     @Binding var galleryClicked: Bool
     @Binding var cameraClicked: Bool
+    @Binding var imageData: Data?
     @State var image: Image?
     @State var inputImage: UIImage?
-    @State private var isShowingImagePicker = false
+    
 
     let context = CIContext()
     
@@ -88,6 +98,7 @@ struct PhotoUploadView: View {
         //need to make it do a different thing based on whether camera or gallery clicked
         @Binding var galleryClicked: Bool
         @Binding var cameraClicked: Bool
+        @Binding var imageData: Data?
         var body: some View {
             Button(action: {
                 if systemName == "photo" {

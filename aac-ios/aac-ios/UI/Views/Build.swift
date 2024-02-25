@@ -1,5 +1,5 @@
 import SwiftUI
-import SymbolPicker
+//import SymbolPicker
 import PhotosUI
 
 struct GridData: Equatable {
@@ -40,7 +40,7 @@ struct Build: View {
                                 }
                             })
                                 .onDrag {
-                                    self.draggingItem = tuple.wrappedValue
+                                    self.draggingItem = tuple
                                     return NSItemProvider()
                                 }
                                 .onDrop(of: [.text], delegate: DropViewDelegate(destinationItem: tuple, data: $data2, draggedItem: $draggingItem))
@@ -63,18 +63,19 @@ struct Build: View {
                     }
                 }
             }
-        } else {
-            VStack() {
-                Text("Add a tile:")
-                AddButton {
-                    showingAddPopup.toggle()
-                }
-                .sheet(isPresented: $showingAddPopup) {
-                    BuildPopupView(isPresented: $showingAddPopup, data: $data2)
-                        .onDrop(of: [.text], delegate: DropViewDelegate(destinationItem: number, data: $data, draggedItem: $draggingItem2))
-                }
-            }
-        }
+//        } else {
+//            VStack() {
+//                Text("Add a tile:")
+//                AddButton {
+//                    showingAddPopup.toggle()
+//                }
+//                .sheet(isPresented: $showingAddPopup) {
+//                    BuildPopupView(isPresented: $showingAddPopup, data: $data2)
+//                        .onDrop(of: [.text], delegate: DropViewDelegate(destinationItem: $data2, data: $data2, draggedItem: $draggingItem2))
+//                }
+//
+//            }
+//        }
     }
 }
 

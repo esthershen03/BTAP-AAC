@@ -17,7 +17,8 @@ struct HorizontalNavBar: View {
 
     var body: some View {
         ZStack {
-            HStack(spacing: 20) {
+            
+            HStack(spacing: 10) {
                 
                 Button(action: {
                             print("Logout button tapped")
@@ -49,103 +50,220 @@ struct HorizontalNavBar: View {
                         }
                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 2)        .shadow(color: Color.black, radius: selectedButton == "logout" ? CGFloat (15) : CGFloat(25), x: 0, y: 20))
                         .buttonStyle(.plain)
-                        .padding([.leading],50)
+                        .padding([.leading],105)
                 
-                Spacer(minLength: 100)
+                Spacer(minLength: 70)
                 
-                Image(systemName: "speaker.wave.2.fill")
-                    .resizable()
-                    .frame(width: 30, height: 30)
-                    .onTapGesture {
-                        speakText()
+                
+                
+                VStack(spacing:0) {
+                    HStack {
+                        Text(autocompleteWord(text: searchText)?[0] ?? " ")
+                            .padding(10)
+                            .fixedSize(horizontal: /*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/, vertical: true)
+                            .frame(width: 110, height: 40)
+                            .overlay(Rectangle().stroke(Color.black, lineWidth: 2))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .onTapGesture {
+                                changeText(fix: autocompleteWord(text: searchText)?[0] ?? "")
+                            }
+                        Text(autocompleteWord(text: searchText)?[1] ?? " ")
+                            .padding(10)
+                            .fixedSize(horizontal: /*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/, vertical: true)
+                            .frame(width: 110, height: 40)
+                            .overlay(Rectangle().stroke(Color.black, lineWidth: 2))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .onTapGesture {
+                                changeText(fix: autocompleteWord(text: searchText)?[1] ?? "")
+                            }
+                        Text(autocompleteWord(text: searchText)?[2] ?? " ")
+                            .padding(10)
+                            .fixedSize(horizontal: /*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/, vertical: true)
+                            .frame(width: 110, height: 40)
+                            .overlay(Rectangle().stroke(Color.black, lineWidth: 2))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .onTapGesture {
+                                changeText(fix: autocompleteWord(text: searchText)?[2] ?? "")
+                            }
+                    } .padding(0)
+                        .overlay(Rectangle().stroke(Color.black, lineWidth: 2))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                    HStack {
+                        TextField("Search", text: $searchText, onCommit:{
+                            speakText()
+                        })
+                            .padding(10)
+                            .padding(.vertical)
+                        ZStack{
+                            RoundedRectangle(cornerRadius: 10)
+                                .frame(width: 30, height: 30)
+                            Ellipse()
+                                .frame(width: 20, height: 20)
+                                .foregroundColor(.white)
+                            Image(systemName: "speaker.wave.2.circle.fill")
+                                .resizable()
+                                .frame(width: 30, height: 30)
+                                .onTapGesture {
+                                    speakText()
+                                }
+                            
+                        }
                     }
+                    .padding(.trailing,10)
+                    .overlay(Rectangle().stroke(Color.black, lineWidth: 2))
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+
+                }.background(Color("AACGreen"))
+                .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 2)        .shadow(color: Color.black, radius: selectedButton == "logout" ? CGFloat (15) : CGFloat(25), x: 0, y: 20))
                 
-                VStack {
-                    TextField("Search", text: $searchText, onCommit:{
-                        speakText()
-                    })
-                        .padding(10)
-                        .background(Color(UIColor.systemGray.withAlphaComponent(0.4)))
-                        .cornerRadius(10)
-                        .padding(.horizontal,20)
-                }
-                
-                HStack(spacing: 20) { // Adjust spacing as needed
+                HStack(spacing: 5) { // Adjust spacing as needed
                     Button(action: {
                         let speechUtterance = AVSpeechUtterance(string: "STOP")
                         speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
                         self.speechSynthesizer.speak(speechUtterance)
                     }) {
-                        Text("STOP")
-                            .font(.system(size:30))
-                            .foregroundColor(.black)
-                            .frame(width:100, height:100)
-                        
-                            .padding()
-                            .background(Circle().fill(Color(UIColor.systemGray.withAlphaComponent(0.4))))
-                        
-                    }
+                        HStack {
+                            Image(systemName: "stop.circle")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 38, height: 38)
+                            
+                            Spacer()
+                                .frame(width: 18)
+                            
+                            Text("Stop")
+                                .font(.system(size: 30))
+                                .multilineTextAlignment(.leading)
+                        }
+                            .frame(width: 150, height: 80)
+                                .padding()
+                                .background(selectedButton == "stop" ? Color("AACGreenDark") : Color("AACGreen"))
+                                .clipShape(Ellipse())
+                                .cornerRadius(10)
+                                .onTapGesture {
+                                    selectedButton = "stop"
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        selectedButton = nil
+                                    }
+                                    let speechUtterance = AVSpeechUtterance(string: "Stop")
+                                    speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
+                                    self.speechSynthesizer.speak(speechUtterance)
+                                }
+                    }.overlay(Ellipse().stroke(Color.black, lineWidth: 2)        .shadow(color: Color.black, radius: selectedButton == "stop" ? CGFloat (15) : CGFloat(25), x: 0, y: 20))
+                        .buttonStyle(.plain)
+                        .padding([.leading],40)
                     
                     Button(action: {
                         let speechUtterance = AVSpeechUtterance(string: "HELP")
                         speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
                         self.speechSynthesizer.speak(speechUtterance)
                     }) {
-                        Text("HELP")
-                            .font(.system(size:30))
-                            .foregroundColor(.black)
-                            .frame(width:100, height:100)
-                        
-                            .padding()
-                            .background(Circle().fill(Color(UIColor.systemGray.withAlphaComponent(0.4))))
-                    }
-                    
+                        HStack {
+                            Image(systemName: "questionmark.circle")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 38, height: 38)
+                            
+                            Spacer()
+                                .frame(width: 18)
+                            
+                            Text("Help")
+                                .font(.system(size: 30))
+                                .multilineTextAlignment(.leading)
+                        }
+                            .frame(width: 150, height: 80)
+                                .padding()
+                                .background(selectedButton == "help" ? Color("AACGreenDark") : Color("AACGreen"))
+                                .clipShape(Ellipse())
+                                .cornerRadius(10)
+                                .onTapGesture {
+                                    selectedButton = "help"
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        selectedButton = nil
+                                    }
+                                    let speechUtterance = AVSpeechUtterance(string: "Help")
+                                    speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
+                                    self.speechSynthesizer.speak(speechUtterance)
+                                }
+                    }.overlay(Ellipse().stroke(Color.black, lineWidth: 2)        .shadow(color: Color.black, radius: selectedButton == "help" ? CGFloat (15) : CGFloat(25), x: 0, y: 20))
+                        .buttonStyle(.plain)
+                        .padding([.leading],35)
                 }
-                
                 VStack {
-                    HStack{
-                        Button(action: {
-                            let speechUtterance = AVSpeechUtterance(string: "YES")
-                            speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
-                            self.speechSynthesizer.speak(speechUtterance)
-                        }) {
-                            Text("YES")
-                                .font(.system(size: 20))
-                            
-                                .padding()
-                                .background(Color(UIColor.systemGray.withAlphaComponent(0.4)))
-                                .foregroundColor(.black)
-                                .cornerRadius(10)
-                        }
-                        .frame(width: 100, height: 31)
-                        .padding(.bottom,30)
-                        
-                        Image(systemName: "checkmark.circle")
-                            .resizable()
-                            .frame(width: 24, height:24)
-                    }
-                    HStack{
-                        Button(action: {
-                            let speechUtterance = AVSpeechUtterance(string: "NO")
-                            speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
-                            self.speechSynthesizer.speak(speechUtterance)
-                        }) {
-                            Text("NO")
-                                .font(.system(size: 20))
-                            
-                                .padding()
-                                .background(Color(UIColor.systemGray.withAlphaComponent(0.4)))
-                                .foregroundColor(.black)
-                                .cornerRadius(10)
-                        }
-                        .frame(width: 100, height: 31)
-                        Image(systemName: "x.circle")
-                            .resizable()
-                            .frame(width: 24, height:24)
-                    }
+                    Button(action: {
+                                print("Yes button tapped")
+                            }) {
+                                HStack {
+                                    Image(systemName: "checkmark.shield")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 38, height: 38)
+                                    
+                                    Spacer()
+                                        .frame(width: 18)
+                                    
+                                    Text("Yes")
+                                        .font(.system(size: 24))
+                                        .multilineTextAlignment(.leading)
+                                        
+                                }.frame(width: 100, height: 25)
+                                    .padding()
+                                    .background(selectedButton == "yes" ? Color("AACGreenDark") : Color("AACGreen"))
+                                    .cornerRadius(10)
+                                    .onTapGesture {
+                                        selectedButton = "yes"
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                            selectedButton = nil
+                                        }
+                                        let speechUtterance = AVSpeechUtterance(string: "Yes")
+                                        speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
+                                        self.speechSynthesizer.speak(speechUtterance)
+                                    }
+                                
+                            }
+                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 2)        .shadow(color: Color.black, radius: selectedButton == "yes" ? CGFloat (15) : CGFloat(25), x: 0, y: 20))
+                            .buttonStyle(.plain)
+                            .padding([.leading],20)
                     
+                    Button(action: {
+                                print("No button tapped")
+                            }) {
+                                HStack {
+                                    Image(systemName: "xmark.shield")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 38, height: 38)
+                                    
+                                    Spacer()
+                                        .frame(width: 18)
+                                    
+                                    Text("No")
+                                        .font(.system(size: 24))
+                                        .multilineTextAlignment(.leading)
+                                        
+                                }.frame(width: 100, height: 25)
+                                    .padding()
+                                    .background(selectedButton == "no" ? Color("AACGreenDark") : Color("AACGreen"))
+                                    .cornerRadius(10)
+                                    .onTapGesture {
+                                        selectedButton = "no"
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                            selectedButton = nil
+                                        }
+                                        let speechUtterance = AVSpeechUtterance(string: "No")
+                                        speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
+                                        self.speechSynthesizer.speak(speechUtterance)
+                                    }
+                                
+                            }
+                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 2)        .shadow(color: Color.black, radius: selectedButton == "yes" ? CGFloat (15) : CGFloat(25), x: 0, y: 20))
+                            .buttonStyle(.plain)
+                            .padding([.leading],20)
+
                     
                 }
+                .padding([.leading],20)
+                .padding([.trailing],80)
             }
             .padding()
             .frame(maxWidth: .infinity)
@@ -156,6 +274,35 @@ struct HorizontalNavBar: View {
         let speechUtterance = AVSpeechUtterance(string: searchText)
         speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
         speechSynthesizer.speak(speechUtterance)
+    }
+    func autocompleteWord(text: String) -> [String]? {
+        let words = text.components(separatedBy: " ")
+        let str = (words.count >= 0) ? words[words.count - 1] : "default"
+        let rangeForEndOfStr = NSMakeRange(0, str.utf16.count)     // You had inverted parameters ; could also use NSRange(0..<str.utf16.count)
+        let spellChecker = UITextChecker()
+        let completions = spellChecker.completions(forPartialWordRange: rangeForEndOfStr, in: str, language: "en_US")
+        print(completions ?? "")
+        var phrase: [String] = ["","",""]
+        if let unwrapped = completions {
+            var counting = 0
+            for word in unwrapped {
+                if (!(word.contains("'"))) {
+                    phrase.insert(word, at: 0)
+                    counting += 1
+                }
+                if (counting >= 3) {
+                    break
+                }
+            }
+        }
+        return(phrase)
+    }
+    func changeText(fix: String) {
+        var words = searchText.components(separatedBy: " ")
+        print(words)
+        words[words.count - 1] = fix
+        print(words)
+        searchText = words.joined(separator: " ")
     }
 }
 

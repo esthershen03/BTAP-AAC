@@ -122,16 +122,25 @@ struct BuildPopupView: View {
     
     var body: some View {
         VStack {
+            HStack {
+                Spacer()
+                Button(action: {
+                    isPresented = false
+                }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .resizable()
+                        .frame(width: 24, height: 24)
+                        .foregroundColor(.gray)
+                }
+            }
+            .padding([.top, .trailing])
             Text("Add a new tile")
                 .padding()
                 .font(.system(size: 36))
             
             HStack(spacing: 0) {
-                
                 VStack {
-                    
                     HStack {
-                        
                         Text("Set icon: ")
                             .font(.system(size: 36))
                         PhotosPicker(selection: $avatarItem, matching: .images) {

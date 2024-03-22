@@ -1,3 +1,10 @@
+//
+//  Build.swift
+//  aac-ios
+//
+//  Created by Sydney DeFelice on 10/4/23.
+//
+
 import SwiftUI
 import SymbolPicker
 import PhotosUI
@@ -13,16 +20,10 @@ struct GridData: Equatable {
     }
 }
 
-let tileOrderKey = "tileOrder"
-
 struct Build: View {
     @State private var data2: [GridData] = Array()
     @State private var draggingItem: GridData?
     @State private var showingAddPopup = false
-    @State private var data: [String] = {
-        UserDefaults.standard.stringArray(forKey: tileOrderKey) ?? Array(1...20).map { String($0) }
-    }()
-    @State private var draggingItem2: String?
     
     private let adaptiveColumns = [
         GridItem(.adaptive(minimum: 100))
@@ -71,7 +72,6 @@ struct Build: View {
                 }
                 .sheet(isPresented: $showingAddPopup) {
                     BuildPopupView(isPresented: $showingAddPopup, data: $data2)
-                        .onDrop(of: [.text], delegate: DropViewDelegate(destinationItem: number, data: $data, draggedItem: $draggingItem2))
                 }
             }
         }
@@ -94,10 +94,16 @@ struct DropViewDelegate: DropDelegate {
     }
     
     func dropEntered(info: DropInfo) {
-        if let draggedItem, let fromIndex = data.firstIndex(of: draggedItem), let toIndex = data.firstIndex(of: destinationItem), fromIndex != toIndex {
-            withAnimation {
-                data.move(fromOffsets: IndexSet(integer: fromIndex), toOffset: (toIndex > fromIndex ? (toIndex + 1) : toIndex))
-                UserDefaults.standard.set(data, forKey: tileOrderKey)
+        // Swap Items
+        if let draggedItem {
+            let fromIndex = data.firstIndex(of: draggedItem)
+            if let fromIndex {
+                let toIndex = data.firstIndex(of: destinationItem)
+                if let toIndex, fromIndex != toIndex {
+                    withAnimation {
+                        self.data.move(fromOffsets: IndexSet(integer: fromIndex), toOffset: (toIndex > fromIndex ? (toIndex + 1) : toIndex))
+                    }
+                }
             }
         }
     }

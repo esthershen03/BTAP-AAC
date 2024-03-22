@@ -30,21 +30,29 @@ struct Build: View {
     ]
     
     var body: some View {
-        if (!$data2.isEmpty) {
-            VStack() {
+        VStack {
+            if !$data2.isEmpty {
                 ScrollView(.vertical) {
                     LazyVGrid(columns: adaptiveColumns, content: {
-                        ForEach($data2, id: \.text ) {tuple in
-                            GridTile(labelText: tuple.wrappedValue.text, image: tuple.wrappedValue.image, onClick: {
-                                if (tuple.wrappedValue.type == "Folder") {
-                                    data2 = tuple.wrappedValue.GridList
+                        ForEach($data2.indices, id: \.self) { index in
+                            GridTile(labelText: data2[index].text, image: data2[index].image, onClick: {
+                                if (data2[index].type == "Folder") {
+                                    data2 = data2[index].GridList
                                 }
                             })
-                                .onDrag {
-                                    self.draggingItem = tuple.wrappedValue
-                                    return NSItemProvider()
+                            .onDrag {
+                                self.draggingItem = data2[index]
+                                return NSItemProvider()
+                            }
+                            .onDrop(of: [.text], delegate: DropViewDelegate(destinationItem: $data2[index], data: $data2, draggedItem: $draggingItem))
+                            .contextMenu {
+                                Button(action: {
+                                    data2.remove(at: index)
+                                }) {
+                                    Text("Delete")
+                                    Image(systemName: "trash")
                                 }
-                                .onDrop(of: [.text], delegate: DropViewDelegate(destinationItem: tuple, data: $data2, draggedItem: $draggingItem))
+                            }
                         }
                     })
                 }
@@ -52,31 +60,29 @@ struct Build: View {
                 .padding(.horizontal)
                 .padding(.bottom, -21)
                 .padding(.top)
-                .navigationBarHidden(true)
-                
-                HStack {
-                    Spacer()
-                    AddButton {
-                        showingAddPopup.toggle()
-                    }
-                    .sheet(isPresented: $showingAddPopup) {
-                        BuildPopupView(isPresented: $showingAddPopup, data: $data2)
-                    }
-                }
+            } else {
+                Text("No tiles to display.")
+                    .padding()
             }
-        } else {
-            VStack() {
-                Text("Add a tile:")
-                AddButton {
-                    showingAddPopup.toggle()
-                }
-                .sheet(isPresented: $showingAddPopup) {
-                    BuildPopupView(isPresented: $showingAddPopup, data: $data2)
-                }
+            
+            Button(action: {
+                showingAddPopup.toggle()
+            }) {
+                Text("Add New Tile")
+                    .foregroundColor(.white)
+                    .padding()
+                    .background(Color.blue)
+                    .cornerRadius(10)
             }
+            .sheet(isPresented: $showingAddPopup) {
+                BuildPopupView(isPresented: $showingAddPopup, data: $data2)
+            }
+            .padding(.bottom)
         }
+        .navigationBarHidden(true)
     }
 }
+
 
 struct DropViewDelegate: DropDelegate {
     
@@ -134,7 +140,7 @@ struct BuildPopupView: View {
                 }
             }
             .padding([.top, .trailing])
-            Text("Add a new tile")
+            Text("Add a New Tile")
                 .padding()
                 .font(.system(size: 36))
             
@@ -188,20 +194,22 @@ struct BuildPopupView: View {
                 }
                 
             }
-            
-            Button(action: {
-                isPresented = false
-                data.append(GridData(image: avatarImage!, text: textValue, GridList: [GridData](), type: type))
-                    }) {
-                        Text("Save")
-                            .font(.system(size: 20))
-                            .foregroundColor(.black)
-                            .padding()
-                            .frame(minWidth: 0, maxWidth: 100)
-                            .background(Color.green)
-                            .cornerRadius(20)
-                    }
-                    .padding()
+            if avatarImage != nil && !textValue.isEmpty {
+                Button(action: {
+                    isPresented = false
+                    data.append(GridData(image: avatarImage!, text: textValue, GridList: [GridData](), type: type))
+                }) {
+                    Text("Add Tile")
+                        .font(.system(size: 20))
+                        .foregroundColor(.white) // Text color white
+                        .padding()
+                        .frame(minWidth: 0, maxWidth: 200)
+                        .background(Color.green) // Background color green
+                        .cornerRadius(20)
+                }
+                .padding()
+    
+            }
             
             Spacer()
         }

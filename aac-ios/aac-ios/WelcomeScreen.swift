@@ -29,7 +29,7 @@ struct startButton: View {
             .bold()
             .foregroundColor(.white)
             .frame(width: 300, height: 70, alignment: .center)
-            .background(Color.mint)
+            .background(Color.teal)
             .cornerRadius(20)
             .padding()
     }

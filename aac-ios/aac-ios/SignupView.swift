@@ -16,87 +16,113 @@ struct SignupView: View {
     var body: some View {
         VStack{
             Spacer()
-            Text("Sign up")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .padding(.bottom, 30)
-            TextField("user name", text: $username)
-                    .font(.title3)
-                    .padding()
-                    .frame(width: 500, height: 70, alignment: .center)
-                    .background(Color(.secondarySystemBackground))
-                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray, lineWidth: 1))
-                    .shadow(color: Color.black.opacity(0.08), radius: 60, x: /*@START_MENU_TOKEN@*/0.0/*@END_MENU_TOKEN@*/, y: 16)
-                    .autocapitalization(.none)
-                    .padding(8)
-                    .padding(.vertical)
-            EntryField(sfSymbolName: "envelope", placeholder: "Email Address", prompt: viewModel.emailPrompt, field: $viewModel.email)
-                .frame(width: 500, height: 70, alignment: .center)
-            EntryField(sfSymbolName: "lock", placeholder: "Password", prompt: viewModel.passwordPrompt, field: $viewModel.password, isSecure: true)
-                .frame(width: 500, height: 70, alignment: .center)
-//        TextField("Work email address", text: $email)
-//                .font(.title3)
-//                .padding()
-//                .frame(width: 500, height: 70, alignment: .center)
-//                .background(Color.white)
-//                .cornerRadius(10.0)
-//                .shadow(color: Color.black.opacity(0.08), radius: 60, x: /*@START_MENU_TOKEN@*/0.0/*@END_MENU_TOKEN@*/, y: 16)
-                .padding(.vertical)
-//            TextField("password", text: $password)
-//                    .font(.title3)
-//                    .padding()
-//                    .frame(width: 500, height: 70, alignment: .center)
-//                    .background(Color.white)
-//                    .cornerRadius(10.0)
-//                    .shadow(color: Color.black.opacity(0.08), radius: 60, x: /*@START_MENU_TOKEN@*/0.0/*@END_MENU_TOKEN@*/, y: 16)
-//                    .padding(.vertical)
             HStack {
-                Spacer()
-                Button {
-                    viewModel.signup()
-                } label: {
-                    Text("Sign Up")
-                        .font(.title2)
-                }.foregroundColor(.black)
-                    .padding(.vertical, 5)
-                    .padding(.horizontal)
-                    .background(Capsule().fill(Color.white))
-                    .opacity(viewModel.canSubmit ? 1 : 0.3)
-                    .disabled(!viewModel.canSubmit)
-                Spacer()
+                Image("logo")
+                    .resizable()
+                    .frame(width: 150, height: 150)
+                Text("Sign up")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .padding(.bottom, 30)
             }
-            .padding()
-            .frame(maxWidth: .infinity)
-            .background(Color.white)
-            .cornerRadius(50.0)
-            .shadow(color: Color.black.opacity(0.08), radius: 60, x: 0.0, y: 16)
-            SignInWithAppleButton(.signIn, onRequest: { request in
-                            request.requestedScopes = [.fullName, .email]
-                        }, onCompletion: { result in
-                            switch result {
-                            case .success(let authResults):
-                                // Handle authResults
-                                print(authResults)
-                            case .failure(let error):
-                                // Handle error
-                                print(error.localizedDescription)
-                            }
-                        })
-                        .frame(height: 60) // Height for the button
+            ZStack {
+                RoundedRectangle(cornerRadius: 30)
+                    .frame(width: 600, height: 400)
+                    .foregroundColor(Color.white)
+                    .border(.gray)
+                    .padding()
+                VStack{
+                    TextField("user name", text: $username)
+                        .font(.title3)
                         .padding()
+                        .frame(width: 500, height: 40, alignment: .center)
+                        .background(Color(.secondarySystemBackground))
+                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray, lineWidth: 1))
+                        .shadow(color: Color.black.opacity(0.08), radius: 60, x: /*@START_MENU_TOKEN@*/0.0/*@END_MENU_TOKEN@*/, y: 16)
+                        .autocapitalization(.none)
+                        .padding(8)
+                        .padding(.vertical)
+                    EntryField(sfSymbolName: "envelope", placeholder: "Email Address", prompt: viewModel.emailPrompt, field: $viewModel.email)
+                        .frame(width: 500, height: 50, alignment: .center)
+                    EntryField(sfSymbolName: "lock", placeholder: "Password", prompt: viewModel.passwordPrompt, field: $viewModel.password, isSecure: true)
+                        .frame(width: 500, height: 70, alignment: .center)
+                    //        TextField("Work email address", text: $email)
+                    //                .font(.title3)
+                    //                .padding()
+                    //                .frame(width: 500, height: 70, alignment: .center)
+                    //                .background(Color.white)
+                    //                .cornerRadius(10.0)
+                    //                .shadow(color: Color.black.opacity(0.08), radius: 60, x: /*@START_MENU_TOKEN@*/0.0/*@END_MENU_TOKEN@*/, y: 16)
+                        .padding(.vertical)
+                    //            TextField("password", text: $password)
+                    //                    .font(.title3)
+                    //                    .padding()
+                    //                    .frame(width: 500, height: 70, alignment: .center)
+                    //                    .background(Color.white)
+                    //                    .cornerRadius(10.0)
+                    //                    .shadow(color: Color.black.opacity(0.08), radius: 60, x: /*@START_MENU_TOKEN@*/0.0/*@END_MENU_TOKEN@*/, y: 16)
+                    //                    .padding(.vertical)
+                    HStack {
+                        Spacer()
+                        Button {
+                            viewModel.signup()
+                        } label: {
+                            Text("Sign Up")
+                                .font(.title2)
+                        }.foregroundColor(.white)
+                            .frame(width: 350, height: 50)
+                            .background(Color.teal)
+                            .cornerRadius(10)
+                            .padding()
+                            .opacity(viewModel.canSubmit ? 1 : 0.8)
+                            .disabled(!viewModel.canSubmit)
+                        Spacer()
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .cornerRadius(50.0)
+                    .shadow(color: Color.black.opacity(0.08), radius: 60, x: 0.0, y: 16)
+                }
+            }
+            VStack {
+                Text("Returning User?")
+                Button("Log In") {
+                    
+                }
+                .foregroundColor(.black)
+                .frame(width: 100, height: 35)
+                .buttonStyle(.bordered)
+                .tint(Color.teal)
+                .cornerRadius(10)
+                .padding()
+            }
+//            SignInWithAppleButton(.signIn, onRequest: { request in
+//                            request.requestedScopes = [.fullName, .email]
+//                        }, onCompletion: { result in
+//                            switch result {
+//                            case .success(let authResults):
+//                                // Handle authResults
+//                                print(authResults)
+//                            case .failure(let error):
+//                                // Handle error
+//                                print(error.localizedDescription)
+//                            }
+//                        })
+//                        .frame(height: 60) // Height for the button
+//                        .padding()
         
-        HStack {
-            Spacer()
-            Text("Sign in with Google")
-                .font(.title2)
-            Spacer()
-        }
-        .padding()
-        .frame(maxWidth: .infinity)
-        .background(Color.white)
-        .cornerRadius(50.0)
-        .shadow(color: Color.black.opacity(0.08), radius: 60, x: /*@START_MENU_TOKEN@*/0.0/*@END_MENU_TOKEN@*/, y: 16)
-            
+//        HStack {
+//            Spacer()
+//            Text("Sign in with Google")
+//                .font(.title2)
+//            Spacer()
+//        }
+//        .padding()
+//        .frame(maxWidth: .infinity)
+//        .background(Color.white)
+//        .cornerRadius(50.0)
+//        .shadow(color: Color.black.opacity(0.08), radius: 60, x: /*@START_MENU_TOKEN@*/0.0/*@END_MENU_TOKEN@*/, y: 16)
+//            
         Spacer()
         Text("Read our Terms & Conditions.")
             .foregroundColor(.black)

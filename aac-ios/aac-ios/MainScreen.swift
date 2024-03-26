@@ -20,6 +20,7 @@ struct MainScreen: View {
                         NavigationButton(labelText: "Images", image: "eye")
                     }
                     .buttonStyle(CustomButtonStyle(selected: selectedButton == "Images"))
+                    .cornerRadius(10)
                     
                     NavigationLink(destination: WhiteBoard(), tag: "WhiteBoard", selection: $selectedButton) {
                         NavigationButton(labelText: "White Board", image: "hand.draw")

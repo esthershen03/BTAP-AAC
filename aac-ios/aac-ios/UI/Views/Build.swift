@@ -4,7 +4,6 @@
 //
 //  Created by Sydney DeFelice on 10/4/23.
 //
-
 import SwiftUI
 import SymbolPicker
 import PhotosUI

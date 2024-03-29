@@ -12,71 +12,83 @@ struct RatingScaleActivity: View {
     @State private var selectedButton: String = "5 levels"
     @State private var numberButtons: Int = 5
     @State private var numSelected: String = "3.square"
+    @State private var screenSelect: String? = nil
     
     var body: some View {
-        VStack{
-            Spacer()
-            HStack{
+        NavigationView(){
+            VStack{
                 Spacer()
-                Button(action: {}, label: {
-                        Image(systemName: "chevron.backward.circle").resizable()
+                HStack{
+                    Spacer()
+                    NavigationLink(destination: RatingScaleGrid(), tag: "Rating Scale Grid", selection: $screenSelect) {
+                  
+                            Image(systemName: "chevron.backward.circle").resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 45, height: 45)
+
+                    }.buttonStyle(.plain)
+                    
+                    Spacer()
+                    RatingScaleLevelButton(labelText: "3 levels", selected: selectedButton == "3 levels").onTapGesture {
+                        selectedButton = "3 levels"
+                        numberButtons = 3
+                        numSelected = "2.square"
+                    }
+                    Spacer()
+                    RatingScaleLevelButton(labelText: "5 levels", selected: selectedButton == "5 levels").onTapGesture {
+                        selectedButton = "5 levels"
+                        numberButtons = 5
+                        numSelected = "3.square"
+                        
+                    }
+                    Spacer()
+                    RatingScaleLevelButton(labelText: "7 levels", selected: selectedButton == "7 levels").onTapGesture {
+                        selectedButton = "7 levels"
+                        numberButtons = 7
+                        numSelected = "4.square"
+                    }
+                    Spacer()
+                    RatingScaleLevelButton(labelText: "10 levels", selected: selectedButton == "10 levels").onTapGesture {
+                        selectedButton = "10 levels"
+                        numberButtons = 10
+                        numSelected = "5.square"
+                    }
+                    Spacer()
+                }
+                Spacer()
+                Spacer()
+                Spacer()
+
+                HStack{
+                    
+                    Image(systemName: numSelected).resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: 45, height: 45)
-                })
-                .buttonStyle(.plain)
-                
-                Spacer()
-                RatingScaleLevelButton(labelText: "3 levels", selected: selectedButton == "3 levels").onTapGesture {
-                    selectedButton = "3 levels"
-                    numberButtons = 3
-                    numSelected = "2.square"
+                        .frame(width: 300, height: 300)
                 }
+                Spacer()                    
                 Spacer()
-                RatingScaleLevelButton(labelText: "5 levels", selected: selectedButton == "5 levels").onTapGesture {
-                    selectedButton = "5 levels"
-                    numberButtons = 5
-                    numSelected = "3.square"
+                Spacer()
 
-                }
-                Spacer()
-                RatingScaleLevelButton(labelText: "7 levels", selected: selectedButton == "7 levels").onTapGesture {
-                    selectedButton = "7 levels"
-                    numberButtons = 7
-                    numSelected = "4.square"
-                }
-                Spacer()
-                RatingScaleLevelButton(labelText: "10 levels", selected: selectedButton == "10 levels").onTapGesture {
-                    selectedButton = "10 levels"
-                    numberButtons = 10
-                    numSelected = "5.square"
-                }
-                Spacer()
-            }
-            Spacer()
-            HStack{
-
-                Image(systemName: numSelected).resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 300, height: 300)
-            }
-            Spacer()
-            HStack{
-                Spacer()
-                Spacer()
-                ForEach(1...numberButtons, id: \.self) { level in
-                    let imageRef = "\(level).square"
-                    RatingScaleSelectionButton(image: imageRef, totalButtons: numberButtons).onTapGesture {
-                        numSelected = imageRef
+                HStack{
+                    Spacer()
+                    Spacer()
+                    ForEach(1...numberButtons, id: \.self) { level in
+                        let imageRef = "\(level).square"
+                        RatingScaleSelectionButton(image: imageRef, totalButtons: numberButtons).onTapGesture {
+                            numSelected = imageRef
+                        }
+                        Spacer()
                     }
                     Spacer()
                 }
                 Spacer()
             }
-            Spacer()
-        }
-        
+        }.navigationViewStyle(StackNavigationViewStyle())
+            .navigationBarBackButtonHidden(true)
+            .navigationBarTitle(Text("").font(.system(size:1)), displayMode: .inline)
+            .navigationBarHidden(true)
+        Spacer()
     }
-    
 }
 
 struct RatingScaleLevelButton: View {
@@ -84,7 +96,7 @@ struct RatingScaleLevelButton: View {
     var selected: Bool = false
     var body: some View {
         VStack{}
-       .frame(width: 200,height: 50)
+       .frame(width: 150,height: 50)
        .padding()
        .accentColor(Color.black)
        .cornerRadius(10.0)
@@ -106,7 +118,7 @@ struct RatingScaleSelectionButton: View {
     var totalButtons: Int = 5
     var body: some View {
         VStack{}
-            .frame(width: totalButtons <= 5 ? 125 : CGFloat(625/totalButtons) , height: totalButtons <= 5 ? 125 : CGFloat(625/totalButtons) )
+            .frame(width: totalButtons <= 5 ? 125 : CGFloat(450/totalButtons) , height: totalButtons <= 5 ? 125 : CGFloat(450/totalButtons) )
        .padding()
        .accentColor(Color.black)
        .cornerRadius(10.0)
@@ -117,7 +129,7 @@ struct RatingScaleSelectionButton: View {
                Image(systemName: image)
                    .resizable()
                    .aspectRatio(contentMode: .fit)
-                   .frame(width: totalButtons <= 5 ? 100 : CGFloat(500/totalButtons)  , height: totalButtons <= 5 ? 100 : CGFloat(500/totalButtons) )
+                   .frame(width: totalButtons <= 5 ? 100 : CGFloat(450/totalButtons)  , height: totalButtons <= 5 ? 100 : CGFloat(450/totalButtons) )
                    .foregroundColor(Color(imageColor))
            }
            

@@ -9,50 +9,56 @@ import Foundation
 import SwiftUI
 
 struct RatingScaleGrid: View {
-    
+    @State private var selectedScale: String? = nil
     var body: some View {
-        VStack{
-            Spacer()
-            HStack{
+        NavigationView(){
+            VStack{
                 Spacer()
-                RatingScaleCategoryButton(labelText: "Numeric", image: "list.number", imageColor: "AACBlack")
+                HStack{
+                    Spacer()
+                    NavigationLink(destination: RatingScaleActivity(), tag: "Numeric", selection: $selectedScale){
+                        RatingScaleCategoryButton(labelText: "Numeric", image: "list.number", imageColor: "AACBlack")
+                    }.buttonStyle(.plain)
+                    Spacer()
+                    RatingScaleCategoryButton(labelText: "Pain", image: "bandage", imageColor: "BandageBrown")
+                    Spacer()
+                    RatingScaleCategoryButton(labelText: "Energy", image: "bolt.batteryblock", imageColor: "BatteryGreen")
+                    Spacer()
+                    RatingScaleCategoryButton(labelText: "", image: "", available: false)
+                    Spacer()
+                }
                 Spacer()
-                RatingScaleCategoryButton(labelText: "Pain", image: "bandage", imageColor: "BandageBrown")
+                HStack{
+                    Spacer()
+                    RatingScaleCategoryButton(labelText: "", image: "", available: false)
+                    Spacer()
+                    RatingScaleCategoryButton(labelText: "", image: "", available: false)
+                    Spacer()
+                    RatingScaleCategoryButton(labelText: "", image: "", available: false)
+                    Spacer()
+                    RatingScaleCategoryButton(labelText: "", image: "", available: false)
+                    Spacer()
+                }
                 Spacer()
-                RatingScaleCategoryButton(labelText: "Energy", image: "bolt.batteryblock", imageColor: "BatteryGreen")
-                Spacer()
-                RatingScaleCategoryButton(labelText: "", image: "", available: false)
+                HStack{
+                    Spacer()
+                    RatingScaleCategoryButton(labelText: "", image: "", available: false)
+                    Spacer()
+                    RatingScaleCategoryButton(labelText: "", image: "", available: false)
+                    Spacer()
+                    RatingScaleCategoryButton(labelText: "", image: "", available: false)
+                    Spacer()
+                    RatingScaleCategoryButton(labelText: "", image: "", available: false)
+                    Spacer()
+                }
                 Spacer()
             }
-            Spacer()
-            HStack{
-                Spacer()
-                RatingScaleCategoryButton(labelText: "", image: "", available: false)
-                Spacer()
-                RatingScaleCategoryButton(labelText: "", image: "", available: false)
-                Spacer()
-                RatingScaleCategoryButton(labelText: "", image: "", available: false)
-                Spacer()
-                RatingScaleCategoryButton(labelText: "", image: "", available: false)
-                Spacer()
-            }
-            Spacer()
-            HStack{
-                Spacer()
-                RatingScaleCategoryButton(labelText: "", image: "", available: false)
-                Spacer()
-                RatingScaleCategoryButton(labelText: "", image: "", available: false)
-                Spacer()
-                RatingScaleCategoryButton(labelText: "", image: "", available: false)
-                Spacer()
-                RatingScaleCategoryButton(labelText: "", image: "", available: false)
-                Spacer()
-            }
-            Spacer()
-        }
-        
+        }.navigationViewStyle(StackNavigationViewStyle())
+            .navigationBarBackButtonHidden(true)
+            .navigationBarTitle(Text("").font(.system(size:1)), displayMode: .inline)
+            .navigationBarHidden(true)
+        Spacer()
     }
-    
 }
 
 struct RatingScaleCategoryButton: View {

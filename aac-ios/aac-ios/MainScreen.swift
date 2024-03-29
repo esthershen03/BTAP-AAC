@@ -40,7 +40,7 @@ struct MainScreen: View {
                     
                     Spacer()
                     
-                    NavigationLink(destination: RatingScale(), tag: "RatingScale", selection: $selectedButton) {
+                    NavigationLink(destination: RatingScaleGrid(), tag: "RatingScale", selection: $selectedButton) {
                         NavigationButton(labelText: "Rating Scale", image: "face.smiling", selected: selectedButton == "RatingScale")
                     }.buttonStyle(.plain)
 

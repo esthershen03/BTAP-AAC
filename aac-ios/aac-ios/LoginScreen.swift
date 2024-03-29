@@ -14,6 +14,7 @@
 
 import Foundation
 import SwiftUI
+import AuthenticationServices
 
 struct LoginScreen: View {
     @State private var username = ""
@@ -38,11 +39,35 @@ struct LoginScreen: View {
             }
             ZStack {
                 RoundedRectangle(cornerRadius: 30)
-                    .frame(width: 600, height: 350)
+                    .frame(width: 600, height: 400)
                     .foregroundColor(Color.white)
                     .border(.gray)
                     .padding()
                 VStack {
+                    HStack {
+                        SignInWithAppleButton(.signIn, onRequest: { request in
+                            request.requestedScopes = [.fullName, .email]
+                        }, onCompletion: { result in
+                            switch result {
+                            case .success(let authResults):
+                                // Handle authResults
+                                print(authResults)
+                            case .failure(let error):
+                                // Handle error
+                                print(error.localizedDescription)
+                            }
+                        })
+                            .frame(height: 35) // Height for the button
+                            .frame(maxWidth: 170)
+                            .padding()
+                        Button(action: {}) {
+                            Text("Sign in with Google")
+                            }
+                            .foregroundColor(.black)
+                            .buttonStyle(.bordered)
+                            .tint(Color.teal)
+                            .padding()
+                    }
                     Text("Login")
                         .font(.title)
                         .padding()
@@ -86,7 +111,18 @@ struct LoginScreen: View {
                     }
                 }
             }
-            
+            VStack {
+                Text("New User?")
+                Button("Sign Up") {
+                    
+                }
+                .foregroundColor(.black)
+                .frame(width: 100, height: 35)
+                .buttonStyle(.bordered)
+                .tint(Color.teal)
+                .cornerRadius(10)
+                .padding()
+            }
         }
     }
     

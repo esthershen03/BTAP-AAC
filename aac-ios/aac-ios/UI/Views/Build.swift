@@ -6,23 +6,14 @@
 //
 
 import SwiftUI
-import SymbolPicker
 import PhotosUI
+import CoreData
 
-struct GridData: Equatable {
-    var image: Image
-    var text: String
-    var GridList: [GridData]
-    var type: String
-    
-    static func ==(lhs: GridData, rhs: GridData) -> Bool {
-        return lhs.text == rhs.text
-    }
-}
-
+// default layout
 struct Build: View {
-    @State private var data2: [GridData] = Array()
-    @State private var draggingItem: GridData?
+    @StateObject var vm = TileViewModel()
+    
+    @State private var draggingItem: Tile?
     @State private var showingAddPopup = false
     
     private let adaptiveColumns = [
@@ -30,21 +21,23 @@ struct Build: View {
     ]
     
     var body: some View {
-        if (!$data2.isEmpty) {
+        if (vm.tiles.count > 0) {
             VStack() {
                 ScrollView(.vertical) {
                     LazyVGrid(columns: adaptiveColumns, content: {
-                        ForEach($data2, id: \.text ) {tuple in
-                            GridTile(labelText: tuple.wrappedValue.text, image: tuple.wrappedValue.image, onClick: {
-                                if (tuple.wrappedValue.type == "Folder") {
-                                    data2 = tuple.wrappedValue.GridList
-                                }
-                            })
+                        ForEach(vm.tiles) { tile in // get the tile that is the current folder (default: main)
+                            GridTile(labelText: tile.name!, image: tile.image!,
+                                     onClick: {
+                                        if (tile.type == "Folder") {
+                                            vm.currentFolder = tile
+                                            vm.fetchTiles(parent: vm.currentFolder!)
+                                        }
+                                })
                                 .onDrag {
-                                    self.draggingItem = tuple.wrappedValue
+                                    self.draggingItem = tile
                                     return NSItemProvider()
                                 }
-                                .onDrop(of: [.text], delegate: DropViewDelegate(destinationItem: tuple, data: $data2, draggedItem: $draggingItem))
+                                .onDrop(of: [.text], delegate: DropViewDelegate(destinationItem: tile, data: $vm.tiles, draggedItem: $draggingItem))
                         }
                     })
                 }
@@ -60,7 +53,7 @@ struct Build: View {
                         showingAddPopup.toggle()
                     }
                     .sheet(isPresented: $showingAddPopup) {
-                        BuildPopupView(isPresented: $showingAddPopup, data: $data2)
+                        BuildPopupView(isPresented: $showingAddPopup, vm: vm, currentFolder: vm.currentFolder!)
                     }
                 }
             }
@@ -71,18 +64,19 @@ struct Build: View {
                     showingAddPopup.toggle()
                 }
                 .sheet(isPresented: $showingAddPopup) {
-                    BuildPopupView(isPresented: $showingAddPopup, data: $data2)
+                    BuildPopupView(isPresented: $showingAddPopup, vm: vm, currentFolder: vm.currentFolder!)
                 }
             }
         }
     }
 }
 
+// Dropping Mechanism
 struct DropViewDelegate: DropDelegate {
     
-    @Binding var destinationItem: GridData
-    @Binding var data: [GridData]
-    @Binding var draggedItem: GridData?
+    var destinationItem: Tile
+    @Binding var data: [Tile]
+    @Binding var draggedItem: Tile?
     
     func dropUpdated(info: DropInfo) -> DropProposal? {
         return DropProposal(operation: .move)
@@ -111,14 +105,16 @@ struct DropViewDelegate: DropDelegate {
 
 struct BuildPopupView: View {
     @Binding var isPresented: Bool
-    @Binding var data: [GridData]
+    var vm: TileViewModel
     
     @State private var iconPickerPresented = false
     @State private var textValue: String = ""
     
     @State private var avatarItem: PhotosPickerItem?
-    @State private var avatarImage: Image?
+    @State private var avatarImage: Data?
     @State private var type: String = "Tiles"
+    @State var currentFolder: Tile
+    
     
     var body: some View {
         VStack {
@@ -143,7 +139,7 @@ struct BuildPopupView: View {
                     }
                     .onChange(of: avatarItem) { avatarItem in
                         Task {
-                            if let loaded = try? await avatarItem?.loadTransferable(type: Image.self) {
+                            if let loaded = try? await avatarItem?.loadTransferable(type: Data.self) {
                                 avatarImage = loaded
                             } else {
                                 print("Failed")
@@ -182,17 +178,17 @@ struct BuildPopupView: View {
             
             Button(action: {
                 isPresented = false
-                data.append(GridData(image: avatarImage!, text: textValue, GridList: [GridData](), type: type))
-                    }) {
-                        Text("Save")
-                            .font(.system(size: 20))
-                            .foregroundColor(.black)
-                            .padding()
-                            .frame(minWidth: 0, maxWidth: 100)
-                            .background(Color.green)
-                            .cornerRadius(20)
-                    }
+                vm.addTile(text: textValue, image: avatarImage!, type: type, parent: self.currentFolder)
+            }) {
+                Text("Save")
+                    .font(.system(size: 20))
+                    .foregroundColor(.black)
                     .padding()
+                    .frame(minWidth: 0, maxWidth: 100)
+                    .background(Color.green)
+                    .cornerRadius(20)
+            }
+            .padding()
             
             Spacer()
         }

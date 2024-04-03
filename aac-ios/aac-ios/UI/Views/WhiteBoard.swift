@@ -152,6 +152,7 @@ struct WhiteBoard: View {
                         }) {
                             Text("Clear Image")
                                 .font(.system(size: 20))
+                                .foregroundColor(.red) // Set text color to red
                         }
 
                     }

@@ -9,49 +9,65 @@ import SwiftUI
 import CoreImage
 import CoreImage.CIFilterBuiltins
 import PhotosUI
+import Foundation
+import AVFoundation
+
+class ViewStateData: ObservableObject {
+    @Published var imageData: Data?
+
+    init(imageData: Data? = nil) {
+        self.imageData = imageData
+    }
+}
 
 struct SceneDisplay: View {
-    @State var galleryClicked = false
-    @State var cameraClicked = false
-    @State var imageText = true
-    @State var inputImage: UIImage? = nil
+        @StateObject private var viewState = ViewStateData()
+        @State var galleryClicked = false
+        @State var cameraClicked = false
+    
 
-    var body: some View {
-        HStack() {
-            PhotoUploadView(galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, inputImage: $inputImage, imageDisplayText: $imageText)
-            VStack {
-                TextFieldsView()
-                Divider()
-                HStack(spacing: 50) {
-                    PhotoUploadView.ButtonWithIcon(systemName: "camera", galleryClicked: $galleryClicked, cameraClicked: $cameraClicked)
-                    PhotoUploadView.ButtonWithIcon(systemName: "photo", galleryClicked: $galleryClicked, cameraClicked: $cameraClicked)
+        var body: some View {
+            HStack() {
+                PhotoUploadView(galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData)
+                VStack {
+                    TextFieldsView()
+                    Divider()
+                    HStack(spacing: 50) {
+                        PhotoUploadView.ButtonWithIcon(systemName: "camera.fill", galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData)
+                        PhotoUploadView.ButtonWithIcon(systemName: "photo", galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData)
+                    }
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding(.bottom, -21)
+            .navigationBarHidden(true)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.bottom, -21)
-        .navigationBarHidden(true)
-    }
 }
     
 struct PhotoUploadView: View {
     //includes the left rectangle
     @Binding var galleryClicked: Bool
     @Binding var cameraClicked: Bool
+    @Binding var imageData: Data?
     @State var image: Image?
-    @Binding var inputImage: UIImage?
-    @State private var isShowingImagePicker = false
-    @Binding var imageDisplayText: Bool
+    @State var inputImage: UIImage?
+    
 
     let context = CIContext()
     
     var body: some View {
         ZStack {
-            if imageDisplayText {
-                Text("Image will display here")
-                    .font(.title)
-                    .foregroundColor(Color.gray)
-            }
+            Rectangle()
+                .fill(Color(UIColor.systemGray.withAlphaComponent(0.4)))
+                .border(Color.black)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(15)
+                .alignmentGuide(.top) { dimensions in
+                    dimensions[VerticalAlignment.top]
+                }
+            Text("Image will display here")
+                .font(.title)
+                .foregroundColor(Color.gray)
             Image(uiImage: inputImage ?? UIImage())
                 .resizable()
                 .scaledToFit()
@@ -82,6 +98,7 @@ struct PhotoUploadView: View {
         //need to make it do a different thing based on whether camera or gallery clicked
         @Binding var galleryClicked: Bool
         @Binding var cameraClicked: Bool
+        @Binding var imageData: Data?
         var body: some View {
             Button(action: {
                 if systemName == "photo" {
@@ -107,6 +124,8 @@ struct PhotoUploadView: View {
 
 struct TextFieldsView: View {
     @State private var textValues: [String] = Array(repeating: "", count: 4)
+    let speechSynthesizer = AVSpeechSynthesizer()
+
     
     var body: some View {
         List {
@@ -130,10 +149,22 @@ struct TextFieldsView: View {
                     }
                     Image(systemName: "pencil")
                         .resizable()
-                        .frame(width: 40, height: 40)
+                        .frame(width: 30, height: 40)
+                    Image(systemName: "speaker.wave.2.fill")
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                        .foregroundColor(.black) // Change the color to black
+                        .onTapGesture {
+                            speakText(text: textValues[index])
+                        }
                 }
             }
         }
+    }
+    func speakText(text: String) {
+        let speechUtterance = AVSpeechUtterance(string: text)
+        speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
+        speechSynthesizer.speak(speechUtterance)
     }
 }
 

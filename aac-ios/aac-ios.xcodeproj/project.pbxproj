@@ -241,6 +241,8 @@
 			dependencies = (
 			);
 			name = "aac-ios";
+			packageProductDependencies = (
+			);
 			productName = "aac-ios";
 			productReference = 8E3422A52A990C8B000A3055 /* aac-ios.app */;
 			productType = "com.apple.product-type.application";
@@ -313,6 +315,8 @@
 				Base,
 			);
 			mainGroup = 8E34229C2A990C8B000A3055;
+			packageReferences = (
+			);
 			productRefGroup = 8E3422A62A990C8B000A3055 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";

@@ -24,16 +24,17 @@ struct SceneDisplay: View {
         @StateObject private var viewState = ViewStateData()
         @State var galleryClicked = false
         @State var cameraClicked = false
+        @State var inputImage: UIImage? = nil
     
 
         var body: some View {
             HStack() {
-                PhotoUploadView(galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData)
+                PhotoUploadView(galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData, inputImage: $inputImage)
                 VStack {
                     TextFieldsView()
                     Divider()
                     HStack(spacing: 50) {
-                        PhotoUploadView.ButtonWithIcon(systemName: "camera", galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData)
+                        PhotoUploadView.ButtonWithIcon(systemName: "camera.fill", galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData)
                         PhotoUploadView.ButtonWithIcon(systemName: "photo", galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData)
                     }
                 }
@@ -50,7 +51,7 @@ struct PhotoUploadView: View {
     @Binding var cameraClicked: Bool
     @Binding var imageData: Data?
     @State var image: Image?
-    @State var inputImage: UIImage?
+    @Binding var inputImage: UIImage?
     
 
     let context = CIContext()
@@ -58,16 +59,13 @@ struct PhotoUploadView: View {
     var body: some View {
         ZStack {
             Rectangle()
-                .fill(Color(UIColor.systemGray.withAlphaComponent(0.4)))
+                .fill(Color(UIColor.systemGray.withAlphaComponent(0)))
                 .border(Color.black)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding(15)
                 .alignmentGuide(.top) { dimensions in
                     dimensions[VerticalAlignment.top]
                 }
-            Text("Image will display here")
-                .font(.title)
-                .foregroundColor(Color.gray)
             Image(uiImage: inputImage ?? UIImage())
                 .resizable()
                 .scaledToFit()
@@ -110,16 +108,17 @@ struct PhotoUploadView: View {
                 Image(systemName: systemName)
                     .resizable()
                     .foregroundColor(.black)
-                    .frame(width: 45, height: 40, alignment: .center)
-                    .padding(7)
+                    .frame(width: 65, height: 55, alignment: .center)
+                    .padding(20) //change size of rectangle
             }
-            .background(Color(UIColor.systemGray.withAlphaComponent(0.4)))
+            .background(Color("AACBlue"))
+            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 2)        .shadow(color: Color.black, radius: false ? CGFloat(15) : CGFloat(25), x: 0, y: 20))
             .border(Color.black, width: 1)
-            .padding(.bottom, 25)
-            .padding(.top, 25)
+            .padding(.bottom, 15)
+            .padding(.top, 15)
 
-        }
-    }
+        } // end of body view
+    } // end of button with icon view
 }
 
 struct TextFieldsView: View {

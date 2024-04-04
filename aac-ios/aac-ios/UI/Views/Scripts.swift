@@ -51,12 +51,12 @@ struct Scripts: View {
                     }
                 }
             }
-            .padding(10)
+            .padding(15)
             .sheet(isPresented: $showScriptText) {
                 // This is the view that will be shown when showScriptText is true
                 ScriptTextScreen(showScriptText: $showScriptText)
             }
-            .padding(40)
+            .padding(10)
         } //end of vstck
     }
 }

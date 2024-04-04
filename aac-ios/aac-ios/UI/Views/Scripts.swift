@@ -71,9 +71,9 @@ struct ScriptTextScreen: View {
         VStack {
             ForEach(0..<textValues.count, id: \.self) { index in
                 HStack {
-                    TextField("Text", text: $textValues[index])
+                    TextField("Text", text: $textValues[index], axis: .vertical)
                         .font(.title2)
-                        .frame(width: .infinity, height: 40)
+                        .frame(width: .infinity)
                         .padding()
                         .background(RoundedRectangle(cornerRadius: 10).fill(Color.white))
                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.blue, lineWidth: 1))

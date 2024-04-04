@@ -134,7 +134,7 @@ struct TextFieldsView: View {
                         TextField("Text", text: $textValues[index], axis: .vertical)
                             .font(.title)
                             .padding(15)
-                            .background(Color(UIColor.systemGray.withAlphaComponent(0.4)))
+                            .background(Color(UIColor.systemGray.withAlphaComponent(0.2)))
                             .border(Color.black, width: 1)
                             .padding(10)
                     } else {

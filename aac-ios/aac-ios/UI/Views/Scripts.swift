@@ -51,6 +51,7 @@ struct Scripts: View {
                     }
                 }
             }
+            .padding(10)
             .sheet(isPresented: $showScriptText) {
                 // This is the view that will be shown when showScriptText is true
                 ScriptTextScreen(showScriptText: $showScriptText)

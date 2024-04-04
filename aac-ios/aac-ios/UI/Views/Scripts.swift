@@ -24,7 +24,7 @@ struct Scripts: View {
                     .background(Color.white)
                     .frame(width: 900, height: 60)
                     .cornerRadius(10)
-                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color("AACBlueDark"), lineWidth: 2))
+                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 2))
 
                 Button(action: {
                     // When the button is clicked, add the new category

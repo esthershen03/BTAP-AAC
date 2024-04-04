@@ -107,16 +107,19 @@ struct PhotoUploadView: View {
             }) {
                 Image(systemName: systemName)
                     .resizable()
+                    .frame(width: 65, height: 55)
                     .foregroundColor(.black)
-                    .frame(width: 65, height: 55, alignment: .center)
-                    .padding(20) //change size of rectangle
+                    .padding(20)
             }
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.black, lineWidth: 2)
+                    .shadow(color: Color.black, radius: false ? 15 : 25, x: 0, y: 20)
+            )
             .background(Color("AACBlue"))
-            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 2)        .shadow(color: Color.black, radius: false ? CGFloat(15) : CGFloat(25), x: 0, y: 20))
-            .border(Color.black, width: 1)
-            .padding(.bottom, 15)
-            .padding(.top, 15)
-
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .padding(.vertical, 15)
+            .padding(.horizontal)
         } // end of body view
     } // end of button with icon view
 }
@@ -134,16 +137,18 @@ struct TextFieldsView: View {
                         TextField("Text", text: $textValues[index], axis: .vertical)
                             .font(.title)
                             .padding(15)
-                            .background(Color(UIColor.systemGray.withAlphaComponent(0.4)))
-                            .border(Color.black, width: 1)
+                            .cornerRadius(10)
+                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 2))
+                            .background(Color(UIColor.systemGray.withAlphaComponent(0.2)))
                             .padding(10)
                     } else {
                         TextField("Text", text: $textValues[index])
                             .font(.title)
                             .frame(height: 40)
                             .padding(15)
+                            .cornerRadius(10)
+                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 2))
                             .background(Color(UIColor.systemGray.withAlphaComponent(0.4)))
-                            .border(Color.black, width: 1)
                             .padding(5)
                     }
                     Image(systemName: "pencil")

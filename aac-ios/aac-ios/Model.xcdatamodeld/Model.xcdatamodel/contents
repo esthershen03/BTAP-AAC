@@ -7,7 +7,7 @@
     <entity name="LineEntity" representedClassName="LineEntity" syncable="YES">
         <attribute name="color" optional="YES" attributeType="String"/>
         <attribute name="lineWidth" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="point" optional="YES" attributeType="Transformable"/>
+        <attribute name="points" optional="YES" attributeType="Transformable"/>
     </entity>
     <entity name="TestEntity" representedClassName="TestEntity" syncable="YES" codeGenerationType="class">
         <attribute name="testValue" optional="YES" attributeType="String"/>

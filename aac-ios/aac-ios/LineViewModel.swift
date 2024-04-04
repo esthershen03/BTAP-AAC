@@ -1,64 +1,65 @@
-//
-//  LineViewModel.swift
-//  aac-ios
-//
-//  Created by Asma on 4/4/24.
-//
-
 import Foundation
 import CoreData
 import SwiftUI
 
-class LineViewModel: ObservableObject {
-    
-    let container: NSPersistentContainer
-    @Published var lines: [LineEntity] = []
-    
-    init() {
-        container = NSPersistentContainer(name: "AAC_CoreData")
-        container.loadPersistentStores { description, error in
-            if let error = error {
-                print("Error Loading")
-            }
-        }
-        fetchLines()
-    }
-    
-    func fetchLines() {
-        let request: NSFetchRequest<LineEntity> = LineEntity.fetchRequest()
-        
-        do {
-            lines = try container.viewContext.fetch(request)
-        } catch let error {
-            print("Error Fetching Lines")
-            print(error)
-        }
-    }
-    
-    func addLine(points: [CGPoint], color: Color, lineWidth: CGFloat) {
-        let newLine = LineEntity(context: container.viewContext)
-        newLine.points = points.map { NSValue(cgPoint: $0) }
-        newLine.color = color.description // Store color as string for now
-        newLine.lineWidth = Float(lineWidth)
-        saveData()
-    }
-    
-    func saveData() {
-        do {
-            try container.viewContext.save()
-            fetchLines() // Update lines after saving
-        } catch let error {
-            print("Error Saving")
-            print(error)
-        }
-    }
+@objc(LineEntity)
+public class LineEntity: NSManagedObject {
+    @NSManaged public var points: [NSValue]?
+    @NSManaged public var color: String?
+    @NSManaged public var lineWidth: Float
 }
 
-extension LineEntity {
-    func toLine() -> Line {
-        let points = self.points.compactMap { ($0 as? NSValue)?.cgPointValue }
-        let color = Color(self.color)
-        let lineWidth = CGFloat(self.lineWidth)
-        return Line(points: points, color: color, lineWidth: lineWidth)
+class LineViewModel: ObservableObject {
+    private let persistentContainer: NSPersistentContainer
+    
+    init() {
+        persistentContainer = NSPersistentContainer(name: "Model") // Replace with your actual Core Data model name
+        persistentContainer.loadPersistentStores { description, error in
+            if let error = error {
+                fatalError("Unable to load persistent stores: \(error)")
+            }
+        }
+    }
+    
+    // Method to add a line to Core Data
+    func addLine(points: [CGPoint], color: Color, lineWidth: CGFloat) {
+        let line = LineEntity(context: persistentContainer.viewContext)
+        line.points = points.map { NSValue(cgPoint: $0) }
+        line.color = color.description // Store color as string
+        line.lineWidth = Float(lineWidth)
+        saveContext()
+    }
+    
+    // Method to fetch lines from Core Data
+    func fetchLines() -> [Line] {
+        let lineEntities = fetchLineEntities()
+        return lineEntities.map { entity in
+            let points = (entity.points as? [CGPoint] ?? []).map { $0 }
+            let color = Color(entity.color ?? "") // Convert string to Color
+            let lineWidth = CGFloat(entity.lineWidth)
+            return Line(points: points, color: color, lineWidth: lineWidth)
+        }
+    }
+    
+    private func fetchLineEntities() -> [LineEntity] {
+        let fetchRequest: NSFetchRequest<LineEntity> = NSFetchRequest(entityName: "LineEntity")
+        do {
+            let result = try persistentContainer.viewContext.fetch(fetchRequest)
+            return result
+        } catch {
+            print("Failed to fetch line entities: \(error)")
+            return []
+        }
+    }
+
+
+
+    // Method to save changes to Core Data context
+    private func saveContext() {
+        do {
+            try persistentContainer.viewContext.save()
+        } catch {
+            print("Unable to save context: \(error)")
+        }
     }
 }

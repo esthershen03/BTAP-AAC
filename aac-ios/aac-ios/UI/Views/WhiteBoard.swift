@@ -7,11 +7,33 @@
 
 import SwiftUI
 import PhotosUI
+import CoreData
 
 struct Line {
     var points: [CGPoint]
     var color: Color
     var lineWidth: CGFloat
+}
+
+extension Line {
+    func toLineEntity(in context: NSManagedObjectContext) -> LineEntity {
+        let entity = LineEntity(context: context)
+        entity.points = points.map { NSValue(cgPoint: $0) }
+        entity.color = color.description
+        entity.lineWidth = Float(lineWidth)
+        return entity
+    }
+}
+
+@objc(LineEntity)
+public class LineEntity: NSManagedObject {
+    @NSManaged public var points: [NSValue]
+    @NSManaged public var color: String
+    @NSManaged public var lineWidth: Float
+    static func fetchRequest() -> NSFetchRequest<LineEntity> {
+        return NSFetchRequest<LineEntity>(entityName: "LineEntity")
+        
+    }
 }
 
 struct WhiteBoard: View {
@@ -59,9 +81,7 @@ struct WhiteBoard: View {
                                     if let last = lines.last?.points, last.isEmpty {
                                         lines.removeLast()
                                     }
-                                })
-                                         
-                                )
+                                }))
                                 .padding()
                         } // end of Zstack
                         HStack {
@@ -163,6 +183,7 @@ struct WhiteBoard: View {
                 
             }
         }
+    
 }
 
 struct WhiteBoard_Previews: PreviewProvider {

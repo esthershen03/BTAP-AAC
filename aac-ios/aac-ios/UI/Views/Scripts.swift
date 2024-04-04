@@ -121,3 +121,10 @@ struct ScriptTextScreen: View {
         speechSynthesizer.speak(speechUtterance)
     }
 }
+
+struct ScriptsPreview: PreviewProvider {
+    static var previews: some View {
+        Scripts()
+            .previewInterfaceOrientation(.landscapeLeft)
+    }
+}

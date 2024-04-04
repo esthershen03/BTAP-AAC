@@ -40,6 +40,8 @@ struct Scripts: View {
                         .background(Color("AACBlue"))
                         .foregroundColor(.black)
                         .cornerRadius(10)
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 2))
+
                 }
             }
 
@@ -47,7 +49,7 @@ struct Scripts: View {
                 LazyVGrid(columns: columns, spacing: 60) {
                     // Create a button for each category
                     ForEach(categories, id: \.self) { category in
-                        ScriptsCategoryButton(labelText: category, image: "bandage", available: false, imageColor: "red", showScriptText: $showScriptText)
+                        ScriptsCategoryButton(labelText: category, image: "circle", available: false, imageColor: "red", showScriptText: $showScriptText)
                     }
                 }
             }
@@ -56,7 +58,6 @@ struct Scripts: View {
                 // This is the view that will be shown when showScriptText is true
                 ScriptTextScreen(showScriptText: $showScriptText)
             }
-            .padding(10)
         } //end of vstck
     }
 }

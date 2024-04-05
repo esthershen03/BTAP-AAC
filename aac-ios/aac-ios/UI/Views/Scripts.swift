@@ -64,8 +64,10 @@ struct Scripts: View {
                 // This is the view that will be shown when showScriptText is true
                 ScriptTextScreen(showScriptText: $showScriptText)
             }
-            .sheet(isPresented: $showError) {
-                ErrorScreen(showError: $showError)
+            .alert(isPresented: $showError) {
+                Alert(
+                    title: Text("That category already exists!")
+                )
             }
         } //end of vstck
     }
@@ -183,27 +185,6 @@ struct ScriptsCategoryButton: View {
             .background(Color("AACGrey"))
             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 2))
         }
-    }
-}
-
-struct ErrorScreen: View {
-    @Binding var showError: Bool
-    
-    var body: some View {
-        Text("That category already exists!")
-            .font(.title)
-            .padding()
-        Button(action: {
-            showError = false
-        }) {
-            Text("Close")
-                .font(.system(size:20)) // Increase the font size
-                .frame(width: 100, height: 50) // Set a specific width and height
-                .background(Color.blue)
-                .foregroundColor(.white)
-                .cornerRadius(10)
-        }
-        .font(.title)
     }
 }
 

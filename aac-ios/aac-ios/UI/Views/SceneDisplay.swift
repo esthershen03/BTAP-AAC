@@ -151,13 +151,21 @@ struct TextFieldsView: View {
                             .background(Color(UIColor.systemGray.withAlphaComponent(0.4)))
                             .padding(5)
                     }
+                    
                     Image(systemName: "pencil")
                         .resizable()
-                        .frame(width: 30, height: 40)
+                        .frame(width: 30, height: 30)
+                        .padding()
+                        .background(RoundedRectangle(cornerRadius: 10).fill(Color("CustomGray")))
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 1))
+                    
                     Image(systemName: "speaker.wave.2.fill")
                         .resizable()
                         .frame(width: 30, height: 30)
                         .foregroundColor(.black) // Change the color to black
+                        .padding()
+                        .background(RoundedRectangle(cornerRadius: 10).fill(Color("CustomGray")))
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 1))
                         .onTapGesture {
                             speakText(text: textValues[index])
                         }

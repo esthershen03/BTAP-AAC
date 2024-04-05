@@ -8,6 +8,7 @@ struct Scripts: View {
     
     // State variable to control which view is currently being shown
     @State private var showScriptText = false
+    @State private var showError = false
 
     // State variable to hold the new category name
     @State private var newCategoryName = ""
@@ -29,8 +30,12 @@ struct Scripts: View {
                 Button(action: {
                     // When the button is clicked, add the new category
                     if !newCategoryName.isEmpty {
-                        self.categories.append(newCategoryName)
-                        self.newCategoryName = ""
+                        if !categories.contains(newCategoryName) {
+                            self.categories.append(newCategoryName)
+                            self.newCategoryName = ""
+                        } else {
+                            showError = true
+                        }
                     }
                 }) {
                     Text("Add")
@@ -52,11 +57,15 @@ struct Scripts: View {
                         ScriptsCategoryButton(labelText: category, image: "circle", available: false, imageColor: "red", showScriptText: $showScriptText)
                     }
                 }
+                .padding()
             }
             .padding(15)
             .sheet(isPresented: $showScriptText) {
                 // This is the view that will be shown when showScriptText is true
                 ScriptTextScreen(showScriptText: $showScriptText)
+            }
+            .sheet(isPresented: $showError) {
+                ErrorScreen(showError: $showError)
             }
         } //end of vstck
     }
@@ -82,13 +91,18 @@ struct ScriptTextScreen: View {
 
                     Image(systemName: "pencil")
                         .resizable()
-                        .frame(width: 30, height: 40)
-                        .padding(.leading)
+                        .frame(width: 30, height: 30)
+                        .padding()
+                        .background(RoundedRectangle(cornerRadius: 10).fill(Color("CustomGray")))
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 1))
 
                     Image(systemName: "speaker.wave.2.fill")
                         .resizable()
                         .frame(width: 30, height: 30)
+                        .padding()
                         .foregroundColor(.black) // Change the color to black
+                        .background(RoundedRectangle(cornerRadius: 10).fill(Color("CustomGray")))
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 1))
                         .onTapGesture {
                             speakText(text: textValues[index])
                         }
@@ -169,6 +183,27 @@ struct ScriptsCategoryButton: View {
             .background(Color("AACGrey"))
             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 2))
         }
+    }
+}
+
+struct ErrorScreen: View {
+    @Binding var showError: Bool
+    
+    var body: some View {
+        Text("That category already exists!")
+            .font(.title)
+            .padding()
+        Button(action: {
+            showError = false
+        }) {
+            Text("Close")
+                .font(.system(size:20)) // Increase the font size
+                .frame(width: 100, height: 50) // Set a specific width and height
+                .background(Color.blue)
+                .foregroundColor(.white)
+                .cornerRadius(10)
+        }
+        .font(.title)
     }
 }
 

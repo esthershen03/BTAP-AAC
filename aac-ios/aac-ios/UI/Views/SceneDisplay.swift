@@ -20,7 +20,7 @@ class ViewStateData: ObservableObject {
     }
 }
 
-let imageViewModel = ImageViewModel()
+let imageViewModel = VSDImageViewModel()
 
 struct SceneDisplay: View {
         @StateObject private var viewState = ViewStateData()
@@ -31,7 +31,7 @@ struct SceneDisplay: View {
         var body: some View {
             
             HStack() {
-                PhotoUploadView(galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData, inputImage: $inputImage)
+                PhotoUploadView(galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData, inputImage: $inputImage, screen: "VSD")
                 VStack {
                     TextFieldsView()
                     Divider()
@@ -54,87 +54,7 @@ struct SceneDisplay: View {
         
 }
     
-struct PhotoUploadView: View {
-    //includes the left rectangle
-    @Binding var galleryClicked: Bool
-    @Binding var cameraClicked: Bool
-    @Binding var imageData: Data?
-    @State var image: Image?
-    @Binding var inputImage: UIImage?
-    
 
-    let context = CIContext()
-    
-    var body: some View {
-        ZStack {
-            Rectangle()
-                .fill(Color(UIColor.systemGray.withAlphaComponent(0)))
-                .border(Color.black)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding(15)
-                .alignmentGuide(.top) { dimensions in
-                    dimensions[VerticalAlignment.top]
-                }
-            Image(uiImage: inputImage ?? UIImage())
-                .resizable()
-                .scaledToFit()
-                .padding(17)
-        }
-        //makes the image picker pop up show when gallery is clicked
-        .sheet(isPresented: $galleryClicked) {
-            ImagePicker(image: $inputImage, sourceType: .photoLibrary)
-        }
-        .onChange(of: inputImage) { _ in loadImageFromGallery()
-            if let inputImage = inputImage {
-                imageViewModel.saveImage(inputImage)
-            }
-        }
-        .sheet(isPresented: $cameraClicked) {
-            ImagePicker(image: $inputImage, sourceType: .camera)
-        }
-
-
-    }//end of struct
-    
-    func loadImageFromGallery() {
-        guard let inputImage = inputImage else {
-            return
-        }
-        image = Image(uiImage: inputImage)
-    }
-    
-    struct ButtonWithIcon: View { //includes the bottom right buttons
-        let systemName: String
-        //need to make it do a different thing based on whether camera or gallery clicked
-        @Binding var galleryClicked: Bool
-        @Binding var cameraClicked: Bool
-        @Binding var imageData: Data?
-        var body: some View {
-            Button(action: {
-                if systemName == "photo" {
-                    galleryClicked = true
-                } else if systemName == "camera" {
-                    cameraClicked = true
-                }
-            }) {
-                Image(systemName: systemName)
-                    .resizable()
-                    .frame(width: 65, height: 55)
-                    .foregroundColor(.black)
-                    .padding(20)
-            }
-            .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(Color.black, lineWidth: 2)
-                    .shadow(color: Color.black, radius: false ? 15 : 25, x: 0, y: 20)
-            )
-            .background(Color("AACBlue"))
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .padding(.vertical, 15)
-            .padding(.horizontal)
-        } // end of body view
-    } // end of button with icon view
-}
 
 struct TextFieldsView: View {
     @State private var textValues: [String] = Array(repeating: "", count: 4)

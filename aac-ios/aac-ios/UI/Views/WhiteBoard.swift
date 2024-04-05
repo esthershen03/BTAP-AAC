@@ -9,6 +9,7 @@ import SwiftUI
 import PhotosUI
 import CoreData
 
+let whiteboardImageViewModel = WhiteboardImageViewModel()
 
 struct Line {
     var points: [CGPoint]
@@ -37,7 +38,7 @@ struct WhiteBoard: View {
             HStack{
                 VStack {
                     ZStack {
-                        PhotoUploadView(galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData, inputImage: $inputImage)
+                        PhotoUploadView(galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData, inputImage: $inputImage, screen: "whiteboard")
                         Canvas { context, size in
                             
                             for line in lines {
@@ -161,7 +162,12 @@ struct WhiteBoard: View {
             }
             .padding(20)
         } // vstack
-
+        .onAppear {
+            if let loadedImage = whiteboardImageViewModel.loadImage() {
+                inputImage = loadedImage
+            }
+            return
+        }
     } //body view
 } // white board struct
 

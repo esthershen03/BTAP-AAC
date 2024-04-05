@@ -119,7 +119,11 @@ class VSDImageViewModel: ObservableObject {
 class WhiteboardImageViewModel: ObservableObject {
     private let imageKey = "whiteboardImageData"
 
-    func saveImage(_ image: UIImage) {
+    func saveImage(_ image: UIImage?) {
+        guard let image = image else {
+            UserDefaults.standard.set(nil, forKey: imageKey)
+            return
+        }
         if let imageData = image.jpegData(compressionQuality: 1.0) {
             UserDefaults.standard.set(imageData, forKey: imageKey)
         }

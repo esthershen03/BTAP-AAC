@@ -132,6 +132,7 @@ struct WhiteBoard: View {
                                         lines = [Line]()
                                         deletedLines = [Line]()
                                         inputImage = nil
+                                        whiteboardImageViewModel.saveImage(nil)
                                     },
                                     secondaryButton: .cancel()
                                 )
@@ -150,6 +151,7 @@ struct WhiteBoard: View {
                     PhotoUploadView.ButtonWithIcon(systemName: "photo", galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData)
                     Button(action: {
                         inputImage = nil
+                        whiteboardImageViewModel.saveImage(nil)
                     }) {
                         Text("Clear Image")
                             .font(.system(size: 20))

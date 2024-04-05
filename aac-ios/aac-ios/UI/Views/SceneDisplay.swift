@@ -20,14 +20,16 @@ class ViewStateData: ObservableObject {
     }
 }
 
+let imageViewModel = ImageViewModel()
+
 struct SceneDisplay: View {
         @StateObject private var viewState = ViewStateData()
         @State var galleryClicked = false
         @State var cameraClicked = false
         @State var inputImage: UIImage? = nil
-    
 
         var body: some View {
+            
             HStack() {
                 PhotoUploadView(galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData, inputImage: $inputImage)
                 VStack {
@@ -42,7 +44,14 @@ struct SceneDisplay: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding(.bottom, -21)
             .navigationBarHidden(true)
+            .onAppear {
+                if let loadedImage = imageViewModel.loadImage() {
+                    inputImage = loadedImage
+                }
+                return
+            }
         }
+        
 }
     
 struct PhotoUploadView: View {
@@ -76,6 +85,9 @@ struct PhotoUploadView: View {
             ImagePicker(image: $inputImage, sourceType: .photoLibrary)
         }
         .onChange(of: inputImage) { _ in loadImageFromGallery()
+            if let inputImage = inputImage {
+                imageViewModel.saveImage(inputImage)
+            }
         }
         .sheet(isPresented: $cameraClicked) {
             ImagePicker(image: $inputImage, sourceType: .camera)

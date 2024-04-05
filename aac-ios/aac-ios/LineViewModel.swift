@@ -13,7 +13,7 @@ class LineViewModel: ObservableObject {
     private let persistentContainer: NSPersistentContainer
     
     init() {
-        persistentContainer = NSPersistentContainer(name: "Model") // Replace with your actual Core Data model name
+        persistentContainer = NSPersistentContainer(name: "Model")
         persistentContainer.loadPersistentStores { description, error in
             if let error = error {
                 fatalError("Unable to load persistent stores: \(error)")
@@ -21,16 +21,14 @@ class LineViewModel: ObservableObject {
         }
     }
     
-    // Method to add a line to Core Data
     func addLine(points: [CGPoint], color: Color, lineWidth: CGFloat) {
         let line = LineEntity(context: persistentContainer.viewContext)
         line.points = points.map { NSValue(cgPoint: $0) }
-        line.color = color.description // Store color as string
+        line.color = color.description
         line.lineWidth = Float(lineWidth)
         saveContext()
     }
     
-    // Method to fetch lines from Core Data
     func fetchLines() -> [Line] {
         let lineEntities = fetchLineEntities()
         return lineEntities.map { entity in
@@ -52,9 +50,6 @@ class LineViewModel: ObservableObject {
         }
     }
 
-
-
-    // Method to save changes to Core Data context
     private func saveContext() {
         do {
             try persistentContainer.viewContext.save()

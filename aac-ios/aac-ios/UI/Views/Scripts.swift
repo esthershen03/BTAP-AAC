@@ -8,6 +8,7 @@ struct Scripts: View {
     
     // State variable to control which view is currently being shown
     @State private var showScriptText = false
+    @State private var showError = false
 
     // State variable to hold the new category name
     @State private var newCategoryName = ""
@@ -29,8 +30,12 @@ struct Scripts: View {
                 Button(action: {
                     // When the button is clicked, add the new category
                     if !newCategoryName.isEmpty {
-                        self.categories.append(newCategoryName)
-                        self.newCategoryName = ""
+                        if !categories.contains(newCategoryName) {
+                            self.categories.append(newCategoryName)
+                            self.newCategoryName = ""
+                        } else {
+                            showError = true
+                        }
                     }
                 }) {
                     Text("Add")
@@ -52,11 +57,17 @@ struct Scripts: View {
                         ScriptsCategoryButton(labelText: category, image: "circle", available: false, imageColor: "red", showScriptText: $showScriptText)
                     }
                 }
+                .padding()
             }
             .padding(15)
             .sheet(isPresented: $showScriptText) {
                 // This is the view that will be shown when showScriptText is true
                 ScriptTextScreen(showScriptText: $showScriptText)
+            }
+            .alert(isPresented: $showError) {
+                Alert(
+                    title: Text("That category already exists!")
+                )
             }
         } //end of vstck
     }
@@ -82,13 +93,18 @@ struct ScriptTextScreen: View {
 
                     Image(systemName: "pencil")
                         .resizable()
-                        .frame(width: 30, height: 40)
-                        .padding(.leading)
+                        .frame(width: 30, height: 30)
+                        .padding()
+                        .background(RoundedRectangle(cornerRadius: 10).fill(Color("CustomGray")))
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 1))
 
                     Image(systemName: "speaker.wave.2.fill")
                         .resizable()
                         .frame(width: 30, height: 30)
+                        .padding()
                         .foregroundColor(.black) // Change the color to black
+                        .background(RoundedRectangle(cornerRadius: 10).fill(Color("CustomGray")))
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 1))
                         .onTapGesture {
                             speakText(text: textValues[index])
                         }

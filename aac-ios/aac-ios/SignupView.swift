@@ -20,7 +20,7 @@ struct SignupView: View {
                 Image("logo")
                     .resizable()
                     .frame(width: 150, height: 150)
-                Text("Sign up")
+                Text("Welcome to AAC")
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .padding(.bottom, 30)
@@ -29,7 +29,10 @@ struct SignupView: View {
                 RoundedRectangle(cornerRadius: 30)
                     .frame(width: 600, height: 400)
                     .foregroundColor(Color.white)
-                    .border(.gray)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.gray, lineWidth: 1)
+                    )
                     .padding()
                 VStack{
                     TextField("user name", text: $username)
@@ -67,15 +70,19 @@ struct SignupView: View {
                         Button {
                             viewModel.signup()
                         } label: {
-                            Text("Sign Up")
+                            Text("Create Account")
                                 .font(.title2)
-                        }.foregroundColor(.white)
-                            .frame(width: 350, height: 50)
-                            .background(Color.teal)
+                        }.foregroundColor(.black)
+                            .frame(width: 250, height: 50)
+                            .background(Color("AACBlue"))
                             .cornerRadius(10)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(Color.black, lineWidth: 1)
+                            )
                             .padding()
-                            .opacity(viewModel.canSubmit ? 1 : 0.8)
-                            .disabled(!viewModel.canSubmit)
+//                            .opacity(viewModel.canSubmit ? 1 : 0.8)
+//                            .disabled(!viewModel.canSubmit)
                         Spacer()
                     }
                     .padding()
@@ -90,10 +97,13 @@ struct SignupView: View {
                     
                 }
                 .foregroundColor(.black)
-                .frame(width: 100, height: 35)
-                .buttonStyle(.bordered)
-                .tint(Color.teal)
+                .frame(width: 173, height: 40)
+                .background(Color("AACBlue"))
                 .cornerRadius(10)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.black, lineWidth: 1)
+                )
                 .padding()
             }
 //            SignInWithAppleButton(.signIn, onRequest: { request in
@@ -122,7 +132,7 @@ struct SignupView: View {
 //        .background(Color.white)
 //        .cornerRadius(50.0)
 //        .shadow(color: Color.black.opacity(0.08), radius: 60, x: /*@START_MENU_TOKEN@*/0.0/*@END_MENU_TOKEN@*/, y: 16)
-//            
+//
         Spacer()
         Text("Read our Terms & Conditions.")
             .foregroundColor(.black)

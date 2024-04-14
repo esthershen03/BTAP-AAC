@@ -27,10 +27,15 @@ struct startButton: View {
         Text(title)
             .font(.title3)
             .bold()
-            .foregroundColor(.white)
+            .foregroundColor(.black)
             .frame(width: 300, height: 70, alignment: .center)
-            .background(Color.teal)
+            .background(Color("AACBlue"))
             .cornerRadius(20)
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(Color.black, lineWidth: 1)
+            )
+
             .padding()
     }
 }
@@ -53,10 +58,13 @@ struct WelcomeScreenView: View{
                             .font(.title3)
                             .bold()
                             .frame(width: 300, height: 70, alignment: .center)
-                            .foregroundColor(Color.teal)
-                            .border(.black)
+                            .foregroundColor(Color.black)
                             .cornerRadius(20)
                             .shadow(color: .black.opacity(0.08), radius: 60, x: 0.0, y: 16)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .stroke(Color.black, lineWidth: 1)
+                            )
                             .padding(.vertical)
                     }).navigationBarHidden(true)
                 Spacer()

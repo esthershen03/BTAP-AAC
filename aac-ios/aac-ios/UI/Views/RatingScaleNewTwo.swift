@@ -105,7 +105,7 @@ struct RatingScaleLevelButton: View {
        .overlay {
            HStack{
                Text(labelText)
-                   .font(.system(size: 24))
+                   .font(.system(size: 28))
                    .multilineTextAlignment(.leading)
            }
        }

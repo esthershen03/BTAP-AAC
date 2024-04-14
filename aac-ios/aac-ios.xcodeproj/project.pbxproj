@@ -37,6 +37,7 @@
 		D5E092672B168FC9002C5DE0 /* ColorPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E092662B168FC9002C5DE0 /* ColorPickerView.swift */; };
 		DA91A5662B9CCA0900A8C3AF /* RatingScaleNew.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA91A5652B9CCA0900A8C3AF /* RatingScaleNew.swift */; };
 		DA91A56A2B9CD35800A8C3AF /* RatingScaleNewTwo.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA91A5692B9CD35800A8C3AF /* RatingScaleNewTwo.swift */; };
+		DA9995E32BB7406A00955B80 /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = DA9995E22BB7406A00955B80 /* SymbolPicker */; };
 		DAF6F0632B0812B600E36C86 /* RatingScale.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAF6F0622B0812B600E36C86 /* RatingScale.swift */; };
 /* End PBXBuildFile section */
 
@@ -100,6 +101,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DA9995E32BB7406A00955B80 /* SymbolPicker in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -127,6 +129,7 @@
 				8E3422B82A990C8C000A3055 /* aac-iosTests */,
 				8E3422C22A990C8C000A3055 /* aac-iosUITests */,
 				8E3422A62A990C8B000A3055 /* Products */,
+				DA9995E12BB7406A00955B80 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -225,6 +228,13 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
+		DA9995E12BB7406A00955B80 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -242,6 +252,7 @@
 			);
 			name = "aac-ios";
 			packageProductDependencies = (
+				DA9995E22BB7406A00955B80 /* SymbolPicker */,
 			);
 			productName = "aac-ios";
 			productReference = 8E3422A52A990C8B000A3055 /* aac-ios.app */;
@@ -316,6 +327,7 @@
 			);
 			mainGroup = 8E34229C2A990C8B000A3055;
 			packageReferences = (
+				DA9995E02BB73DE500955B80 /* XCRemoteSwiftPackageReference "SymbolPicker" */,
 			);
 			productRefGroup = 8E3422A62A990C8B000A3055 /* Products */;
 			projectDirPath = "";
@@ -705,6 +717,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		DA9995E02BB73DE500955B80 /* XCRemoteSwiftPackageReference "SymbolPicker" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/xnth97/SymbolPicker.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		DA9995E22BB7406A00955B80 /* SymbolPicker */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DA9995E02BB73DE500955B80 /* XCRemoteSwiftPackageReference "SymbolPicker" */;
+			productName = SymbolPicker;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		425550D32B1BC48200623989 /* Model.xcdatamodeld */ = {

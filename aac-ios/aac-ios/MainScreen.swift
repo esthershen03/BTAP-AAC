@@ -8,7 +8,6 @@
 import SwiftUI
 
 
-
 struct MainScreen: View {
     @State private var selectedButton: String? = nil
     var body: some View {
@@ -16,11 +15,14 @@ struct MainScreen: View {
             HorizontalNavBar()
             NavigationView() {
                 VStack {
+                    Spacer()
+                    
                     NavigationLink(destination: SceneDisplay(), tag: "Images", selection: $selectedButton) {
                         NavigationButton(labelText: "Scene Display", image: "photo.circle", selected: selectedButton == "Images")
                     }.buttonStyle(.plain)
                     
                     Spacer()
+
                     
                     NavigationLink(destination: WhiteBoard(), tag: "WhiteBoard", selection: $selectedButton) {
                         NavigationButton(labelText: "White Board", image: "square.and.pencil", selected: selectedButton == "WhiteBoard")
@@ -46,6 +48,7 @@ struct MainScreen: View {
 
                     
                     Spacer()
+
                 }
                 .navigationBarHidden(true)
             }

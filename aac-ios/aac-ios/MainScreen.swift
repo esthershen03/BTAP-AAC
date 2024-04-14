@@ -16,6 +16,8 @@ struct MainScreen: View {
             HorizontalNavBar()
             NavigationView() {
                 VStack {
+                    Spacer()
+
                     NavigationLink(destination: SceneDisplay(), tag: "Images", selection: $selectedButton) {
                         NavigationButton(labelText: "Scene Display", image: "photo.circle", selected: selectedButton == "Images")
                     }.buttonStyle(.plain)

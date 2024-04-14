@@ -39,7 +39,6 @@
 		D5E092672B168FC9002C5DE0 /* ColorPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E092662B168FC9002C5DE0 /* ColorPickerView.swift */; };
 		DA91A5662B9CCA0900A8C3AF /* RatingScaleNew.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA91A5652B9CCA0900A8C3AF /* RatingScaleNew.swift */; };
 		DA91A56A2B9CD35800A8C3AF /* RatingScaleNewTwo.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA91A5692B9CD35800A8C3AF /* RatingScaleNewTwo.swift */; };
-		DA9995E32BB7406A00955B80 /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = DA9995E22BB7406A00955B80 /* SymbolPicker */; };
 		DAF6F0632B0812B600E36C86 /* RatingScale.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAF6F0622B0812B600E36C86 /* RatingScale.swift */; };
 /* End PBXBuildFile section */
 
@@ -105,7 +104,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DA9995E32BB7406A00955B80 /* SymbolPicker in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -258,7 +256,6 @@
 			);
 			name = "aac-ios";
 			packageProductDependencies = (
-				DA9995E22BB7406A00955B80 /* SymbolPicker */,
 			);
 			productName = "aac-ios";
 			productReference = 8E3422A52A990C8B000A3055 /* aac-ios.app */;
@@ -278,6 +275,8 @@
 				8E3422B72A990C8C000A3055 /* PBXTargetDependency */,
 			);
 			name = "aac-iosTests";
+			packageProductDependencies = (
+			);
 			productName = "aac-iosTests";
 			productReference = 8E3422B52A990C8C000A3055 /* aac-iosTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -296,6 +295,8 @@
 				8E3422C12A990C8C000A3055 /* PBXTargetDependency */,
 			);
 			name = "aac-iosUITests";
+			packageProductDependencies = (
+			);
 			productName = "aac-iosUITests";
 			productReference = 8E3422BF2A990C8C000A3055 /* aac-iosUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
@@ -736,14 +737,6 @@
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		DA9995E22BB7406A00955B80 /* SymbolPicker */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DA9995E02BB73DE500955B80 /* XCRemoteSwiftPackageReference "SymbolPicker" */;
-			productName = SymbolPicker;
-		};
-/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		425550D32B1BC48200623989 /* Model.xcdatamodeld */ = {

@@ -153,10 +153,21 @@ struct WhiteBoard: View {
                         inputImage = nil
                         whiteboardImageViewModel.saveImage(nil)
                     }) {
-                        Text("Clear Image")
-                            .font(.system(size: 20))
-                            .foregroundColor(.red) // Set text color to red
+                        Image(systemName: "rectangle.portrait.on.rectangle.portrait.slash")
+                            .resizable()
+                            .frame(width: 65, height: 55)
+                            .foregroundColor(.black)
+                            .padding(20)
                     }
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.black, lineWidth: 2)
+                            .shadow(color: Color.black, radius: false ? 15 : 25, x: 0, y: 20)
+                    )
+                    .background(Color("AACBlue"))
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .padding(.vertical, 15)
+                    .padding(.horizontal)
                     
                 }
                 .padding()

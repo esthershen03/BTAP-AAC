@@ -96,7 +96,7 @@ struct RatingScaleCategoryButton: View {
                Image(systemName: image)
                    .resizable()
                    .aspectRatio(contentMode: .fit)
-                   .frame(width: 80, height: 80)
+                   .frame(width: 75, height: 75)
                    .foregroundColor(Color(imageColor))
 
                
@@ -105,7 +105,7 @@ struct RatingScaleCategoryButton: View {
     
                
                Text(labelText)
-                   .font(.system(size: 28))
+                   .font(.system(size: 32))
                    .multilineTextAlignment(.leading)
                
                Spacer()

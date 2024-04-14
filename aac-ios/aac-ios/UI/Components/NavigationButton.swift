@@ -31,7 +31,7 @@ struct NavigationButton: View {
                    .frame(width: 18)
                
                Text(labelText)
-                   .font(.system(size: 24))
+                   .font(.system(size: 26))
                    .multilineTextAlignment(.leading)
            }
            

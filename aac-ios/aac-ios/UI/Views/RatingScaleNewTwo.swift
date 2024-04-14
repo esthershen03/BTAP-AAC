@@ -53,6 +53,7 @@ struct RatingScaleActivity: View {
                         numberButtons = 10
                         numSelected = "5.square"
                     }
+                    Spacer()
                 }
                 Spacer()
                 Spacer()
@@ -80,12 +81,16 @@ struct RatingScaleActivity: View {
                     }
                     Spacer()
                 }
+                Spacer()
+
             }
+
         }.navigationViewStyle(StackNavigationViewStyle())
             .navigationBarBackButtonHidden(true)
             .navigationBarTitle(Text("").font(.system(size:1)), displayMode: .inline)
             .navigationBarHidden(true)
         Spacer()
+
     }
 }
 
@@ -103,7 +108,7 @@ struct RatingScaleLevelButton: View {
        .overlay {
            HStack{
                Text(labelText)
-                   .font(.system(size: 24))
+                   .font(.system(size: 28))
                    .multilineTextAlignment(.leading)
            }
        }

@@ -33,7 +33,7 @@ struct HorizontalNavBar: View {
                                     .frame(width: 18)
                                 
                                 Text("Log Out")
-                                    .font(.system(size: 24))
+                                    .font(.system(size: 26))
                                     .multilineTextAlignment(.leading)
                                     
                             }.frame(width: 150, height: 80)
@@ -66,7 +66,7 @@ struct HorizontalNavBar: View {
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                             .onTapGesture {
                                 changeText(fix: autocompleteWord(text: searchText)?[0] ?? "")
-                            }
+                            }.font(.system(size: 16))
                         Text(autocompleteWord(text: searchText)?[1] ?? " ")
                             .padding(10)
                             .fixedSize(horizontal: /*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/, vertical: true)
@@ -75,7 +75,7 @@ struct HorizontalNavBar: View {
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                             .onTapGesture {
                                 changeText(fix: autocompleteWord(text: searchText)?[1] ?? "")
-                            }
+                            }.font(.system(size: 16))
                         Text(autocompleteWord(text: searchText)?[2] ?? " ")
                             .padding(10)
                             .fixedSize(horizontal: /*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/, vertical: true)
@@ -84,16 +84,17 @@ struct HorizontalNavBar: View {
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                             .onTapGesture {
                                 changeText(fix: autocompleteWord(text: searchText)?[2] ?? "")
-                            }
+                            }.font(.system(size: 16))
                     } .padding(0)
                         .overlay(Rectangle().stroke(Color.black, lineWidth: 2))
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                     HStack {
                         TextField("Search", text: $searchText, onCommit:{
                             speakText()
-                        })
+                        }).font(.system(size: 24))
                             .padding(10)
-                            .padding(.vertical)
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 2)
                         ZStack{
                             RoundedRectangle(cornerRadius: 10)
                                 .frame(width: 30, height: 30)
@@ -203,7 +204,7 @@ struct HorizontalNavBar: View {
                                         .frame(width: 18)
                                     
                                     Text("Yes")
-                                        .font(.system(size: 24))
+                                        .font(.system(size: 26))
                                         .multilineTextAlignment(.leading)
                                         
                                 }.frame(width: 100, height: 25)
@@ -238,7 +239,7 @@ struct HorizontalNavBar: View {
                                         .frame(width: 18)
                                     
                                     Text("No")
-                                        .font(.system(size: 24))
+                                        .font(.system(size: 26))
                                         .multilineTextAlignment(.leading)
                                         
                                 }.frame(width: 100, height: 25)

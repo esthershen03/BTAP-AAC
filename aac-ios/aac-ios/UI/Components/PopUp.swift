@@ -1,52 +1,32 @@
-//
-//  PopUp.swift
-//  aac-ios
-//
-//  Created by Asma on 10/10/23.
-//
-
 import SwiftUI
+import symbolpicker
 
 struct PopUp: View {
-    @State private var isShowingPopup = false
+    @State private var selectedSymbol: String = "smiley"
+
+    @State private var icon = "star.fill"
+    @State private var isPresented = false
 
     var body: some View {
-        VStack {
-            Button("Click") {
-                isShowingPopup.toggle()
-            }
-            .padding()
-            .font(.title)
-            .border(Color.blue, width: 2)
-            .sheet(isPresented: $isShowingPopup) {
-                PopupView(isPresented: $isShowingPopup)
+        NavigationView {
+            VStack {
+                Button("Select a symbol") {
+                    isPresented.toggle()
+                }
+
+                Image(systemName: icon)
+
+                .sheet(isPresented: $isPresented, content: {
+                    SymbolsPicker(selection: $icon)
+                })
+
             }
         }
     }
 }
 
-struct PopUp_Previews: PreviewProvider {
+struct PopUp_Preview: PreviewProvider {
     static var previews: some View {
-        PopUp()
+        ContentView()
     }
 }
-
-struct PopupView: View {
-    @Binding var isPresented: Bool
-    //tells the system that a property has read/write access to a value without ownership
-    var body: some View {
-        Text("Hello")
-            .font(.title)
-            .padding()
-        Button("Close") {
-            isPresented.toggle()
-        }
-        .font(.title)
-    }
-}
-
-
-
-
-
-

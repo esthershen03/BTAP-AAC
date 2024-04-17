@@ -45,10 +45,6 @@ struct MainScreen: View {
                     NavigationLink(destination: RatingScaleGrid(), tag: "RatingScale", selection: $selectedButton) {
                         NavigationButton(labelText: "Rating Scale", image: "face.smiling", selected: selectedButton == "RatingScale")
                     }.buttonStyle(.plain)
-
-                    
-                    Spacer()
-
                 }
                 .navigationBarHidden(true)
             }

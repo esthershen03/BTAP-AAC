@@ -53,7 +53,6 @@ struct RatingScaleActivity: View {
                         numberButtons = 10
                         numSelected = "5.square"
                     }
-                    Spacer()
                 }
                 Spacer()
                 Spacer()
@@ -81,8 +80,6 @@ struct RatingScaleActivity: View {
                     }
                     Spacer()
                 }
-                Spacer()
-
             }
 
         }.navigationViewStyle(StackNavigationViewStyle())

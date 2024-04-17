@@ -26,7 +26,7 @@ class TileViewModel: ObservableObject {
         if (curr == nil) { // set up main folder
             let newTile = Tile(context: self.container.viewContext)
             newTile.name = "main"
-            newTile.image = nil
+            newTile.imagePath = nil
             newTile.type = "Folder"
             newTile.parent = nil
             saveData()
@@ -73,14 +73,22 @@ class TileViewModel: ObservableObject {
         }
     }
     
-    func addTile(text: String, image: Data?, type: String, parent: Tile) {
+    func addTile(text: String, imagePath: String, type: String, parent: Tile) {
         let newTile = Tile(context: container.viewContext)
+        newTile.id = UUID()
         newTile.name = text
-        newTile.image = image
+        newTile.imagePath = imagePath
         newTile.type = type
         newTile.parent = parent
         saveData()
         fetchTiles(parent: parent)
+    }
+    
+    func deleteTile(tile: Tile, parent: Tile) {
+        container.viewContext.delete(tile)
+        saveData()
+        fetchTiles(parent: parent)
+        print(self.tiles)
     }
     
     func saveData() {

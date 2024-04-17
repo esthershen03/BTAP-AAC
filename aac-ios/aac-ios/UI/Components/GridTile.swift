@@ -28,13 +28,13 @@ struct GridTileStyle: ButtonStyle {
 
 struct GridTile: View {
     let labelText: String
-    let image: Data
+    let image: Image
     let onClick: () -> Void
     
     var body: some View {
         Button(action: onClick) {
             VStack {
-                Image(uiImage: UIImage(data: image)!)
+               image
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 55, height: 55)

@@ -4,7 +4,6 @@
 //
 //  Created by Sydney DeFelice on 10/4/23.
 //
-
 import SwiftUI
 import PhotosUI
 import CoreData
@@ -14,19 +13,19 @@ struct Build: View {
     @StateObject var vm = TileViewModel()
     
     @State private var draggingItem: Tile?
-    @State private var showingAddPopup = false
-    
+    @State private var addShowing = false //hides the add button
+
     private let adaptiveColumns = [
         GridItem(.adaptive(minimum: 100))
     ]
     
     var body: some View {
-        if (vm.tiles.count > 0) {
-            VStack() {
+        VStack() {
+            if (!vm.tiles.isEmpty) {
                 ScrollView(.vertical) {
                     LazyVGrid(columns: adaptiveColumns, content: {
                         ForEach(vm.tiles) { tile in // get the tile that is the current folder (default: main)
-                            GridTile(labelText: tile.name!, image: tile.image!,
+                            GridTile(labelText: tile.name ?? "none", image: getImageFromImagePath(tile.imagePath ?? "") ?? Image(systemName: "questionmark.app"),
                                      onClick: {
                                         if (tile.type == "Folder") {
                                             vm.currentFolder = tile
@@ -38,36 +37,60 @@ struct Build: View {
                                     return NSItemProvider()
                                 }
                                 .onDrop(of: [.text], delegate: DropViewDelegate(destinationItem: tile, data: $vm.tiles, draggedItem: $draggingItem))
+                                .contextMenu {
+                                    Button(action: {
+                                        vm.deleteTile(tile: tile, parent: vm.currentFolder!)
+                                    }) {
+                                        Text("Delete")
+                                        Image(systemName: "trash")
+                                    }
+                                }
                         }
                     })
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding(.horizontal)
-                .padding(.bottom, -21)
-                .padding(.top)
-                .navigationBarHidden(true)
-                
-                HStack {
-                    Spacer()
-                    AddButton {
-                        showingAddPopup.toggle()
-                    }
-                    .sheet(isPresented: $showingAddPopup) {
-                        BuildPopupView(isPresented: $showingAddPopup, vm: vm, currentFolder: vm.currentFolder!)
-                    }
-                }
+                .padding()
+            } else {
+                Text("No tiles to display.").padding() //if there are no tiles to display, show that message
             }
-        } else {
-            VStack() {
-                Text("Add a tile:")
-                AddButton {
-                    showingAddPopup.toggle()
-                }
-                .sheet(isPresented: $showingAddPopup) {
-                    BuildPopupView(isPresented: $showingAddPopup, vm: vm, currentFolder: vm.currentFolder!)
-                }
+            Button(action: { addShowing.toggle()}) { //button to add a new tile
+                Text("Add New Tile")
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+            }
+            .sheet(isPresented: $addShowing) {
+                BuildPopupView(visible: $addShowing, vm: vm, currentFolder: vm.currentFolder!)
             }
         }
+        .navigationBarHidden(true)
+    }
+}
+
+func getImageFromImagePath(_ imagePath: String) -> Image? {
+    let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first! //accesses the directory where all the image files are stored
+    let fileURL = documentsDirectory.appendingPathComponent(imagePath) //makes the url to access the image
+    //loads the pic if the url is valid and its found
+    if let uiImage = UIImage(contentsOfFile: fileURL.path) {
+        return Image(uiImage: uiImage)
+    } else {
+        return nil
+    }
+}
+
+//saves pictures to a document directory so that they can be saved and loaded (needed for persistence)
+func saveImageToDocumentDirectory(_ image: UIImage) -> String? {
+    guard let data = image.jpegData(compressionQuality: 1) else { return nil }
+    let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+    let fileName = UUID().uuidString + ".jpeg"
+    let fileURL = documentDirectory.appendingPathComponent(fileName)
+    
+    do {
+        try data.write(to: fileURL)
+        return fileName
+    } catch {
+        print("Error saving image: \(error)")
+        return nil
     }
 }
 
@@ -104,94 +127,143 @@ struct DropViewDelegate: DropDelegate {
 }
 
 struct BuildPopupView: View {
-    @Binding var isPresented: Bool
+    @Binding var visible: Bool //is the popup visible
     var vm: TileViewModel
-    
-    @State private var iconPickerPresented = false
-    @State private var textValue: String = ""
-    
-    @State private var avatarItem: PhotosPickerItem?
-    @State private var avatarImage: Data?
-    @State private var type: String = "Tiles"
     @State var currentFolder: Tile
-    
+    @State private var labelText: String = ""
+    @State private var iconItem: PhotosPickerItem?
+    @State private var iconImage: Image?
+    @State private var imagePath: String = ""
+    @State private var type: String = "Tiles"
     
     var body: some View {
         VStack {
-            Text("Add a new tile")
+            HStack {
+                Spacer()
+                Button(action: {visible = false}) { //button to x out of menu to add tile
+                    Image(systemName: "xmark.circle.fill")
+                        .frame(width: 24, height: 24)
+                        .foregroundColor(.gray)
+                }
+            }
+            Text("Add a New Tile")
                 .padding()
                 .font(.system(size: 36))
+                .padding([.top, .trailing])
             
-            HStack(spacing: 0) {
-                
-                VStack {
-                    
-                    HStack {
-                        
-                        Text("Set icon: ")
-                            .font(.system(size: 36))
-                        PhotosPicker(selection: $avatarItem, matching: .images) {
-                            Image(systemName: "pencil")
-                        }
-                        .padding()
-                        
-                        Spacer()
-                    }
-                    .onChange(of: avatarItem) { avatarItem in
-                        Task {
-                            if let loaded = try? await avatarItem?.loadTransferable(type: Data.self) {
-                                avatarImage = loaded
-                            } else {
-                                print("Failed")
-                            }
-                        }
-                    }
-                    HStack {
-                        
-                        Text("Set label: ")
-                            .font(.system(size: 36))
-                        
-                        TextField("Enter text", text: $textValue)
-                            .padding()
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .frame(maxWidth: 200)
-                        
-                        Spacer()
-                    }
-                    HStack {
-                        Text("Set type: ")
-                            .font(.system(size: 36))
-                        Picker("Types", selection: $type) {
-                            Text("Folder").tag("Folder")
-                            Text("Tiles").tag("Tiles")
-                        }
-                        Spacer()
-                    }
-                }
-                .frame(width: 400)
-                
-                if (avatarImage != nil) {
-                    GridTile(labelText: textValue, image: avatarImage!, onClick: {})
-                }
-                
-            }
-            
-            Button(action: {
-                isPresented = false
-                vm.addTile(text: textValue, image: avatarImage!, type: type, parent: self.currentFolder)
-            }) {
-                Text("Save")
-                    .font(.system(size: 20))
-                    .foregroundColor(.black)
+            //shows a preview of the tile before adding
+            if !labelText.isEmpty || iconImage != nil {
+                Text("Preview")
+                    .font(.headline)
+                    .padding(.top)
+                TilePreview(labelText: labelText, image: iconImage)
+                    .frame(width: 120, height: 150)
                     .padding()
-                    .frame(minWidth: 0, maxWidth: 100)
-                    .background(Color.green)
-                    .cornerRadius(20)
             }
-            .padding()
-            
+            //tile settings
+            VStack {
+                HStack {
+                    Text("Set Icon: ")
+                        .font(.system(size: 36))
+                    PhotosPicker(selection: $iconItem, matching: .images) {
+                        Image(systemName: "photo.artframe")
+                            .font(.system(size: 36))
+                    }
+                    .padding()
+                    Spacer()
+                }
+                //sets the new icon image for the tile
+                .onChange(of: iconItem) { newItem in Task {
+                    if let data = try? await newItem?.loadTransferable(type: Data.self),
+                       let uiImage = UIImage(data: data) {
+                        DispatchQueue.main.async {
+                            self.iconImage = Image(uiImage: uiImage)
+                        }
+                        if let savedPath = saveImageToDocumentDirectory(uiImage) {
+                            self.imagePath = savedPath
+                        }
+                    }
+                }
+                }
+                //sets the label for the tile
+                HStack {
+                    Text("Set Label: ")
+                        .font(.system(size: 36))
+                    TextField("Enter tile label text", text: $labelText)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .frame(maxWidth: 200)
+                        .padding()
+                    Spacer()
+                }
+                //sets type (folder or tile)
+                HStack {
+                    Text("Set Type: ")
+                        .font(.system(size: 36))
+                    Picker("Types", selection: $type) {
+                        Text("Tile").tag("Tile") //default is tile
+                        Text("Folder").tag("Folder")
+                    }
+                    .pickerStyle(MenuPickerStyle())
+                    Spacer()
+                }
+            }
+            .frame(maxWidth: 400)
+            if iconImage != nil && !labelText.isEmpty { //doesnt allow you to add until fields are completed
+                Button(action: {
+                    visible = false
+                    vm.addTile(text: labelText, imagePath: imagePath, type: type, parent: self.currentFolder) //adds and saves the new tile
+                }) {
+                    Text("Add Tile") //button to confirm tile adding
+                        .font(.system(size: 20))
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(minWidth: 0, maxWidth: 200)
+                        .background(Color.blue)
+                        .cornerRadius(20)
+                }
+                .padding()
+            }
             Spacer()
         }
-        .frame(width: .infinity, height: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding()
+    }
+}
+
+//tile preview (from add tile menu) configurations
+struct TilePreview: View {
+    let labelText: String
+    let image: Image?
+    var body: some View {
+        VStack {
+            ZStack {
+                Rectangle()
+                    .fill(Color.clear)
+                    .frame(width: 90, height: 90)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.white, lineWidth: 8)
+                    )
+                    .cornerRadius(10)
+                    .padding(.top, 16)
+                if let image = image {
+                    image
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 80, height: 80)
+                        .cornerRadius(8)
+                        .clipped()
+                        .padding(.top, 16)
+                }
+            }
+            Text(labelText)
+                .font(.system(size: 22))
+                .foregroundColor(.black)
+                .frame(maxWidth: .infinity)
+                .cornerRadius(8)
+        }
+        .padding(5)
+        .background(Color.gray.opacity(0.5))
+        .cornerRadius(12)
     }
 }

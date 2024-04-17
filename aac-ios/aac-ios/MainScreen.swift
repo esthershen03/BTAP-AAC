@@ -46,9 +46,6 @@ struct MainScreen: View {
                         NavigationButton(labelText: "Rating Scale", image: "face.smiling", selected: selectedButton == "RatingScale")
                     }.buttonStyle(.plain)
 
-                    
-                    Spacer()
-
                 }
                 .navigationBarHidden(true)
             }

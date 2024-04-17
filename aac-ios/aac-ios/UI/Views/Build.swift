@@ -6,31 +6,75 @@
 //
 import SwiftUI
 import PhotosUI
-import UIKit
+import CoreData
 
+// default layout
+struct Build: View {
+    @StateObject var vm = TileViewModel()
+    
+    @State private var draggingItem: Tile?
+    @State private var addShowing = false //hides the add button
 
-struct GridData: Codable, Equatable {
-    var id = UUID() //identifies each grid tile
-    var imagePath: String //path to the pic used on the tile
-    var label: String //label for the tile
-    var GridList: [GridData] //stores grid items if they are nested
-    var type: String //type of tile
+    private let adaptiveColumns = [
+        GridItem(.adaptive(minimum: 100))
+    ]
     
-    //checks to see if two tiles are "equal" by comparing the labels and pics
-    static func ==(lhs: GridData, rhs: GridData) -> Bool {
-        return lhs.label == rhs.label && lhs.imagePath == rhs.imagePath
-    }
-    
-    //loads the image for the tile
-    var image: Image? {
-        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first! //accesses the directory where all the image files are stored
-        let fileURL = documentsDirectory.appendingPathComponent(imagePath) //makes the url to access the image
-        //loads the pic if the url is valid and its found
-        if let uiImage = UIImage(contentsOfFile: fileURL.path) {
-            return Image(uiImage: uiImage)
-        } else {
-            return nil
+    var body: some View {
+        VStack() {
+            if (!vm.tiles.isEmpty) {
+                ScrollView(.vertical) {
+                    LazyVGrid(columns: adaptiveColumns, content: {
+                        ForEach(vm.tiles) { tile in // get the tile that is the current folder (default: main)
+                            GridTile(labelText: tile.name ?? "none", image: getImageFromImagePath(tile.imagePath ?? "") ?? Image(systemName: "questionmark.app"),
+                                     onClick: {
+                                        if (tile.type == "Folder") {
+                                            vm.currentFolder = tile
+                                            vm.fetchTiles(parent: vm.currentFolder!)
+                                        }
+                                })
+                                .onDrag {
+                                    self.draggingItem = tile
+                                    return NSItemProvider()
+                                }
+                                .onDrop(of: [.text], delegate: DropViewDelegate(destinationItem: tile, data: $vm.tiles, draggedItem: $draggingItem))
+                                .contextMenu {
+                                    Button(action: {
+                                        vm.deleteTile(tile: tile, parent: vm.currentFolder!)
+                                    }) {
+                                        Text("Delete")
+                                        Image(systemName: "trash")
+                                    }
+                                }
+                        }
+                    })
+                }
+                .padding()
+            } else {
+                Text("No tiles to display.").padding() //if there are no tiles to display, show that message
+            }
+            Button(action: { addShowing.toggle()}) { //button to add a new tile
+                Text("Add New Tile")
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+            }
+            .sheet(isPresented: $addShowing) {
+                BuildPopupView(visible: $addShowing, vm: vm, currentFolder: vm.currentFolder!)
+            }
         }
+        .navigationBarHidden(true)
+    }
+}
+
+func getImageFromImagePath(_ imagePath: String) -> Image? {
+    let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first! //accesses the directory where all the image files are stored
+    let fileURL = documentsDirectory.appendingPathComponent(imagePath) //makes the url to access the image
+    //loads the pic if the url is valid and its found
+    if let uiImage = UIImage(contentsOfFile: fileURL.path) {
+        return Image(uiImage: uiImage)
+    } else {
+        return nil
     }
 }
 
@@ -50,110 +94,42 @@ func saveImageToDocumentDirectory(_ image: UIImage) -> String? {
     }
 }
 
-//saves the tiles as JSON objects in UserDefaults (needed for persistence)
-func saveTiles(_ tiles: [GridData]) {
-    let encoder = JSONEncoder()
-    if let encoded = try? encoder.encode(tiles) {
-        UserDefaults.standard.set(encoded, forKey: "SavedTiles")
-    }
-}
-
-//loads the tiles from the UserDefaults (needed for persistence)
-func loadTiles() -> [GridData] {
-    if let savedTiles = UserDefaults.standard.object(forKey: "SavedTiles") as? Data {
-        let decoder = JSONDecoder()
-        if let loadedTiles = try? decoder.decode([GridData].self, from: savedTiles) {
-            return loadedTiles
-        }
-    }
-    return []
-}
-
-//view to display the grid
-struct Build: View {
-    @State private var data2: [GridData] = loadTiles() //array for the tiles displayed
-    @State private var draggingItem: GridData? //tracks the item that is being moved (only if one is)
-    @State private var addShowing = false //hides the add button
-    
-    var body: some View {
-        VStack {
-            if data2.isEmpty == false { //only display if there is data there
-                ScrollView(.vertical) { //vertical scrolling
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))], content: {
-                        ForEach($data2.indices, id: \.self) { //loop to show all the data in the array as grid tiles
-                            index in GridTile(labelText: data2[index].label, image: data2[index].image!, onClick: {
-                                if (data2[index].type == "Folder") {
-                                    data2 = data2[index].GridList
-                                }
-                            })
-                            .onDrag {
-                                self.draggingItem = data2[index] //sets the dragging item to the current index
-                                return NSItemProvider() //apple default item provider for drag and drops
-                            }
-                            .onDrop(of: [.text], delegate: DropViewDelegate(destinationItem: $data2[index], data: $data2, draggedItem: $draggingItem))
-                            .contextMenu {
-                                Button(action: {
-                                    data2.remove(at: index)
-                                    saveTiles(data2) //modifies the indexes of the tiles and then resaves based on changes
-                                }) {
-                                    Text("Delete")
-                                    Image(systemName: "trash") //lets you delete the tile on long press
-                                }
-                            }
-                        }
-                    })
-                    .padding()
-                }
-            } else {
-                Text("No tiles to display.").padding() //if there are no tiles to display, show that message
-            }
-            
-            //
-            Button(action: { addShowing.toggle()}) { //button to add a new tile
-                Text("Add New Tile")
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
-            }
-            .sheet(isPresented: $addShowing) {
-                BuildPopupView(visible: $addShowing, data: $data2) //shows the menu for adding a tile
-            }
-        }
-        .navigationBarHidden(true)
-    }
-}
-
-
+// Dropping Mechanism
 struct DropViewDelegate: DropDelegate {
-    @Binding var destinationItem: GridData
-    @Binding var data: [GridData]
-    @Binding var draggedItem: GridData?
+    
+    var destinationItem: Tile
+    @Binding var data: [Tile]
+    @Binding var draggedItem: Tile?
     
     func dropUpdated(info: DropInfo) -> DropProposal? {
         return DropProposal(operation: .move)
     }
+    
     func performDrop(info: DropInfo) -> Bool {
         draggedItem = nil
         return true
     }
+    
     func dropEntered(info: DropInfo) {
-            guard let draggedItem = draggedItem else { return } //make sure there is a dragged item
-            if let fromIndex = data.firstIndex(where: { $0.id == draggedItem.id }), let toIndex = data.firstIndex(where: { $0.id == destinationItem.id }) { //finds indices of the 'from' and 'to' tiles
-                if fromIndex != toIndex {
+        // Swap Items
+        if let draggedItem {
+            let fromIndex = data.firstIndex(of: draggedItem)
+            if let fromIndex {
+                let toIndex = data.firstIndex(of: destinationItem)
+                if let toIndex, fromIndex != toIndex {
                     withAnimation {
-                        data.move(fromOffsets: IndexSet(integer: fromIndex), toOffset: toIndex > fromIndex ? toIndex + 1 : toIndex) //moves the tiles from the 'from' to the 'to' index
-                        saveTiles(data) //saves the new positions of the tiles
+                        self.data.move(fromOffsets: IndexSet(integer: fromIndex), toOffset: (toIndex > fromIndex ? (toIndex + 1) : toIndex))
                     }
                 }
             }
         }
+    }
 }
 
-//adding new tiles popup
 struct BuildPopupView: View {
     @Binding var visible: Bool //is the popup visible
-    @Binding var data: [GridData]
+    var vm: TileViewModel
+    @State var currentFolder: Tile
     @State private var labelText: String = ""
     @State private var iconItem: PhotosPickerItem?
     @State private var iconImage: Image?
@@ -173,7 +149,7 @@ struct BuildPopupView: View {
             Text("Add a New Tile")
                 .padding()
                 .font(.system(size: 36))
-            .padding([.top, .trailing])
+                .padding([.top, .trailing])
             
             //shows a preview of the tile before adding
             if !labelText.isEmpty || iconImage != nil {
@@ -190,7 +166,7 @@ struct BuildPopupView: View {
                     Text("Set Icon: ")
                         .font(.system(size: 36))
                     PhotosPicker(selection: $iconItem, matching: .images) {
-                        Image(systemName: "photo.badge.plus")
+                        Image(systemName: "photo.artframe")
                             .font(.system(size: 36))
                     }
                     .padding()
@@ -198,16 +174,16 @@ struct BuildPopupView: View {
                 }
                 //sets the new icon image for the tile
                 .onChange(of: iconItem) { newItem in Task {
-                        if let data = try? await newItem?.loadTransferable(type: Data.self),
-                           let uiImage = UIImage(data: data) {
-                            DispatchQueue.main.async {
-                                self.iconImage = Image(uiImage: uiImage)
-                            }
-                            if let savedPath = saveImageToDocumentDirectory(uiImage) {
-                                self.imagePath = savedPath
-                            }
+                    if let data = try? await newItem?.loadTransferable(type: Data.self),
+                       let uiImage = UIImage(data: data) {
+                        DispatchQueue.main.async {
+                            self.iconImage = Image(uiImage: uiImage)
+                        }
+                        if let savedPath = saveImageToDocumentDirectory(uiImage) {
+                            self.imagePath = savedPath
                         }
                     }
+                }
                 }
                 //sets the label for the tile
                 HStack {
@@ -216,7 +192,7 @@ struct BuildPopupView: View {
                     TextField("Enter tile label text", text: $labelText)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .frame(maxWidth: 200)
-                    .padding()
+                        .padding()
                     Spacer()
                 }
                 //sets type (folder or tile)
@@ -235,9 +211,7 @@ struct BuildPopupView: View {
             if iconImage != nil && !labelText.isEmpty { //doesnt allow you to add until fields are completed
                 Button(action: {
                     visible = false
-                    let newTile = GridData(imagePath: imagePath, label: labelText, GridList: [], type: type)
-                    data.append(newTile)
-                    saveTiles(data) //adds and saves the new tile
+                    vm.addTile(text: labelText, imagePath: imagePath, type: type, parent: self.currentFolder) //adds and saves the new tile
                 }) {
                     Text("Add Tile") //button to confirm tile adding
                         .font(.system(size: 20))

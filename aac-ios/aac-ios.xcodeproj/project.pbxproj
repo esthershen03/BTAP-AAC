@@ -22,6 +22,9 @@
 		425550D52B1BC48200623989 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 425550D32B1BC48200623989 /* Model.xcdatamodeld */; };
 		68EA44442ACE0569008C3C69 /* HorizontalNavBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68EA44432ACE0569008C3C69 /* HorizontalNavBar.swift */; };
 		68EA44462ACE09F2008C3C69 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 68EA44452ACE09F2008C3C69 /* Images.xcassets */; };
+		821CD4422BCF315E007D45EF /* AAC Core Data.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 821CD4402BCF315E007D45EF /* AAC Core Data.xcdatamodeld */; };
+		82653FB32BA3AAE80089F1AD /* TileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82653FB22BA3AAE80089F1AD /* TileViewModel.swift */; };
+		82DA4FA92B845DC6005BFFB7 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		8E09CD9B2AE15B3300239660 /* GridTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E09CD9A2AE15B3300239660 /* GridTile.swift */; };
 		8E0EC37D2ACDD1D30019F3B4 /* SceneDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0EC37C2ACDD1D30019F3B4 /* SceneDisplay.swift */; };
 		8E0EC37F2ACDD2170019F3B4 /* WhiteBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0EC37E2ACDD2170019F3B4 /* WhiteBoard.swift */; };
@@ -77,6 +80,8 @@
 		425550D82B1BCA9B00623989 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		68EA44432ACE0569008C3C69 /* HorizontalNavBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalNavBar.swift; sourceTree = "<group>"; };
 		68EA44452ACE09F2008C3C69 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		821CD4412BCF315E007D45EF /* AAC Core Data.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "AAC Core Data.xcdatamodel"; sourceTree = "<group>"; };
+		82653FB22BA3AAE80089F1AD /* TileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileViewModel.swift; sourceTree = "<group>"; };
 		8E09CD9A2AE15B3300239660 /* GridTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridTile.swift; sourceTree = "<group>"; };
 		8E0EC37C2ACDD1D30019F3B4 /* SceneDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDisplay.swift; sourceTree = "<group>"; };
 		8E0EC37E2ACDD2170019F3B4 /* WhiteBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteBoard.swift; sourceTree = "<group>"; };
@@ -150,6 +155,7 @@
 		8E3422A72A990C8B000A3055 /* aac-ios */ = {
 			isa = PBXGroup;
 			children = (
+				821CD4402BCF315E007D45EF /* AAC Core Data.xcdatamodeld */,
 				3F219AE12BBF040500FF0441 /* LineViewModel.swift */,
 				425550D82B1BCA9B00623989 /* ViewController.swift */,
 				3F219AE32BBFA2E600FF0441 /* PhotoUploadView.swift */,
@@ -212,6 +218,7 @@
 				8E0EC37C2ACDD1D30019F3B4 /* SceneDisplay.swift */,
 				8E0EC37E2ACDD2170019F3B4 /* WhiteBoard.swift */,
 				8E0EC3802ACDD2340019F3B4 /* Build.swift */,
+				82653FB22BA3AAE80089F1AD /* TileViewModel.swift */,
 				8E0EC3822ACDD25E0019F3B4 /* Scripts.swift */,
 				DAF6F0622B0812B600E36C86 /* RatingScale.swift */,
 				D5E092642B168FAA002C5DE0 /* DrawingEngine.swift */,
@@ -382,8 +389,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				82653FB32BA3AAE80089F1AD /* TileViewModel.swift in Sources */,
 				1228F1582B16952200F03833 /* SignupView.swift in Sources */,
 				3F39A5C12AFC186A0092BF8F /* ImagePicker.swift in Sources */,
+				82DA4FA92B845DC6005BFFB7 /* (null) in Sources */,
 				8E3422AB2A990C8B000A3055 /* MainScreen.swift in Sources */,
 				DA91A5662B9CCA0900A8C3AF /* RatingScaleNew.swift in Sources */,
 				8E09CD9B2AE15B3300239660 /* GridTile.swift in Sources */,
@@ -392,6 +401,7 @@
 				12A93AD02B1D8C0100B3D19C /* EntryField.swift in Sources */,
 				68EA44442ACE0569008C3C69 /* HorizontalNavBar.swift in Sources */,
 				3F673BC52BD05DDB005823D6 /* ScriptsViewModel.swift in Sources */,
+				821CD4422BCF315E007D45EF /* AAC Core Data.xcdatamodeld in Sources */,
 				D5E092652B168FAA002C5DE0 /* DrawingEngine.swift in Sources */,
 				3F8303782AD628D40012E832 /* PopUp.swift in Sources */,
 				4244468B2B7B24A90019219E /* AppDelegate.swift in Sources */,
@@ -750,6 +760,16 @@
 			);
 			currentVersion = 425550D42B1BC48200623989 /* Model.xcdatamodel */;
 			path = Model.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+		821CD4402BCF315E007D45EF /* AAC Core Data.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				821CD4412BCF315E007D45EF /* AAC Core Data.xcdatamodel */,
+			);
+			currentVersion = 821CD4412BCF315E007D45EF /* AAC Core Data.xcdatamodel */;
+			path = "AAC Core Data.xcdatamodeld";
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

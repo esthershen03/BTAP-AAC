@@ -34,7 +34,7 @@ struct GridTile: View {
     var body: some View {
         Button(action: onClick) {
             VStack {
-                image
+               image
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 55, height: 55)

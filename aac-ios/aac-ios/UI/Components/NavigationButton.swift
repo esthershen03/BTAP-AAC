@@ -52,8 +52,6 @@ struct NavigationButton_Previews: PreviewProvider {
             NavigationButton(labelText: "Scripts", image: "scroll")
             
             NavigationButton(labelText: "Rating Scale", image: "face.smiling")
-
-
         }
         .previewInterfaceOrientation(.landscapeLeft)
     }

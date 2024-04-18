@@ -263,7 +263,7 @@ struct TilePreview: View {
                 .cornerRadius(8)
         }
         .padding(5)
-        .background(Color("AACGrey"))
+        .background(Color("CustomGray"))
         .cornerRadius(12)
     }
 }

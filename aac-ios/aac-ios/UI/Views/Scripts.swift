@@ -8,9 +8,19 @@ var currScriptLabel = "hi"
 
 struct Scripts: View {
     // Define your categories here
-    @State private var categories = ["Health", "Food", "Activities", "TV"]
-    
-    // State variable to control which view is currently being shown
+    @State private var categories: [String]
+
+    init() {
+        if categoryTexts.isEmpty {
+            self._categories = State(initialValue: ["Health", "Food", "Activities", "TV"])
+        } else {
+            self._categories = State(initialValue: Array(categoryTexts.keys))
+        }
+        
+        if let savedScripts = scriptsViewModel.loadScripts() {
+            categoryTexts = savedScripts
+        }
+    }
     @State private var showScriptText = false
     @State private var showError = false
 
@@ -19,7 +29,7 @@ struct Scripts: View {
     
     var body: some View {
         // Create a grid layout with 3 columns
-        let columns = Array(repeating: GridItem(.fixed(200), spacing: 60), count: 4)
+        let columns = Array(repeating: GridItem(.fixed(200), spacing: 50), count: 4)
 
         VStack {
             HStack(spacing: 15) {
@@ -37,6 +47,7 @@ struct Scripts: View {
                         if !categories.contains(newCategoryName) {
                             self.categories.append(newCategoryName)
                             categoryTexts[newCategoryName] = Array(repeating: "", count: 6)
+                            scriptsViewModel.saveScripts(categoryTexts)
                             self.newCategoryName = ""
                         } else {
                             showError = true

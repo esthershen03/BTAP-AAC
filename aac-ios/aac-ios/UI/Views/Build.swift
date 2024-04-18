@@ -50,14 +50,18 @@ struct Build: View {
                 }
                 .padding()
             } else {
-                Text("No tiles to display.").padding() //if there are no tiles to display, show that message
+                Text("No tiles to display.")
+                    .font(.title)
+                    .padding() //if there are no tiles to display, show that message
             }
             Button(action: { addShowing.toggle()}) { //button to add a new tile
                 Text("Add New Tile")
                     .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
+                    .background(Color("AACBlueDark"))
+                    .font(.title)
+                    .foregroundColor(.black)
                     .cornerRadius(10)
+                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color(.black), lineWidth: 2))
             }
             .sheet(isPresented: $addShowing) {
                 BuildPopupView(visible: $addShowing, vm: vm, currentFolder: vm.currentFolder!)
@@ -142,35 +146,27 @@ struct BuildPopupView: View {
                 Spacer()
                 Button(action: {visible = false}) { //button to x out of menu to add tile
                     Image(systemName: "xmark.circle.fill")
-                        .frame(width: 24, height: 24)
-                        .foregroundColor(.gray)
+                        .frame(width: 20, height: 20)
+                        .foregroundColor(Color("AACBlueDark"))
                 }
+                .frame(width: 100, height: 100)
             }
             Text("Add a New Tile")
                 .padding()
                 .font(.system(size: 36))
                 .padding([.top, .trailing])
-            
-            //shows a preview of the tile before adding
-            if !labelText.isEmpty || iconImage != nil {
-                Text("Preview")
-                    .font(.headline)
-                    .padding(.top)
-                TilePreview(labelText: labelText, image: iconImage)
-                    .frame(width: 120, height: 150)
-                    .padding()
-            }
-            //tile settings
+            TilePreview(labelText: labelText, image: iconImage)
+                .frame(width: 120, height: 150)
+                .padding()
             VStack {
                 HStack {
                     Text("Set Icon: ")
                         .font(.system(size: 36))
                     PhotosPicker(selection: $iconItem, matching: .images) {
-                        Image(systemName: "photo.artframe")
-                            .font(.system(size: 36))
+                        Image(systemName: "photo")
+                            .font(.system(size: 50))
+                            .foregroundColor(.black)
                     }
-                    .padding()
-                    Spacer()
                 }
                 //sets the new icon image for the tile
                 .onChange(of: iconItem) { newItem in Task {
@@ -189,44 +185,48 @@ struct BuildPopupView: View {
                 HStack {
                     Text("Set Label: ")
                         .font(.system(size: 36))
-                    TextField("Enter tile label text", text: $labelText)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .frame(maxWidth: 200)
+                    TextField("Tile label", text: $labelText)
+                        .font(.title)
+                        .frame(width: 150, height: 20)
                         .padding()
-                    Spacer()
+                        .background(RoundedRectangle(cornerRadius: 10).fill(Color.white))
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color(.black), lineWidth: 1))
                 }
                 //sets type (folder or tile)
                 HStack {
-                    Text("Set Type: ")
+                    Text("Set Type:  ")
                         .font(.system(size: 36))
-                    Picker("Types", selection: $type) {
-                        Text("Tile").tag("Tile") //default is tile
-                        Text("Folder").tag("Folder")
+                    Picker("Type", selection: $type) {
+                        Text("Tile")
+                            .tag("Tile") //default is tile
+                        Text("Folder")
+                            .tag("Folder")
                     }
-                    .pickerStyle(MenuPickerStyle())
-                    Spacer()
+                    .scaleEffect(2.0)
                 }
-            }
-            .frame(maxWidth: 400)
-            if iconImage != nil && !labelText.isEmpty { //doesnt allow you to add until fields are completed
-                Button(action: {
-                    visible = false
-                    vm.addTile(text: labelText, imagePath: imagePath, type: type, parent: self.currentFolder) //adds and saves the new tile
-                }) {
-                    Text("Add Tile") //button to confirm tile adding
-                        .font(.system(size: 20))
-                        .foregroundColor(.white)
-                        .padding()
-                        .frame(minWidth: 0, maxWidth: 200)
-                        .background(Color.blue)
-                        .cornerRadius(20)
+                .frame(maxWidth: 400)
+                if iconImage != nil && !labelText.isEmpty { //doesnt allow you to add until fields are completed
+                    Button(action: {
+                        visible = false
+                        vm.addTile(text: labelText, imagePath: imagePath, type: type, parent: self.currentFolder) //adds and saves the new tile
+                    }) {
+                        Text("Add Tile") //button to confirm tile adding
+                            .font(.title)
+                            .foregroundColor(.black)
+                            .padding()
+                            .frame(minWidth: 0, maxWidth: 200)
+                            .background(Color("AACBlueDark"))
+                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color(.black), lineWidth: 2))
+                            .cornerRadius(10)
+       
+                    }
+                    .padding()
                 }
-                .padding()
+                Spacer()
             }
-            Spacer()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding()
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding()
     }
 }
 
@@ -263,7 +263,14 @@ struct TilePreview: View {
                 .cornerRadius(8)
         }
         .padding(5)
-        .background(Color.gray.opacity(0.5))
+        .background(Color("AACGrey"))
         .cornerRadius(12)
+    }
+}
+
+struct Build_Preview: PreviewProvider {
+    static var previews: some View {
+        Build()
+            .previewInterfaceOrientation(.landscapeLeft)
     }
 }

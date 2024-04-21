@@ -1,15 +1,7 @@
-//
-//  PopUp.swift
-//  aac-ios
-//
-//  Created by Asma on 10/10/23.
-//
-
 import SwiftUI
 
 struct PopUp: View {
     @State private var isShowingPopup = false
-
     var body: some View {
         VStack {
             Button("Click") {
@@ -44,9 +36,3 @@ struct PopupView: View {
         .font(.title)
     }
 }
-
-
-
-
-
-

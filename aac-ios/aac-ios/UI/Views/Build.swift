@@ -52,15 +52,29 @@ struct Build: View {
             } else {
                 Text("No tiles to display.").padding() //if there are no tiles to display, show that message
             }
-            Button(action: { addShowing.toggle()}) { //button to add a new tile
-                Text("Add New Tile")
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
-            }
-            .sheet(isPresented: $addShowing) {
-                BuildPopupView(visible: $addShowing, vm: vm, currentFolder: vm.currentFolder!)
+            HStack() {
+                Button(action: { addShowing.toggle()}) { //button to add a new tile
+                    Text("Add New Tile")
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
+                .sheet(isPresented: $addShowing) {
+                    BuildPopupView(visible: $addShowing, vm: vm, currentFolder: vm.currentFolder!)
+                }
+                if (!vm.tiles.isEmpty) {
+                    Button {
+                        if (vm.currentFolder?.parent != nil) {
+                            vm.currentFolder = vm.currentFolder?.parent
+                            vm.fetchTiles(parent: vm.currentFolder!)
+                        }
+                    } label: {
+                        Image(systemName: "arrowshape.turn.up.backward.circle.fill")
+                            .resizable()
+                            .frame(width: 32.0, height: 32.0)
+                    }
+                }
             }
         }
         .navigationBarHidden(true)

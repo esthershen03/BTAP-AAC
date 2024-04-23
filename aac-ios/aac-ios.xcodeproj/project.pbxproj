@@ -345,7 +345,6 @@
 			mainGroup = 8E34229C2A990C8B000A3055;
 			packageReferences = (
 				DA9995E02BB73DE500955B80 /* XCRemoteSwiftPackageReference "SymbolPicker" */,
-				F2AAC86D2BD74B9C004CF3EB /* XCRemoteSwiftPackageReference "swift-collections" */,
 			);
 			productRefGroup = 8E3422A62A990C8B000A3055 /* Products */;
 			projectDirPath = "";
@@ -749,14 +748,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.5.2;
-			};
-		};
-		F2AAC86D2BD74B9C004CF3EB /* XCRemoteSwiftPackageReference "swift-collections" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/apple/swift-collections.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.1.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

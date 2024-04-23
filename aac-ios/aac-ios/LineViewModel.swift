@@ -53,6 +53,7 @@ class LineViewModel: ObservableObject {
     private func saveContext() {
         do {
             try persistentContainer.viewContext.save()
+            print("Saved!")
         } catch {
             print("Unable to save context: \(error)")
         }

@@ -6,19 +6,48 @@ var categoryTexts: [String: [String]] = [:]
 let scriptsViewModel = ScriptsViewModel()
 var currScriptLabel = "hi"
 
+var categoryOrder: [Int: String] = [:]
+var orderNum = 1
+
 struct Scripts: View {
     // Define your categories here
     @State private var categories: [String]
 
     init() {
-        if categoryTexts.isEmpty {
-            self._categories = State(initialValue: ["Health", "Food", "Activities", "TV"])
-        } else {
-            self._categories = State(initialValue: Array(categoryTexts.keys))
-        }
+        // Rough code for resetting scripts - just for testing, should implement deleting/clearing tiles later
+        // Uncomment next two lines to reset
+//        scriptsViewModel.saveScripts([:])
+//        scriptsViewModel.saveOrder([:])
         
         if let savedScripts = scriptsViewModel.loadScripts() {
             categoryTexts = savedScripts
+        }
+        
+        if categoryTexts.isEmpty {
+            self._categories = State(initialValue: ["Health", "Food", "Activities", "TV"])
+            
+            // Initialize categoryTexts and categoryOrder based on default categories above
+            var num = 1
+            for defaultCategory in categories {
+                categoryTexts[defaultCategory] = Array(repeating: "", count: 6)
+                categoryOrder[num] = defaultCategory
+                num += 1
+            }
+            
+            scriptsViewModel.saveScripts(categoryTexts)
+            scriptsViewModel.saveOrder(categoryOrder)
+        } else {
+            if let savedOrder = scriptsViewModel.loadOrder() {
+                categoryOrder = savedOrder
+            }
+            
+            // Initialize categories list based on order stored in categoryOrder
+            var tempCategories: [String] = []
+            for i in 1...(categoryTexts.keys.count) {
+                tempCategories.append(categoryOrder[i] ?? "")
+            }
+            
+            self._categories = State(initialValue: tempCategories)
         }
     }
     @State private var showScriptText = false
@@ -47,7 +76,14 @@ struct Scripts: View {
                         if !categories.contains(newCategoryName) {
                             self.categories.append(newCategoryName)
                             categoryTexts[newCategoryName] = Array(repeating: "", count: 6)
+                            
+                            // Keep track of tile order
+                            orderNum = categories.count
+                            categoryOrder[orderNum] = newCategoryName
+                            orderNum += 1
+                            
                             scriptsViewModel.saveScripts(categoryTexts)
+                            scriptsViewModel.saveOrder(categoryOrder)
                             self.newCategoryName = ""
                         } else {
                             showError = true

@@ -9,6 +9,7 @@ import Foundation
 
 class ScriptsViewModel: ObservableObject {
     private let key = "scripts"
+    private let key2 = "scriptOrder"
 
     func saveScripts(_ categoryTexts: [String: [String]]?) {
         guard let categoryTexts = categoryTexts else {
@@ -30,6 +31,32 @@ class ScriptsViewModel: ObservableObject {
                 return categoryTexts
             } catch {
                 print("Error decoding scripts data: \(error)")
+                return nil
+            }
+        }
+        return nil
+    }
+    
+    func saveOrder(_ categoryOrder: [Int: String]?) {
+        guard let categoryOrder = categoryOrder else {
+            UserDefaults.standard.set(nil, forKey: key2)
+            return
+        }
+        do {
+            let data = try JSONEncoder().encode(categoryOrder)
+            UserDefaults.standard.set(data, forKey: key2)
+        } catch {
+            print("Error encoding script order data: \(error)")
+        }
+    }
+    
+    func loadOrder() -> [Int: String]? {
+        if let data = UserDefaults.standard.data(forKey: key2) {
+            do {
+                let categoryOrder = try JSONDecoder().decode([Int: String].self, from: data)
+                return categoryOrder
+            } catch {
+                print("Error decoding script order data: \(error)")
                 return nil
             }
         }

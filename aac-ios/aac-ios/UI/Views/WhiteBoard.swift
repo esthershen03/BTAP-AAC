@@ -41,6 +41,11 @@ struct WhiteBoard: View {
                         PhotoUploadView(galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData, inputImage: $inputImage, screen: "whiteboard")
                         Canvas { context, size in
                             
+//                            for oldLine in lvm.fetchLines() {
+//                                let oldPath = engine.createPath(for: oldLine.points)
+//                                context.stroke(oldPath, with: .color(oldLine.color), style: StrokeStyle(lineWidth: oldLine.lineWidth, lineCap: .round, lineJoin: .round))
+//                            }
+                            
                             for line in lines {
                                 let path = engine.createPath(for: line.points)
                                 context.stroke(path, with: .color(line.color), style: StrokeStyle(lineWidth: line.lineWidth, lineCap: .round, lineJoin: .round))

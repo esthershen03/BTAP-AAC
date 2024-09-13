@@ -20,11 +20,17 @@ struct RatingScaleGrid: View {
                         RatingScaleCategoryButton(labelText: "Numeric", image: "list.number", imageColor: "AACBlack")
                     }.buttonStyle(.plain)
                     Spacer()
-                    RatingScaleCategoryButton(labelText: "Pain", image: "bandage", imageColor: "BandageBrown")
+                    NavigationLink(destination: RatingScaleActivityTwo(), tag: "Energy", selection: $selectedScale){
+                        RatingScaleCategoryButton(labelText: "Energy", image: "bolt.batteryblock", imageColor: "BatteryGreen")
+                    }.buttonStyle(.plain)
                     Spacer()
-                    RatingScaleCategoryButton(labelText: "Energy", image: "bolt.batteryblock", imageColor: "BatteryGreen")
+                    NavigationLink(destination: RatingScaleActivityThree(), tag: "Pain", selection: $selectedScale){
+                        RatingScaleCategoryButton(labelText: "Pain", image: "bandage", imageColor: "BandageBrown")
+                    }.buttonStyle(.plain)
                     Spacer()
-                    RatingScaleCategoryButton(labelText: "", image: "", available: false)
+                    NavigationLink(destination: RatingScaleActivityFour(), tag: "Response", selection: $selectedScale){
+                        RatingScaleCategoryButton(labelText: "Response", image: "questionmark.bubble", imageColor: "BlueQuestion")
+                    }.buttonStyle(.plain)
                     Spacer()
                 }
                 Spacer()

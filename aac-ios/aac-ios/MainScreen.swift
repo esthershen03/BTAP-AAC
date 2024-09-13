@@ -52,7 +52,7 @@ struct MainScreen: View {
                         }.buttonStyle(.plain)
                     }
                     .navigationBarHidden(true)
-                    .padding(.top, 20)
+                    .padding(.top, 22)
                 }
             }.navigationBarBackButtonHidden(true)
                 .navigationBarHidden(true)

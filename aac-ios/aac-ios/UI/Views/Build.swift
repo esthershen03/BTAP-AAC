@@ -16,7 +16,7 @@ struct Build: View {
     @State private var addShowing = false //hides the add button
 
     private let adaptiveColumns = [
-        GridItem(.adaptive(minimum: 100))
+        GridItem(.adaptive(minimum: 170))
     ]
     
     var body: some View {
@@ -263,7 +263,7 @@ struct TilePreview: View {
                 .cornerRadius(8)
         }
         .padding(5)
-        .background(Color("CustomGray"))
+        .background(Color.black.opacity(0.05))
         .cornerRadius(12)
     }
 }

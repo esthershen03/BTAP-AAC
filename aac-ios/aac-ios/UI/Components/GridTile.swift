@@ -10,19 +10,26 @@ import SwiftUI
 struct GridTileStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 6)
-                .foregroundColor(.gray)
+            RoundedRectangle(cornerRadius: 10)
+                .foregroundColor(Color.black.opacity(0.025))
                 .offset(y: 3)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.black, lineWidth: 1)
+                )
             
-            RoundedRectangle(cornerRadius: 6)
-                .foregroundColor(Color("CustomGray"))
+            RoundedRectangle(cornerRadius: 10)
+                .foregroundColor(Color.black.opacity(0.025))
                 .offset(y: configuration.isPressed ? 3 : 0)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.black, lineWidth: 1)
+                )
             
             configuration.label
                 .offset(y: configuration.isPressed ? 3 : 0)
         }
         .compositingGroup()
-        .shadow(radius: 6, y: 2)
     }
 }
 
@@ -37,13 +44,12 @@ struct GridTile: View {
                image
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: 55, height: 55)
+                    .frame(width: 90, height: 90)
                     .clipShape(RoundedRectangle(cornerRadius: 6))
                     .overlay {
                         RoundedRectangle(cornerRadius: 6)
                           .stroke(.white, lineWidth: 3)
                     }
-                    .shadow(radius: 6, y: 2)
                     
                 
                 Text(labelText)
@@ -51,8 +57,9 @@ struct GridTile: View {
             }
             
         }
-        .frame(width:100,height:100)
+        .frame(width:150,height:150)
         .buttonStyle(GridTileStyle())
+        .padding(20)
     }
 }
 

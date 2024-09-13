@@ -1,5 +1,5 @@
 //
-//  RatingScaleNewTwo.swift
+//  RatingScaleNewThree.swift
 //  aac-ios
 //
 //  Created by Smera Bhatia on 3/9/24.
@@ -8,10 +8,10 @@
 import Foundation
 import SwiftUI
 
-struct RatingScaleActivity: View {
+struct RatingScaleActivityTwo: View {
     @State private var selectedButton: String = "5 levels"
     @State private var numberButtons: Int = 5
-    @State private var numSelected: String = "3.square"
+    @State private var numSelected: String = "battery.50percent"
     @State private var screenSelect: String? = nil
     
     var body: some View {
@@ -29,31 +29,21 @@ struct RatingScaleActivity: View {
                     }.buttonStyle(.plain)
                     
                     Spacer()
-                    RatingScaleLevelButton(labelText: "3 levels", selected: selectedButton == "3 levels").onTapGesture {
+                    RatingScaleLevelButtonTwo(labelText: "3 levels", selected: selectedButton == "3 levels").onTapGesture {
                         selectedButton = "3 levels"
                         numberButtons = 3
-                        numSelected = "2.square"
+                        numSelected = "battery.50percent"
                     }
                     Spacer()
-                    RatingScaleLevelButton(labelText: "5 levels", selected: selectedButton == "5 levels").onTapGesture {
+                    RatingScaleLevelButtonTwo(labelText: "5 levels", selected: selectedButton == "5 levels").onTapGesture {
                         selectedButton = "5 levels"
                         numberButtons = 5
-                        numSelected = "3.square"
+                        numSelected = "battery.50percent"
                         
                     }
                     Spacer()
-                    RatingScaleLevelButton(labelText: "7 levels", selected: selectedButton == "7 levels").onTapGesture {
-                        selectedButton = "7 levels"
-                        numberButtons = 7
-                        numSelected = "4.square"
-                    }
                     Spacer()
-                    RatingScaleLevelButton(labelText: "10 levels", selected: selectedButton == "10 levels").onTapGesture {
-                        selectedButton = "10 levels"
-                        numberButtons = 10
-                        numSelected = "5.square"
-                    }
-                    Spacer()
+
 
                 }
                 Spacer()
@@ -74,7 +64,8 @@ struct RatingScaleActivity: View {
                     Spacer()
                     Spacer()
                     ForEach(1...numberButtons, id: \.self) { level in
-                        let imageRef = "\(level).square"
+                        let batteryPercent = getBatteryPercent(for: level)
+                        let imageRef = "battery.\(batteryPercent)percent"
                         RatingScaleSelectionButton(image: imageRef, totalButtons: numberButtons).onTapGesture {
                             numSelected = imageRef
                         }
@@ -91,14 +82,40 @@ struct RatingScaleActivity: View {
         Spacer()
 
     }
+    // Helper function to handle battery percentage logic
+    func getBatteryPercent(for level: Int) -> Int {
+        if numberButtons == 5 {
+            switch level {
+            case 1:
+                return 0
+            case 2:
+                return 25
+            case 3:
+                return 50
+            case 4:
+                return 75
+            default:
+                return 100
+            }
+        } else {
+            switch level {
+            case 1:
+                return 0
+            case 2:
+                return 50
+            default:
+                return 100
+            }
+        }
+    }
 }
 
-struct RatingScaleLevelButton: View {
+struct RatingScaleLevelButtonTwo: View {
     let labelText: String
     var selected: Bool = false
     var body: some View {
         VStack{}
-       .frame(width: 150,height: 50)
+       .frame(width: 400,height: 50)
        .padding()
        .accentColor(Color.black)
        .cornerRadius(10.0)
@@ -114,7 +131,7 @@ struct RatingScaleLevelButton: View {
     }
 }
 
-struct RatingScaleSelectionButton: View {
+struct RatingScaleSelectionButtonTwo: View {
     let image: String
     var imageColor: String = "AACBlack"
     var totalButtons: Int = 5
@@ -140,9 +157,9 @@ struct RatingScaleSelectionButton: View {
     }
 }
 
-struct RatingScaleActivity_Preview: PreviewProvider {
+struct RatingScaleActivityTwo_Preview: PreviewProvider {
     static var previews: some View {
-        RatingScaleActivity()
+        RatingScaleActivityTwo()
             .previewInterfaceOrientation(.landscapeLeft)
         
     }

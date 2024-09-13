@@ -41,6 +41,9 @@
 		8EB02D7B2ABDE21B0097CC0C /* NavigationButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB02D7A2ABDE21B0097CC0C /* NavigationButton.swift */; };
 		D5E092652B168FAA002C5DE0 /* DrawingEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E092642B168FAA002C5DE0 /* DrawingEngine.swift */; };
 		D5E092672B168FC9002C5DE0 /* ColorPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E092662B168FC9002C5DE0 /* ColorPickerView.swift */; };
+		DA3B55222C9489C60060C1A2 /* RatingScaleNewThree.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3B55212C9489C60060C1A2 /* RatingScaleNewThree.swift */; };
+		DA3B55242C948EC10060C1A2 /* RatingScaleNewFour.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3B55232C948EC10060C1A2 /* RatingScaleNewFour.swift */; };
+		DA3B55262C9496730060C1A2 /* RatingScaleNewFive.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3B55252C9496730060C1A2 /* RatingScaleNewFive.swift */; };
 		DA91A5662B9CCA0900A8C3AF /* RatingScaleNew.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA91A5652B9CCA0900A8C3AF /* RatingScaleNew.swift */; };
 		DA91A56A2B9CD35800A8C3AF /* RatingScaleNewTwo.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA91A5692B9CD35800A8C3AF /* RatingScaleNewTwo.swift */; };
 		DACC96DB2C8B561A00FC22FC /* SignupScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = DACC96DA2C8B561A00FC22FC /* SignupScreen.swift */; };
@@ -102,6 +105,9 @@
 		8EB02D7A2ABDE21B0097CC0C /* NavigationButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationButton.swift; sourceTree = "<group>"; };
 		D5E092642B168FAA002C5DE0 /* DrawingEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingEngine.swift; sourceTree = "<group>"; };
 		D5E092662B168FC9002C5DE0 /* ColorPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPickerView.swift; sourceTree = "<group>"; };
+		DA3B55212C9489C60060C1A2 /* RatingScaleNewThree.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RatingScaleNewThree.swift; sourceTree = "<group>"; };
+		DA3B55232C948EC10060C1A2 /* RatingScaleNewFour.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RatingScaleNewFour.swift; sourceTree = "<group>"; };
+		DA3B55252C9496730060C1A2 /* RatingScaleNewFive.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RatingScaleNewFive.swift; sourceTree = "<group>"; };
 		DA91A5652B9CCA0900A8C3AF /* RatingScaleNew.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingScaleNew.swift; sourceTree = "<group>"; };
 		DA91A5692B9CD35800A8C3AF /* RatingScaleNewTwo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingScaleNewTwo.swift; sourceTree = "<group>"; };
 		DACC96DA2C8B561A00FC22FC /* SignupScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SignupScreen.swift; path = UI/SignupScreen.swift; sourceTree = "<group>"; };
@@ -228,6 +234,9 @@
 				D5E092662B168FC9002C5DE0 /* ColorPickerView.swift */,
 				DA91A5652B9CCA0900A8C3AF /* RatingScaleNew.swift */,
 				DA91A5692B9CD35800A8C3AF /* RatingScaleNewTwo.swift */,
+				DA3B55212C9489C60060C1A2 /* RatingScaleNewThree.swift */,
+				DA3B55252C9496730060C1A2 /* RatingScaleNewFive.swift */,
+				DA3B55232C948EC10060C1A2 /* RatingScaleNewFour.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -395,6 +404,7 @@
 				82653FB32BA3AAE80089F1AD /* TileViewModel.swift in Sources */,
 				1228F1582B16952200F03833 /* SignupView.swift in Sources */,
 				3F39A5C12AFC186A0092BF8F /* ImagePicker.swift in Sources */,
+				DA3B55222C9489C60060C1A2 /* RatingScaleNewThree.swift in Sources */,
 				82DA4FA92B845DC6005BFFB7 /* (null) in Sources */,
 				8E3422AB2A990C8B000A3055 /* MainScreen.swift in Sources */,
 				DA91A5662B9CCA0900A8C3AF /* RatingScaleNew.swift in Sources */,
@@ -404,6 +414,7 @@
 				12A93AD02B1D8C0100B3D19C /* EntryField.swift in Sources */,
 				68EA44442ACE0569008C3C69 /* HorizontalNavBar.swift in Sources */,
 				3F673BC52BD05DDB005823D6 /* ScriptsViewModel.swift in Sources */,
+				DA3B55242C948EC10060C1A2 /* RatingScaleNewFour.swift in Sources */,
 				821CD4422BCF315E007D45EF /* AAC Core Data.xcdatamodeld in Sources */,
 				D5E092652B168FAA002C5DE0 /* DrawingEngine.swift in Sources */,
 				3F8303782AD628D40012E832 /* PopUp.swift in Sources */,
@@ -412,6 +423,7 @@
 				8E0EC37D2ACDD1D30019F3B4 /* SceneDisplay.swift in Sources */,
 				D5E092672B168FC9002C5DE0 /* ColorPickerView.swift in Sources */,
 				8E0EC3812ACDD2340019F3B4 /* Build.swift in Sources */,
+				DA3B55262C9496730060C1A2 /* RatingScaleNewFive.swift in Sources */,
 				12A93ACE2B1D7EF300B3D19C /* signupViewModel.swift in Sources */,
 				8E3422A92A990C8B000A3055 /* aac_iosApp.swift in Sources */,
 				8E0EC37F2ACDD2170019F3B4 /* WhiteBoard.swift in Sources */,

@@ -14,6 +14,9 @@ struct HorizontalNavBar: View {
     @State private var searchText = ""
     @State private var selectedButton: String? = nil
     let speechSynthesizer = AVSpeechSynthesizer()
+    
+    // Add a closure that gets called when logout is triggered
+    var onLogout: () -> Void = {}
 
     var body: some View {
         ZStack {
@@ -21,6 +24,11 @@ struct HorizontalNavBar: View {
             HStack(spacing: 10) {
                 
                 Button(action: {
+                            selectedButton = "logout"
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                selectedButton = nil
+                            }
+                            onLogout()
                             print("Logout button tapped")
                         }) {
                             HStack {
@@ -40,12 +48,6 @@ struct HorizontalNavBar: View {
                                 .padding()
                                 .background(selectedButton == "logout" ? Color("AACGreenDark") : Color("AACGreen"))
                                 .cornerRadius(10)
-                                .onTapGesture {
-                                    selectedButton = "logout"
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                        selectedButton = nil
-                                    }
-                                }
                             
                         }
                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 2)        .shadow(color: Color.black, radius: selectedButton == "logout" ? CGFloat (15) : CGFloat(25), x: 0, y: 20))

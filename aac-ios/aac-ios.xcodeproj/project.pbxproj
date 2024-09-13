@@ -43,6 +43,7 @@
 		D5E092672B168FC9002C5DE0 /* ColorPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E092662B168FC9002C5DE0 /* ColorPickerView.swift */; };
 		DA91A5662B9CCA0900A8C3AF /* RatingScaleNew.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA91A5652B9CCA0900A8C3AF /* RatingScaleNew.swift */; };
 		DA91A56A2B9CD35800A8C3AF /* RatingScaleNewTwo.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA91A5692B9CD35800A8C3AF /* RatingScaleNewTwo.swift */; };
+		DACC96DB2C8B561A00FC22FC /* SignupScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = DACC96DA2C8B561A00FC22FC /* SignupScreen.swift */; };
 		DAF6F0632B0812B600E36C86 /* RatingScale.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAF6F0622B0812B600E36C86 /* RatingScale.swift */; };
 /* End PBXBuildFile section */
 
@@ -103,6 +104,7 @@
 		D5E092662B168FC9002C5DE0 /* ColorPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPickerView.swift; sourceTree = "<group>"; };
 		DA91A5652B9CCA0900A8C3AF /* RatingScaleNew.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingScaleNew.swift; sourceTree = "<group>"; };
 		DA91A5692B9CD35800A8C3AF /* RatingScaleNewTwo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingScaleNewTwo.swift; sourceTree = "<group>"; };
+		DACC96DA2C8B561A00FC22FC /* SignupScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SignupScreen.swift; path = UI/SignupScreen.swift; sourceTree = "<group>"; };
 		DAF6F0622B0812B600E36C86 /* RatingScale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingScale.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -166,6 +168,7 @@
 				425550D62B1BC6C400623989 /* AppDelegate.swift */,
 				8E3422AA2A990C8B000A3055 /* MainScreen.swift */,
 				3F8303212AD5DA200012E832 /* LoginScreen.swift */,
+				DACC96DA2C8B561A00FC22FC /* SignupScreen.swift */,
 				1228F1552B16949100F03833 /* WelcomeScreen.swift */,
 				1228F1572B16952200F03833 /* SignupView.swift */,
 				12A93ACD2B1D7EF300B3D19C /* signupViewModel.swift */,
@@ -418,6 +421,7 @@
 				8EB02D7B2ABDE21B0097CC0C /* NavigationButton.swift in Sources */,
 				8E0EC3832ACDD25E0019F3B4 /* Scripts.swift in Sources */,
 				425550D52B1BC48200623989 /* Model.xcdatamodeld in Sources */,
+				DACC96DB2C8B561A00FC22FC /* SignupScreen.swift in Sources */,
 				8E960F0A2ACDD4D200948CC5 /* AddButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

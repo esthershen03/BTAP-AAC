@@ -106,33 +106,7 @@ struct SignupView: View {
                 )
                 .padding()
             }
-//            SignInWithAppleButton(.signIn, onRequest: { request in
-//                            request.requestedScopes = [.fullName, .email]
-//                        }, onCompletion: { result in
-//                            switch result {
-//                            case .success(let authResults):
-//                                // Handle authResults
-//                                print(authResults)
-//                            case .failure(let error):
-//                                // Handle error
-//                                print(error.localizedDescription)
-//                            }
-//                        })
-//                        .frame(height: 60) // Height for the button
-//                        .padding()
-        
-//        HStack {
-//            Spacer()
-//            Text("Sign in with Google")
-//                .font(.title2)
-//            Spacer()
-//        }
-//        .padding()
-//        .frame(maxWidth: .infinity)
-//        .background(Color.white)
-//        .cornerRadius(50.0)
-//        .shadow(color: Color.black.opacity(0.08), radius: 60, x: /*@START_MENU_TOKEN@*/0.0/*@END_MENU_TOKEN@*/, y: 16)
-//
+
         Spacer()
         Text("Read our Terms & Conditions.")
             .foregroundColor(.black)
@@ -144,7 +118,7 @@ struct SignupView: View {
 
 struct SignupView_Previews: PreviewProvider {
     static var previews: some View {
-        SignupView()
+        SignupView().previewInterfaceOrientation(.landscapeLeft)
     }
 }
 

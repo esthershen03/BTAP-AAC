@@ -9,6 +9,7 @@ import SwiftUI
 
 struct GridTileStyle: ButtonStyle {
     let tileType: String
+    let onRemove: () -> Void
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
             RoundedRectangle(cornerRadius: 10)
@@ -38,6 +39,23 @@ struct GridTileStyle: ButtonStyle {
                     }
                     Spacer()
                 }
+            } else if (tileType == "DroppedTile") {
+                VStack {
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            onRemove()
+                        }) {
+                            Image(systemName: "xmark.circle")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 20, height: 20)
+                                .padding([.top, .trailing], 6)
+                                .foregroundColor(.black)
+                        }
+                    }
+                    Spacer()
+                }
             }
             configuration.label
                 .offset(y: configuration.isPressed ? 3 : 0)
@@ -50,6 +68,7 @@ struct GridTile: View {
     let labelText: String
     let image: Image
     let tileType: String
+    let onRemove: () -> Void
     let onClick: () -> Void
     
     var body: some View {
@@ -72,7 +91,7 @@ struct GridTile: View {
             
         }
         .frame(width:150,height:150)
-        .buttonStyle(GridTileStyle(tileType: tileType))
+        .buttonStyle(GridTileStyle(tileType: tileType, onRemove: onRemove))
         .padding(20)
     }
 }

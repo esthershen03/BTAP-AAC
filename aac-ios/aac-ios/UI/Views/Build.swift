@@ -46,7 +46,7 @@ struct Build: View {
                 ScrollView(.vertical) {
                     LazyVGrid(columns: adaptiveColumns, content: {
                         ForEach(vm.tiles) { tile in // get the tile that is the current folder (default: main)
-                            GridTile(labelText: tile.name ?? "none", image: getImageFromImagePath(tile.imagePath ?? "") ?? Image(systemName: "questionmark.app"), tileType: tile.type ?? "",
+                            GridTile(labelText: tile.name ?? "none", image: getImageFromImagePath(tile.imagePath ?? "") ?? Image(systemName: "questionmark.app"), tileType: tile.type ?? "", onRemove: {},
                                      onClick: {
                                 if (tile.type == "Folder") {
                                     vm.currentFolder = tile
@@ -90,10 +90,16 @@ struct Build: View {
                         .onDrop(of: [.text], delegate: DropViewDelegate(destinationItem: Tile(), data: $vm.tiles, draggedItem: $draggingItem, droppedTiles: $vm.droppedTiles))
                     Spacer()
                     HStack {
-                        ForEach(vm.droppedTiles) {droppedTile in
-                            GridTile(labelText: droppedTile.name ?? "none",
-                                     image: getImageFromImagePath(droppedTile.imagePath ?? "") ?? Image(systemName: "questionmark.app"),
-                                     tileType: droppedTile.type ?? "", onClick: {})
+                        ForEach(vm.droppedTiles.indices, id: \.self) { index in // Use indices to get the index for removal
+                                GridTile(
+                                    labelText: vm.droppedTiles[index].name ?? "none",
+                                    image: getImageFromImagePath(vm.droppedTiles[index].imagePath ?? "") ?? Image(systemName: "questionmark.app"),
+                                    tileType: "DroppedTile",
+                                    onRemove: {
+                                        vm.droppedTiles.remove(at: index)
+                                    },
+                                    onClick: {}
+                                )
                             .frame(width: 100, height: 100) // Adjust size if needed
                         }
                         .padding(.horizontal, 30)

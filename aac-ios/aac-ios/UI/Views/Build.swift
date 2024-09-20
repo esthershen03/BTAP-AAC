@@ -21,11 +21,32 @@ struct Build: View {
     
     var body: some View {
         VStack() {
+            if (vm.currentFolder?.parent != nil) {
+                HStack {
+                    // Custom back button
+                    Button(action: {
+                        if let currentFolder = vm.currentFolder?.parent {
+                            vm.currentFolder = currentFolder
+                            vm.fetchTiles(parent: vm.currentFolder!)
+                        }
+                    }) {
+                        HStack {
+                            Image(systemName: "chevron.left.circle")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 25, height: 25)
+                                .padding([.top, .leading], 16)
+                        }
+                        .foregroundColor(.black)
+                    }
+                    Spacer()
+                }
+            }
             if (!vm.tiles.isEmpty) {
                 ScrollView(.vertical) {
                     LazyVGrid(columns: adaptiveColumns, content: {
                         ForEach(vm.tiles) { tile in // get the tile that is the current folder (default: main)
-                            GridTile(labelText: tile.name ?? "none", image: getImageFromImagePath(tile.imagePath ?? "") ?? Image(systemName: "questionmark.app"),
+                            GridTile(labelText: tile.name ?? "none", image: getImageFromImagePath(tile.imagePath ?? "") ?? Image(systemName: "questionmark.app"), tileType: tile.type ?? "",
                                      onClick: {
                                         if (tile.type == "Folder") {
                                             vm.currentFolder = tile
@@ -48,7 +69,8 @@ struct Build: View {
                         }
                     })
                 }
-                .padding()
+                .padding(.top, vm.currentFolder?.parent == nil ? 16 : 0)
+                .padding([.leading, .trailing, .bottom], 16)
             } else {
                 Text("No tiles to display.")
                     .font(.title)

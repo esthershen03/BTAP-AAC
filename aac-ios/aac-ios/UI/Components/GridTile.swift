@@ -8,10 +8,11 @@
 import SwiftUI
 
 struct GridTileStyle: ButtonStyle {
+    let tileType: String
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
             RoundedRectangle(cornerRadius: 10)
-                .foregroundColor(Color.black.opacity(0.025))
+                .foregroundColor(Color("AACGrey"))
                 .offset(y: 3)
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
@@ -19,13 +20,25 @@ struct GridTileStyle: ButtonStyle {
                 )
             
             RoundedRectangle(cornerRadius: 10)
-                .foregroundColor(Color.black.opacity(0.025))
+                .foregroundColor(Color("AACGrey"))
                 .offset(y: configuration.isPressed ? 3 : 0)
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(Color.black, lineWidth: 1)
                 )
-            
+            if (tileType == "Folder") {
+                VStack {
+                    HStack {
+                        Spacer()
+                        Image(systemName: "chevron.right.circle")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 20, height: 20)
+                            .padding([.top, .trailing], 6)
+                    }
+                    Spacer()
+                }
+            }
             configuration.label
                 .offset(y: configuration.isPressed ? 3 : 0)
         }
@@ -36,6 +49,7 @@ struct GridTileStyle: ButtonStyle {
 struct GridTile: View {
     let labelText: String
     let image: Image
+    let tileType: String
     let onClick: () -> Void
     
     var body: some View {
@@ -58,7 +72,7 @@ struct GridTile: View {
             
         }
         .frame(width:150,height:150)
-        .buttonStyle(GridTileStyle())
+        .buttonStyle(GridTileStyle(tileType: tileType))
         .padding(20)
     }
 }

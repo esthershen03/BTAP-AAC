@@ -42,6 +42,7 @@ struct WhiteBoard: View {
                     VStack {
                         ZStack {
                             PhotoUploadView(galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData, inputImage: $inputImage, screen: "whiteboard")
+                            
                             Canvas { context, size in
                                 
                                 //                            for oldLine in lvm.fetchLines() {
@@ -56,7 +57,7 @@ struct WhiteBoard: View {
                                     
                                 }
                             }.frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .background(Color("AACGrey"))
+                                .background(Color("AACGrey").opacity(inputImage == nil ? 1 : 0))
                                 .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .local).onChanged({ value in
                                     let newPoint = value.location
                                     if value.translation.width + value.translation.height == 0 {
@@ -73,6 +74,7 @@ struct WhiteBoard: View {
                                 }))
                                 .padding()
                         } // end of Zstack
+                        
                         HStack {
                             Button {
                                 deletedAllLines = false
@@ -232,26 +234,25 @@ struct WhiteBoard: View {
                     .navigationBarHidden(true)
                 }
                 .padding(20)
-            } // vstack
-            .onAppear {
+            }.onAppear {
                 if let loadedImage = whiteboardImageViewModel.loadImage() {
                     inputImage = loadedImage
                 }
                 return
-            }
+            }// vstack
             
-            // folder pop-up
-            ZStack {
-                if showFolder {
-                    // Semi-transparent background to cover the main view
+            // Folder pop-up (only show when showFolder is true)
+            if showFolder {
+                ZStack {
                     Color.black.opacity(0.15)
                         .edgesIgnoringSafeArea(.all)
                         .onTapGesture {
-                            // Hide the overlay if the background is tapped
-                            showFolder.toggle()
+                            // Hide the popup when the background is tapped
+                            withAnimation {
+                                showFolder.toggle()
+                            }
                         }
 
-                    // Popup content with chevron at the top-left corner
                     ZStack(alignment: .topLeading) {
                         // Main popup content
                         VStack {
@@ -263,26 +264,23 @@ struct WhiteBoard: View {
                         .background(Color.white)
                         .cornerRadius(20)
                         .shadow(radius: 20)
-                        .transition(.move(edge: .bottom))
-                        .animation(.easeInOut)
 
-                        // Chevron in the top-right corner
+                        // Close button (top-right)
                         Image(systemName: "x.circle")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 35, height: 35)
-                            .padding(25) // Add padding to move it away from the edge
+                            .padding(25)
                             .onTapGesture {
-                                // You can also toggle the overlay by tapping the chevron
                                 withAnimation {
                                     showFolder.toggle()
                                 }
                             }
                     }
                     .frame(width: 1000, height: 750)
-                    .transition(.move(edge: .bottom))
-                    .animation(.easeInOut)
                 }
+                .transition(.move(edge: .bottom)) // Apply the transition to the entire ZStack
+                .animation(.easeInOut)
             }
         } //body view
     }

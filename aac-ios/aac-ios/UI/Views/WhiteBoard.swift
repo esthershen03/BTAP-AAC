@@ -29,165 +29,321 @@ struct WhiteBoard: View {
     @State var inputImage: UIImage? = nil
     @State var imageText = false
     @StateObject private var viewState = ViewStateData()
+    @State var deletedAllLines = false
+    @State private var showFolder = false
     
     
     let engine = DrawingEngine()
     
     var body: some View {
-        VStack() {
-            HStack{
-                VStack {
-                    ZStack {
-                        PhotoUploadView(galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData, inputImage: $inputImage, screen: "whiteboard")
-                        Canvas { context, size in
-                            
-//                            for oldLine in lvm.fetchLines() {
-//                                let oldPath = engine.createPath(for: oldLine.points)
-//                                context.stroke(oldPath, with: .color(oldLine.color), style: StrokeStyle(lineWidth: oldLine.lineWidth, lineCap: .round, lineJoin: .round))
-//                            }
-                            
-                            for line in lines {
-                                let path = engine.createPath(for: line.points)
-                                context.stroke(path, with: .color(line.color), style: StrokeStyle(lineWidth: line.lineWidth, lineCap: .round, lineJoin: .round))
-                                lvm.addLine(points: line.points, color:line.color, lineWidth: line.lineWidth)
+        ZStack{
+            VStack() {
+                HStack{
+                    VStack {
+                        ZStack {
+                            PhotoUploadView(galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData, inputImage: $inputImage, screen: "whiteboard")
+                            Canvas { context, size in
                                 
-                            }
-                        }.frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .background(Color.gray.opacity(0.2))
-                            .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .local).onChanged({ value in
-                                let newPoint = value.location
-                                if value.translation.width + value.translation.height == 0 {
-                                    lines.append(Line(points: [newPoint], color: selectedColor, lineWidth: selectedLineWidth))
+                                //                            for oldLine in lvm.fetchLines() {
+                                //                                let oldPath = engine.createPath(for: oldLine.points)
+                                //                                context.stroke(oldPath, with: .color(oldLine.color), style: StrokeStyle(lineWidth: oldLine.lineWidth, lineCap: .round, lineJoin: .round))
+                                //                            }
+                                
+                                for line in lines {
+                                    let path = engine.createPath(for: line.points)
+                                    context.stroke(path, with: .color(line.color), style: StrokeStyle(lineWidth: line.lineWidth, lineCap: .round, lineJoin: .round))
+                                    lvm.addLine(points: line.points, color:line.color, lineWidth: line.lineWidth)
+                                    
+                                }
+                            }.frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .background(Color("AACGrey"))
+                                .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .local).onChanged({ value in
+                                    let newPoint = value.location
+                                    if value.translation.width + value.translation.height == 0 {
+                                        lines.append(Line(points: [newPoint], color: selectedColor, lineWidth: selectedLineWidth))
+                                    } else {
+                                        let index = lines.count - 1
+                                        lines[index].points.append(newPoint)
+                                    }
+                                    
+                                }).onEnded({ value in
+                                    if let last = lines.last?.points, last.isEmpty {
+                                        lines.removeLast()
+                                    }
+                                }))
+                                .padding()
+                        } // end of Zstack
+                        HStack {
+                            Button {
+                                deletedAllLines = false
+                                let last = lines.removeLast()
+                                deletedLines.append(last)
+                            } label: {
+                                ZStack{
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .frame(width: 60, height: 60)
+                                        .foregroundColor(.black)
+                                    Ellipse()
+                                        .frame(width: 50, height: 50)
+                                        .foregroundColor(.white)
+                                    Image(systemName: "arrow.uturn.backward.circle.fill")
+                                        .resizable()
+                                        .frame(width: 60, height: 60)
+                                        .foregroundColor(.black)
+                                }
+                                
+                            }.disabled(lines.count == 0)
+                                .padding(5)
+                            
+                            Button {
+                                if deletedAllLines {
+                                    lines = deletedLines
+                                    deletedLines = [Line]()
+                                    deletedAllLines = false
                                 } else {
-                                    let index = lines.count - 1
-                                    lines[index].points.append(newPoint)
+                                    let last = deletedLines.removeLast()
+                                    
+                                    lines.append(last)
+                                }
+                            } label: {
+                                ZStack{
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .frame(width: 60, height: 60)
+                                        .foregroundColor(.black)
+                                    Ellipse()
+                                        .frame(width: 50, height: 50)
+                                        .foregroundColor(.white)
+                                    Image(systemName: "arrow.uturn.forward.circle.fill")
+                                        .resizable()
+                                        .frame(width: 60, height: 60)
+                                        .foregroundColor(.black)
+                                }
+                            }.disabled(deletedLines.count == 0)
+                                .padding(5)
+                            
+                            // remove all lines button
+                            Button {
+                                deletedLines = lines
+                                lines = [Line]()
+                                deletedAllLines = true
+                            } label: {
+                                ZStack{
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .frame(width: 60, height: 60)
+                                        .foregroundColor(.black)
+                                    Ellipse()
+                                        .frame(width: 50, height: 50)
+                                        .foregroundColor(.white)
+                                    Image(systemName: "arrow.counterclockwise.circle.fill")
+                                        .resizable()
+                                        .frame(width: 60, height: 60)
+                                        .foregroundColor(.black)
                                 }
                                 
-                            }).onEnded({ value in
-                                if let last = lines.last?.points, last.isEmpty {
-                                    lines.removeLast()
+                            }.disabled(lines.count == 0)
+                                .padding(5)
+                            
+                            // revised remove picture button
+                            Button {
+                                inputImage = nil
+                                whiteboardImageViewModel.saveImage(nil)
+                            } label: {
+                                ZStack{
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .frame(width: 60, height: 60)
+                                        .foregroundColor(.black)
+                                    Ellipse()
+                                        .frame(width: 50, height: 50)
+                                        .foregroundColor(.white)
+                                    Image(systemName: "rectangle.on.rectangle.slash.circle.fill")
+                                        .resizable()
+                                        .frame(width: 60, height: 60)
+                                        .foregroundColor(.black)
                                 }
-                            }))
-                            .padding()
-                    } // end of Zstack
-                    HStack {
-                        Button {
-                            let last = lines.removeLast()
-                            deletedLines.append(last)
-                        } label: {
-                            ZStack{
-                                RoundedRectangle(cornerRadius: 10)
-                                    .frame(width: 60, height: 60)
-                                    .foregroundColor(.black)
-                                Ellipse()
-                                    .frame(width: 50, height: 50)
-                                    .foregroundColor(.white)
-                                Image(systemName: "arrow.uturn.backward.circle.fill")
-                                    .resizable()
-                                    .frame(width: 60, height: 60)
-                                    .foregroundColor(.black)
-                            }
+                            }.padding(5)
                             
-                        }.disabled(lines.count == 0)
-                            .padding(5)
-                        
-                        Button {
-                            let last = deletedLines.removeLast()
-                            
-                            lines.append(last)
-                        } label: {
-                            ZStack{
-                                RoundedRectangle(cornerRadius: 10)
-                                    .frame(width: 60, height: 60)
-                                    .foregroundColor(.black)
-                                Ellipse()
-                                    .frame(width: 50, height: 50)
-                                    .foregroundColor(.white)
-                                Image(systemName: "arrow.uturn.forward.circle.fill")
-                                    .resizable()
-                                    .frame(width: 60, height: 60)
-                                    .foregroundColor(.black)
+                            Button(action: {
+                                showConfirmation = true
+                            }) {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .frame(width: 60, height: 60)
+                                        .foregroundColor(.black)
+                                    Ellipse()
+                                        .frame(width: 50, height: 50)
+                                        .foregroundColor(.white)
+                                    Image(systemName: "trash.circle.fill")
+                                        .resizable()
+                                        .frame(width: 60, height: 60)
+                                        .foregroundColor(.black)
+                                }
                             }
-                        }.disabled(deletedLines.count == 0)
-                            .padding(5)
-                        
-                        Button(action: {
-                            showConfirmation = true
-                        }) {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 10)
-                                    .frame(width: 60, height: 60)
-                                    .foregroundColor(.black)
-                                Ellipse()
-                                    .frame(width: 50, height: 50)
-                                    .foregroundColor(.white)
-                                Image(systemName: "trash.circle.fill")
-                                    .resizable()
-                                    .frame(width: 60, height: 60)
-                                    .foregroundColor(.black)
-                            }
-                        }
-                        Spacer()
-                            .foregroundColor(.red)
-                            .alert(isPresented: $showConfirmation) {
-                                Alert(
-                                    title: Text("Are you sure you want to delete everything?"),
-                                    message: Text("There is no undo"),
-                                    primaryButton: .destructive(Text("Delete")) {
-                                        lines = [Line]()
-                                        deletedLines = [Line]()
-                                        inputImage = nil
-                                        whiteboardImageViewModel.saveImage(nil)
-                                    },
-                                    secondaryButton: .cancel()
-                                )
-                            }
-                            .padding(10)
-                        ColorPicker("line color", selection: $selectedColor)
-                            .labelsHidden()
-                        Slider(value: $selectedLineWidth, in: 1...20) {
-                            Text("linewidth")
-                        }.frame(maxWidth: 300)
-                        Text(String(format: "%.0f", selectedLineWidth))
-                    }.padding()
-                }
-                VStack(spacing: 30) {
-                    PhotoUploadView.ButtonWithIcon(systemName: "camera.fill", galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData)
-                    PhotoUploadView.ButtonWithIcon(systemName: "photo", galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData)
-                    Button(action: {
-                        inputImage = nil
-                        whiteboardImageViewModel.saveImage(nil)
-                    }) {
-                        Image(systemName: "rectangle.portrait.on.rectangle.portrait.slash")
-                            .resizable()
-                            .frame(width: 65, height: 55)
-                            .foregroundColor(.black)
-                            .padding(20)
+                            Spacer()
+                                .foregroundColor(.red)
+                                .alert(isPresented: $showConfirmation) {
+                                    Alert(
+                                        title: Text("Are you sure you want to delete everything?"),
+                                        message: Text("There is no undo."),
+                                        primaryButton: .destructive(Text("Delete")) {
+                                            lines = [Line]()
+                                            deletedLines = [Line]()
+                                            inputImage = nil
+                                            whiteboardImageViewModel.saveImage(nil)
+                                        },
+                                        secondaryButton: .cancel()
+                                    )
+                                }
+                                .padding(10)
+                            ColorPicker("line color", selection: $selectedColor)
+                                .labelsHidden()
+                            Slider(value: $selectedLineWidth, in: 1...20) {
+                                Text("linewidth")
+                            }.frame(maxWidth: 300)
+                            Text(String(format: "%.0f", selectedLineWidth))
+                        }.padding()
                     }
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.black, lineWidth: 2)
-                            .shadow(color: Color.black, radius: false ? 15 : 25, x: 0, y: 20)
-                    )
-                    .background(Color("AACBlue"))
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .padding(.vertical, 15)
-                    .padding(.horizontal)
-                    
+                    VStack(spacing: 30) {
+                        PhotoUploadView.ButtonWithIcon(systemName: "camera.fill", galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData)
+                        PhotoUploadView.ButtonWithIcon(systemName: "photo", galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData)
+                        Button(action: {
+                            withAnimation {
+                                showFolder.toggle()
+                            }
+                        }) {
+                            Image(systemName: "folder")
+                                .resizable()
+                                .frame(width: 65, height: 55)
+                                .foregroundColor(.black)
+                                .padding(20)
+                        }
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color.black, lineWidth: 2)
+                                .shadow(color: Color.black, radius: false ? 15 : 25, x: 0, y: 20)
+                        )
+                        .background(Color("AACBlue"))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .padding(.vertical, 15)
+                        .padding(.horizontal)
+                        .transition(.move(edge: .bottom))
+                        .animation(.easeInOut)
+                    }
+                    .padding()
+                    .navigationBarHidden(true)
                 }
-                .padding()
-                .navigationBarHidden(true)
+                .padding(20)
+            } // vstack
+            .onAppear {
+                if let loadedImage = whiteboardImageViewModel.loadImage() {
+                    inputImage = loadedImage
+                }
+                return
             }
-            .padding(20)
-        } // vstack
-        .onAppear {
-            if let loadedImage = whiteboardImageViewModel.loadImage() {
-                inputImage = loadedImage
+            
+            // folder pop-up
+            ZStack {
+                if showFolder {
+                    // Semi-transparent background to cover the main view
+                    Color.black.opacity(0.15)
+                        .edgesIgnoringSafeArea(.all)
+                        .onTapGesture {
+                            // Hide the overlay if the background is tapped
+                            showFolder.toggle()
+                        }
+
+                    // Popup content with chevron at the top-left corner
+                    ZStack(alignment: .topLeading) {
+                        // Main popup content
+                        VStack {
+                            Text("Saved Drawings")
+                                .font(.system(size: 40))
+                                .padding()
+                        }
+                        .frame(width: 1000, height: 750)
+                        .background(Color.white)
+                        .cornerRadius(20)
+                        .shadow(radius: 20)
+                        .transition(.move(edge: .bottom))
+                        .animation(.easeInOut)
+
+                        // Chevron in the top-right corner
+                        Image(systemName: "x.circle")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 35, height: 35)
+                            .padding(25) // Add padding to move it away from the edge
+                            .onTapGesture {
+                                // You can also toggle the overlay by tapping the chevron
+                                withAnimation {
+                                    showFolder.toggle()
+                                }
+                            }
+                    }
+                    .frame(width: 1000, height: 750)
+                    .transition(.move(edge: .bottom))
+                    .animation(.easeInOut)
+                }
             }
-            return
-        }
-    } //body view
+        } //body view
+    }
 } // white board struct
+
+struct WhiteBoardTile: View {
+    let labelText: String
+    let image: String
+    var available: Bool = true
+    var imageColor: String = "AACBlack"
+    var body: some View {
+        VStack{}
+       .frame(width: 160,height: 160)
+       .padding()
+       .accentColor(Color.black)
+       .cornerRadius(10.0)
+       .background(Color("AACGrey"))
+       .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 2))
+       .overlay {
+           VStack{
+           Spacer()
+               .frame(height: 10)
+               
+               if(available) {
+                   HStack {
+                       Spacer()
+                           .frame(width: 135)
+                       Image(systemName: "chevron.right.circle")
+                           .resizable()
+                           .aspectRatio(contentMode: .fit)
+                           .frame(width: 25, height: 25)
+                   }
+               }
+               
+               Spacer()
+                   .frame(height: 5)
+               
+               Image(systemName: image)
+                   .resizable()
+                   .aspectRatio(contentMode: .fit)
+                   .frame(width: 75, height: 75)
+                   .foregroundColor(Color(imageColor))
+
+               
+               Spacer()
+                   .frame(height: 10)
+    
+               
+               Text(labelText)
+                   .font(.system(size: 26))
+                   .multilineTextAlignment(.leading)
+                   .padding(.horizontal)
+               
+               Spacer()
+                   .frame(height: 10)
+           }
+           
+       }
+       
+    }
+}
 
 struct WhiteBoard_Previews: PreviewProvider {
     static var previews: some View {

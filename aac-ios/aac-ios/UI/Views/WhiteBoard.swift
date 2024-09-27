@@ -24,6 +24,7 @@ struct WhiteBoard: View {
     @State private var selectedColor: Color = .black
     @State private var selectedLineWidth: CGFloat = 1
     @State private var showConfirmation: Bool = false
+    @State private var showSaveConfirm: Bool = false
     @State var galleryClicked = false
     @State var cameraClicked = false
     @State var inputImage: UIImage? = nil
@@ -31,6 +32,9 @@ struct WhiteBoard: View {
     @StateObject private var viewState = ViewStateData()
     @State var deletedAllLines = false
     @State private var showFolder = false
+    @State var savedDrawingNames: [String] = [] // list of all saved drawings
+    @State var currentImageName: String = "" // name to save current drawing
+
     
     
     let engine = DrawingEngine()
@@ -41,8 +45,10 @@ struct WhiteBoard: View {
                 HStack{
                     VStack {
                         ZStack {
+                            // button to add photo
                             PhotoUploadView(galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData, inputImage: $inputImage, screen: "whiteboard")
                             
+                            // code for actual whiteboard
                             Canvas { context, size in
                                 
                                 //                            for oldLine in lvm.fetchLines() {
@@ -75,7 +81,9 @@ struct WhiteBoard: View {
                                 .padding()
                         } // end of Zstack
                         
+                        // horizontal row of black buttons
                         HStack {
+                            // undo button
                             Button {
                                 deletedAllLines = false
                                 let last = lines.removeLast()
@@ -97,6 +105,7 @@ struct WhiteBoard: View {
                             }.disabled(lines.count == 0)
                                 .padding(5)
                             
+                            // redo button
                             Button {
                                 if deletedAllLines {
                                     lines = deletedLines
@@ -145,7 +154,7 @@ struct WhiteBoard: View {
                             }.disabled(lines.count == 0)
                                 .padding(5)
                             
-                            // revised remove picture button
+                            // remove picture button
                             Button {
                                 inputImage = nil
                                 whiteboardImageViewModel.saveImage(nil)
@@ -164,6 +173,7 @@ struct WhiteBoard: View {
                                 }
                             }.padding(5)
                             
+                            // trash button (clear drawing and lines)
                             Button(action: {
                                 showConfirmation = true
                             }) {
@@ -180,7 +190,6 @@ struct WhiteBoard: View {
                                         .foregroundColor(.black)
                                 }
                             }
-                            Spacer()
                                 .foregroundColor(.red)
                                 .alert(isPresented: $showConfirmation) {
                                     Alert(
@@ -195,7 +204,42 @@ struct WhiteBoard: View {
                                         secondaryButton: .cancel()
                                     )
                                 }
-                                .padding(10)
+                                .padding(5)
+                            
+                            // save image button
+                            Button {
+                                showSaveConfirm = true
+                            } label: {
+                                ZStack{
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .frame(width: 60, height: 60)
+                                        .foregroundColor(.black)
+                                    Ellipse()
+                                        .frame(width: 50, height: 50)
+                                        .foregroundColor(.white)
+                                    Image(systemName: "arrow.down.to.line.circle.fill")
+                                        .resizable()
+                                        .frame(width: 60, height: 60)
+                                        .foregroundColor(.black)
+                                }
+                            }
+                                .foregroundColor(.red)
+                                .alert("Enter the name of your drawing.", isPresented: $showSaveConfirm) {
+                                    TextField("drawing name", text: $currentImageName)
+                                    // replace action with real save functionality
+                                    Button("Save", action: {
+                                        whiteboardImageViewModel.saveImage(nil)
+                                        savedDrawingNames.append(currentImageName)
+                                        } )
+                                    Button("Cancel", role: .cancel) {}
+                                }
+                                .padding(5)
+                            
+                            // push color picker to right
+                            Spacer()
+                            Spacer()
+                            
+                            // color picker and slider
                             ColorPicker("line color", selection: $selectedColor)
                                 .labelsHidden()
                             Slider(value: $selectedLineWidth, in: 1...20) {
@@ -203,10 +247,13 @@ struct WhiteBoard: View {
                             }.frame(maxWidth: 300)
                             Text(String(format: "%.0f", selectedLineWidth))
                         }.padding()
-                    }
+                    } // end of H-Stack
+                    
+                    // vertical column of blue buttons
                     VStack(spacing: 30) {
                         PhotoUploadView.ButtonWithIcon(systemName: "camera.fill", galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData)
                         PhotoUploadView.ButtonWithIcon(systemName: "photo", galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData)
+                        // saved drawings button that triggers pop-up
                         Button(action: {
                             withAnimation {
                                 showFolder.toggle()
@@ -234,16 +281,16 @@ struct WhiteBoard: View {
                     .navigationBarHidden(true)
                 }
                 .padding(20)
-            }.onAppear {
+            }.onAppear { // refreshing in case image added
                 if let loadedImage = whiteboardImageViewModel.loadImage() {
                     inputImage = loadedImage
                 }
                 return
-            }// vstack
+            }// end of v stack
             
-            // Folder pop-up (only show when showFolder is true)
+            // saved drawings pop-up (only show when showFolder is true)
             if showFolder {
-                ZStack {
+                ZStack { // outer z stack for entire sheet and grey background
                     Color.black.opacity(0.15)
                         .edgesIgnoringSafeArea(.all)
                         .onTapGesture {
@@ -253,13 +300,22 @@ struct WhiteBoard: View {
                             }
                         }
 
-                    ZStack(alignment: .topLeading) {
+                    ZStack(alignment: .topLeading) { // inner zstack for drawings area
                         // Main popup content
                         VStack {
                             Text("Saved Drawings")
                                 .font(.system(size: 40))
                                 .padding()
-                        }
+                            
+                            ScrollView {
+                                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 20), count: 4), spacing: 60) {
+                                    // Create a button for each category
+                                    ForEach(savedDrawingNames, id: \.self) { name in
+                                        WhiteBoardTile(labelText: name)
+                                    }
+                                }
+                                .padding()
+                            }                        }
                         .frame(width: 1000, height: 750)
                         .background(Color.white)
                         .cornerRadius(20)
@@ -279,17 +335,18 @@ struct WhiteBoard: View {
                     }
                     .frame(width: 1000, height: 750)
                 }
-                .transition(.move(edge: .bottom)) // Apply the transition to the entire ZStack
+                .transition(.move(edge: .bottom)) // Apply the transition to the inner z stack
                 .animation(.easeInOut)
-            }
-        } //body view
-    }
+            } // end of outer z stack
+        } // end of entire z stack for the whole view
+    } //body view
 } // white board struct
 
+// tile for saved drawing
 struct WhiteBoardTile: View {
     let labelText: String
-    let image: String
-    var available: Bool = true
+    let image: String = "photo.artframe" // should be replaced with preview of image
+    var available: Bool = false
     var imageColor: String = "AACBlack"
     var body: some View {
         VStack{}
@@ -318,6 +375,7 @@ struct WhiteBoardTile: View {
                Spacer()
                    .frame(height: 5)
                
+               // currently using logos as placeholder; must be replaced with preview of drawing
                Image(systemName: image)
                    .resizable()
                    .aspectRatio(contentMode: .fit)

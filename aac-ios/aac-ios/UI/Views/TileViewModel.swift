@@ -13,6 +13,7 @@ class TileViewModel: ObservableObject {
     
     let container: NSPersistentContainer
     @Published var tiles: [Tile] = []
+    @Published var droppedTiles: [Tile] = []
     @Published var currentFolder: Tile? = nil
     
     init() {

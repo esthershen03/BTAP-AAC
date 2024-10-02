@@ -8,27 +8,67 @@
 import SwiftUI
 
 struct GridTileStyle: ButtonStyle {
+    let tileType: String
+    let onRemove: () -> Void
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 6)
-                .foregroundColor(.gray)
+            RoundedRectangle(cornerRadius: 10)
+                .foregroundColor(Color("AACGrey"))
                 .offset(y: 3)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.black, lineWidth: 1)
+                )
             
-            RoundedRectangle(cornerRadius: 6)
-                .foregroundColor(Color("CustomGray"))
+            RoundedRectangle(cornerRadius: 10)
+                .foregroundColor(Color("AACGrey"))
                 .offset(y: configuration.isPressed ? 3 : 0)
-            
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.black, lineWidth: 1)
+                )
+            if (tileType == "Folder") {
+                VStack {
+                    HStack {
+                        Spacer()
+                        Image(systemName: "chevron.right.circle")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 20, height: 20)
+                            .padding([.top, .trailing], 6)
+                    }
+                    Spacer()
+                }
+            } else if (tileType == "DroppedTile") {
+                VStack {
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            onRemove()
+                        }) {
+                            Image(systemName: "xmark.circle")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 20, height: 20)
+                                .padding([.top, .trailing], 6)
+                                .foregroundColor(.black)
+                        }
+                    }
+                    Spacer()
+                }
+            }
             configuration.label
                 .offset(y: configuration.isPressed ? 3 : 0)
         }
         .compositingGroup()
-        .shadow(radius: 6, y: 2)
     }
 }
 
 struct GridTile: View {
     let labelText: String
     let image: Image
+    let tileType: String
+    let onRemove: () -> Void
     let onClick: () -> Void
     
     var body: some View {
@@ -37,13 +77,12 @@ struct GridTile: View {
                image
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: 55, height: 55)
+                    .frame(width: 90, height: 90)
                     .clipShape(RoundedRectangle(cornerRadius: 6))
                     .overlay {
                         RoundedRectangle(cornerRadius: 6)
                           .stroke(.white, lineWidth: 3)
                     }
-                    .shadow(radius: 6, y: 2)
                     
                 
                 Text(labelText)
@@ -51,8 +90,9 @@ struct GridTile: View {
             }
             
         }
-        .frame(width:100,height:100)
-        .buttonStyle(GridTileStyle())
+        .frame(width:150,height:150)
+        .buttonStyle(GridTileStyle(tileType: tileType, onRemove: onRemove))
+        .padding(20)
     }
 }
 

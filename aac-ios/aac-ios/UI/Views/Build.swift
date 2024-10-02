@@ -16,56 +16,121 @@ struct Build: View {
     @State private var addShowing = false //hides the add button
 
     private let adaptiveColumns = [
-        GridItem(.adaptive(minimum: 100))
+        GridItem(.adaptive(minimum: 170))
     ]
     
     var body: some View {
         VStack() {
+            if (vm.currentFolder?.parent != nil) {
+                HStack {
+                    // back button
+                    Button(action: {
+                        if let currentFolder = vm.currentFolder?.parent {
+                            vm.currentFolder = currentFolder
+                            vm.fetchTiles(parent: vm.currentFolder!)
+                        }
+                    }) {
+                        HStack {
+                            Image(systemName: "chevron.left.circle")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 25, height: 25)
+                                .padding([.top, .leading], 16)
+                        }
+                        .foregroundColor(.black)
+                    }
+                    Spacer()
+                }
+            }
             if (!vm.tiles.isEmpty) {
                 ScrollView(.vertical) {
                     LazyVGrid(columns: adaptiveColumns, content: {
                         ForEach(vm.tiles) { tile in // get the tile that is the current folder (default: main)
-                            GridTile(labelText: tile.name ?? "none", image: getImageFromImagePath(tile.imagePath ?? "") ?? Image(systemName: "questionmark.app"),
+                            GridTile(labelText: tile.name ?? "none", image: getImageFromImagePath(tile.imagePath ?? "") ?? Image(systemName: "questionmark.app"), tileType: tile.type ?? "", onRemove: {},
                                      onClick: {
-                                        if (tile.type == "Folder") {
-                                            vm.currentFolder = tile
-                                            vm.fetchTiles(parent: vm.currentFolder!)
-                                        }
-                                })
-                                .onDrag {
-                                    self.draggingItem = tile
-                                    return NSItemProvider()
+                                if (tile.type == "Folder") {
+                                    vm.currentFolder = tile
+                                    vm.fetchTiles(parent: vm.currentFolder!)
                                 }
-                                .onDrop(of: [.text], delegate: DropViewDelegate(destinationItem: tile, data: $vm.tiles, draggedItem: $draggingItem))
-                                .contextMenu {
-                                    Button(action: {
-                                        vm.deleteTile(tile: tile, parent: vm.currentFolder!)
-                                    }) {
-                                        Text("Delete")
-                                        Image(systemName: "trash")
-                                    }
+                            })
+                            .onDrag {
+                                self.draggingItem = tile
+                                return NSItemProvider()
+                            }
+                            .onDrop(of: [.text], delegate: DropViewDelegate(destinationItem: tile, data: $vm.tiles, draggedItem: $draggingItem, droppedTiles: $vm.droppedTiles))
+                            .contextMenu {
+                                Button(action: {
+                                    vm.deleteTile(tile: tile, parent: vm.currentFolder!)
+                                }) {
+                                    Text("Delete")
+                                    Image(systemName: "trash")
                                 }
+                            }
                         }
                     })
                 }
-                .padding()
+                .padding(.top, vm.currentFolder?.parent == nil ? 16 : 0)
+                .padding([.leading, .trailing, .bottom], 16)
             } else {
                 Text("No tiles to display.")
                     .font(.title)
                     .padding() //if there are no tiles to display, show that message
             }
-            Button(action: { addShowing.toggle()}) { //button to add a new tile
-                Text("Add New Tile")
-                    .padding()
-                    .background(Color("AACBlueDark"))
-                    .font(.title)
-                    .foregroundColor(.black)
-                    .cornerRadius(10)
-                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color(.black), lineWidth: 2))
+            HStack {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 10)
+                        .foregroundColor(Color("AACBlue"))
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 170)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color.black, lineWidth: 1)
+                        )
+                        .padding(.vertical, 16)
+                        .onDrop(of: [.text], delegate: DropViewDelegate(destinationItem: Tile(), data: $vm.tiles, draggedItem: $draggingItem, droppedTiles: $vm.droppedTiles))
+                    Spacer()
+                    HStack {
+                        ForEach(vm.droppedTiles.indices, id: \.self) { index in // Use indices to get the index for removal
+                                GridTile(
+                                    labelText: vm.droppedTiles[index].name ?? "none",
+                                    image: getImageFromImagePath(vm.droppedTiles[index].imagePath ?? "") ?? Image(systemName: "questionmark.app"),
+                                    tileType: "DroppedTile",
+                                    onRemove: {
+                                        vm.droppedTiles.remove(at: index)
+                                    },
+                                    onClick: {}
+                                )
+                            .frame(width: 100, height: 100) // Adjust size if needed
+                        }
+                        .padding(.horizontal, 30)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .center)
+                }
+                .padding(.trailing, 40)
+                Button(action: { addShowing.toggle()}) { //button to add a new tile
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 10)
+                            .foregroundColor(Color("AACBlue"))
+                            .frame(width: 170, height: 170)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(Color.black, lineWidth: 1)
+                            )
+//                            .padding(.horizontal, 40)
+                            .padding(.vertical, 16)
+                        
+                        Image(systemName: "pencil")
+                            .resizable()
+                            .foregroundColor(.black)
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 80, height: 80)
+                    }
+                }
+                .sheet(isPresented: $addShowing) {
+                    BuildPopupView(visible: $addShowing, vm: vm, currentFolder: vm.currentFolder!)
+                }
             }
-            .sheet(isPresented: $addShowing) {
-                BuildPopupView(visible: $addShowing, vm: vm, currentFolder: vm.currentFolder!)
-            }
+            .padding(.horizontal, 40)
         }
         .navigationBarHidden(true)
     }
@@ -104,14 +169,21 @@ struct DropViewDelegate: DropDelegate {
     var destinationItem: Tile
     @Binding var data: [Tile]
     @Binding var draggedItem: Tile?
+    @Binding var droppedTiles: [Tile]
     
     func dropUpdated(info: DropInfo) -> DropProposal? {
         return DropProposal(operation: .move)
     }
     
     func performDrop(info: DropInfo) -> Bool {
-        draggedItem = nil
-        return true
+        if let draggedItem = draggedItem {
+            if droppedTiles.count < 4 {
+                droppedTiles.append(draggedItem)
+                self.draggedItem = nil
+                return true
+            }
+        }
+        return false
     }
     
     func dropEntered(info: DropInfo) {
@@ -263,7 +335,7 @@ struct TilePreview: View {
                 .cornerRadius(8)
         }
         .padding(5)
-        .background(Color("CustomGray"))
+        .background(Color("AACGrey"))
         .cornerRadius(12)
     }
 }

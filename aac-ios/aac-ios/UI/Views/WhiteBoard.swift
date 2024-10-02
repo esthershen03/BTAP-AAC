@@ -217,12 +217,15 @@ struct WhiteBoard: View {
                                     Ellipse()
                                         .frame(width: 50, height: 50)
                                         .foregroundColor(.white)
+
                                     Image(systemName: "arrow.down.to.line.circle.fill")
+
                                         .resizable()
                                         .frame(width: 60, height: 60)
                                         .foregroundColor(.black)
                                 }
                             }
+
                                 .foregroundColor(.red)
                                 .alert("Enter the name of your drawing.", isPresented: $showSaveConfirm) {
                                     TextField("drawing name", text: $currentImageName)
@@ -240,6 +243,7 @@ struct WhiteBoard: View {
                             Spacer()
                             
                             // color picker and slider
+
                             ColorPicker("line color", selection: $selectedColor)
                                 .labelsHidden()
                             Slider(value: $selectedLineWidth, in: 1...20) {
@@ -247,6 +251,7 @@ struct WhiteBoard: View {
                             }.frame(maxWidth: 300)
                             Text(String(format: "%.0f", selectedLineWidth))
                         }.padding()
+
                     } // end of H-Stack
                     
                     // vertical column of blue buttons
@@ -254,6 +259,7 @@ struct WhiteBoard: View {
                         PhotoUploadView.ButtonWithIcon(systemName: "camera.fill", galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData)
                         PhotoUploadView.ButtonWithIcon(systemName: "photo", galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData)
                         // saved drawings button that triggers pop-up
+
                         Button(action: {
                             withAnimation {
                                 showFolder.toggle()
@@ -279,6 +285,7 @@ struct WhiteBoard: View {
                     }
                     .padding()
                     .navigationBarHidden(true)
+
                 }
                 .padding(20)
             }.onAppear { // refreshing in case image added
@@ -291,6 +298,7 @@ struct WhiteBoard: View {
             // saved drawings pop-up (only show when showFolder is true)
             if showFolder {
                 ZStack { // outer z stack for entire sheet and grey background
+
                     Color.black.opacity(0.15)
                         .edgesIgnoringSafeArea(.all)
                         .onTapGesture {
@@ -300,12 +308,15 @@ struct WhiteBoard: View {
                             }
                         }
 
+
                     ZStack(alignment: .topLeading) { // inner zstack for drawings area
+
                         // Main popup content
                         VStack {
                             Text("Saved Drawings")
                                 .font(.system(size: 40))
                                 .padding()
+
                             
                             ScrollView {
                                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 20), count: 4), spacing: 60) {
@@ -316,6 +327,7 @@ struct WhiteBoard: View {
                                 }
                                 .padding()
                             }                        }
+
                         .frame(width: 1000, height: 750)
                         .background(Color.white)
                         .cornerRadius(20)
@@ -335,6 +347,7 @@ struct WhiteBoard: View {
                     }
                     .frame(width: 1000, height: 750)
                 }
+
                 .transition(.move(edge: .bottom)) // Apply the transition to the inner z stack
                 .animation(.easeInOut)
             } // end of outer z stack
@@ -375,7 +388,9 @@ struct WhiteBoardTile: View {
                Spacer()
                    .frame(height: 5)
                
+
                // currently using logos as placeholder; must be replaced with preview of drawing
+
                Image(systemName: image)
                    .resizable()
                    .aspectRatio(contentMode: .fit)

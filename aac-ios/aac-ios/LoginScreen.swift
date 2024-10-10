@@ -204,6 +204,7 @@ struct LoginScreen: View {
             }
         }
     }
+    
 }
 
 struct Login_Previews: PreviewProvider {

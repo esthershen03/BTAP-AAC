@@ -95,6 +95,7 @@
 		821CD4412BCF315E007D45EF /* AAC Core Data.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "AAC Core Data.xcdatamodel"; sourceTree = "<group>"; };
 		82653FB22BA3AAE80089F1AD /* TileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileViewModel.swift; sourceTree = "<group>"; };
 		8D8726482CB76F1600EFD01F /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		8D87264A2CB7766000EFD01F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8E09CD9A2AE15B3300239660 /* GridTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridTile.swift; sourceTree = "<group>"; };
 		8E0EC37C2ACDD1D30019F3B4 /* SceneDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDisplay.swift; sourceTree = "<group>"; };
 		8E0EC37E2ACDD2170019F3B4 /* WhiteBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteBoard.swift; sourceTree = "<group>"; };
@@ -194,6 +195,7 @@
 		8E3422A72A990C8B000A3055 /* aac-ios */ = {
 			isa = PBXGroup;
 			children = (
+				8D87264A2CB7766000EFD01F /* Info.plist */,
 				8D8726482CB76F1600EFD01F /* GoogleService-Info.plist */,
 				821CD4402BCF315E007D45EF /* AAC Core Data.xcdatamodeld */,
 				3F219AE12BBF040500FF0441 /* LineViewModel.swift */,
@@ -735,6 +737,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"aac-ios/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "aac-ios/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -765,6 +768,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"aac-ios/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "aac-ios/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

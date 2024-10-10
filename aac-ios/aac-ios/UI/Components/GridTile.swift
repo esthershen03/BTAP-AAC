@@ -19,6 +19,7 @@ struct GridTileStyle: ButtonStyle {
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(Color.black, lineWidth: 1)
                 )
+                .frame(width: 190, height: 190)
             
             RoundedRectangle(cornerRadius: 10)
                 .foregroundColor(Color("AACGrey"))
@@ -27,19 +28,21 @@ struct GridTileStyle: ButtonStyle {
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(Color.black, lineWidth: 1)
                 )
+                .frame(width: 190, height: 190)
             if (tileType == "Folder") {
-                VStack {
+                VStack{
                     HStack {
                         Spacer()
                         Image(systemName: "chevron.right.circle")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(width: 20, height: 20)
-                            .padding([.top, .trailing], 6)
+                            .frame(width: 25, height: 25)
+                            .padding([.top, .trailing], 15)
                     }
                     Spacer()
                 }
-            } else if (tileType == "DroppedTile") {
+            }
+            if (tileType == "DroppedTile") {
                 VStack {
                     HStack {
                         Spacer()
@@ -74,23 +77,29 @@ struct GridTile: View {
     var body: some View {
         Button(action: onClick) {
             VStack {
+                Spacer()
+                    .frame(height: 15)
                image
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: 90, height: 90)
+                    .frame(width: 75, height: 75)
                     .clipShape(RoundedRectangle(cornerRadius: 6))
                     .overlay {
                         RoundedRectangle(cornerRadius: 6)
                           .stroke(.white, lineWidth: 3)
                     }
-                    
+                Spacer()
+                    .frame(height: 10)
                 
                 Text(labelText)
-                    .fixedSize(horizontal: false, vertical: true)
+                    .font(.system(size: 32))
+                    .multilineTextAlignment(.leading)
+                Spacer()
+                    .frame(height: 10)
             }
             
         }
-        .frame(width:150,height:150)
+        .frame(width:190,height:190)
         .buttonStyle(GridTileStyle(tileType: tileType, onRemove: onRemove))
         .padding(20)
     }

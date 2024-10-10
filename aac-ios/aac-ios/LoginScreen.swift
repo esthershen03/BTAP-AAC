@@ -18,7 +18,7 @@ import AuthenticationServices
 import Firebase
 
 struct LoginScreen: View {
-    @State private var emailAddress = " "
+    @State private var emailAddress = ""
     @State private var username = ""
     @State private var password = ""
     @State private var wrongUsername: Float = 0
@@ -184,12 +184,23 @@ struct LoginScreen: View {
             }
         }
     
-    func Login(){
+    func Login() {
+        // Check if fields are empty
+        guard !emailAddress.trimmingCharacters(in: .whitespaces).isEmpty,
+              !password.isEmpty else {
+            // Handle empty fields, e.g., show an alert or change the UI
+            print("Email or Password cannot be empty.")
+            return
+        }
+
         Auth.auth().signIn(withEmail: emailAddress, password: password) { result, error in
-            if error != nil {
-                print("Error")
+            if let error = error {
+                // Handle the error (e.g., show an alert)
+                print("Login failed: \(error.localizedDescription)")
             } else {
+                // Successfully logged in
                 showingMainScreen = true
+                print("Login successful!")
             }
         }
     }

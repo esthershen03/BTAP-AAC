@@ -24,9 +24,9 @@
 		68EA44462ACE09F2008C3C69 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 68EA44452ACE09F2008C3C69 /* Images.xcassets */; };
 		821CD4422BCF315E007D45EF /* AAC Core Data.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 821CD4402BCF315E007D45EF /* AAC Core Data.xcdatamodeld */; };
 		82653FB32BA3AAE80089F1AD /* TileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82653FB22BA3AAE80089F1AD /* TileViewModel.swift */; };
-		82DA4FA92B845DC6005BFFB7 /* BuildFile in Sources */ = {isa = PBXBuildFile; };
+		82DA4FA92B845DC6005BFFB7 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		8359D8B544BE2C168B176022 /* Pods_aac_ios_aac_iosUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E8DB64A7222714EA01985A7 /* Pods_aac_ios_aac_iosUITests.framework */; };
-		8D62C0932CB75E8F00F83453 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8D62C0922CB75E8F00F83453 /* GoogleService-Info.plist */; };
+		8D8726492CB76F1600EFD01F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8D8726482CB76F1600EFD01F /* GoogleService-Info.plist */; };
 		8E09CD9B2AE15B3300239660 /* GridTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E09CD9A2AE15B3300239660 /* GridTile.swift */; };
 		8E0EC37D2ACDD1D30019F3B4 /* SceneDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0EC37C2ACDD1D30019F3B4 /* SceneDisplay.swift */; };
 		8E0EC37F2ACDD2170019F3B4 /* WhiteBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0EC37E2ACDD2170019F3B4 /* WhiteBoard.swift */; };
@@ -94,7 +94,7 @@
 		7E8DB64A7222714EA01985A7 /* Pods_aac_ios_aac_iosUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_aac_ios_aac_iosUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		821CD4412BCF315E007D45EF /* AAC Core Data.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "AAC Core Data.xcdatamodel"; sourceTree = "<group>"; };
 		82653FB22BA3AAE80089F1AD /* TileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileViewModel.swift; sourceTree = "<group>"; };
-		8D62C0922CB75E8F00F83453 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		8D8726482CB76F1600EFD01F /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8E09CD9A2AE15B3300239660 /* GridTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridTile.swift; sourceTree = "<group>"; };
 		8E0EC37C2ACDD1D30019F3B4 /* SceneDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDisplay.swift; sourceTree = "<group>"; };
 		8E0EC37E2ACDD2170019F3B4 /* WhiteBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteBoard.swift; sourceTree = "<group>"; };
@@ -166,7 +166,6 @@
 				B2A9BC8276A8808DD5C3E8CF /* Pods-aac-iosTests.debug.xcconfig */,
 				78FAD3BB9F8CB2D7941A2D13 /* Pods-aac-iosTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -195,7 +194,7 @@
 		8E3422A72A990C8B000A3055 /* aac-ios */ = {
 			isa = PBXGroup;
 			children = (
-				8D62C0922CB75E8F00F83453 /* GoogleService-Info.plist */,
+				8D8726482CB76F1600EFD01F /* GoogleService-Info.plist */,
 				821CD4402BCF315E007D45EF /* AAC Core Data.xcdatamodeld */,
 				3F219AE12BBF040500FF0441 /* LineViewModel.swift */,
 				425550D82B1BCA9B00623989 /* ViewController.swift */,
@@ -410,7 +409,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				68EA44462ACE09F2008C3C69 /* Images.xcassets in Resources */,
-				8D62C0932CB75E8F00F83453 /* GoogleService-Info.plist in Resources */,
+				8D8726492CB76F1600EFD01F /* GoogleService-Info.plist in Resources */,
 				8E3422B02A990C8C000A3055 /* Preview Assets.xcassets in Resources */,
 				8E3422AD2A990C8C000A3055 /* Assets.xcassets in Resources */,
 			);
@@ -544,7 +543,7 @@
 				1228F1582B16952200F03833 /* SignupView.swift in Sources */,
 				3F39A5C12AFC186A0092BF8F /* ImagePicker.swift in Sources */,
 				DA3B55222C9489C60060C1A2 /* RatingScaleNewThree.swift in Sources */,
-				82DA4FA92B845DC6005BFFB7 /* BuildFile in Sources */,
+				82DA4FA92B845DC6005BFFB7 /* (null) in Sources */,
 				8E3422AB2A990C8B000A3055 /* MainScreen.swift in Sources */,
 				DA91A5662B9CCA0900A8C3AF /* RatingScaleNew.swift in Sources */,
 				8E09CD9B2AE15B3300239660 /* GridTile.swift in Sources */,

@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import AuthenticationServices
+import Firebase
 
 struct SignupScreen: View {
     @State private var emailaddress = ""
@@ -123,6 +124,7 @@ struct SignupScreen: View {
                         .padding()
                         
                         Button("Create Account") {
+                            register()
                             authenticateUser(username: username, password: password, email: emailaddress)
                         }
                         .foregroundColor(.black)
@@ -230,8 +232,16 @@ struct SignupScreen: View {
         if wrongPassword == 0 && wrongEmail == 0 && wrongUsername == 0 {
             showingMainScreen = true
         }
-
     }
+    
+    func register(){
+        Auth.auth().createUser(withEmail: emailaddress, password: password) { result, error in
+            if error != nil {
+                print("Success")
+            }
+        }
+    }
+    
 }
 
 struct SignUp_Previews: PreviewProvider {

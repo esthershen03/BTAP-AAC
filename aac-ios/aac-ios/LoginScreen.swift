@@ -15,8 +15,10 @@
 import Foundation
 import SwiftUI
 import AuthenticationServices
+import Firebase
 
 struct LoginScreen: View {
+    @State private var emailAddress = " "
     @State private var username = ""
     @State private var password = ""
     @State private var wrongUsername: Float = 0
@@ -83,7 +85,7 @@ struct LoginScreen: View {
                                 )
                                 .padding()
                             }
-                            TextField("Username", text: $username)
+                            TextField("Email", text: $emailAddress)
                                 .padding()
                                 .frame(width: 550, height: 50)
                                 .background(Color.black.opacity(0.05))
@@ -100,7 +102,7 @@ struct LoginScreen: View {
                         .padding()
                         
                         Button("Sign In") {
-                            authenticateUser(username: username, password: password)
+                            Login()
                         }
                         .foregroundColor(.black)
                         .frame(width: 250, height: 50)
@@ -181,6 +183,16 @@ struct LoginScreen: View {
                 wrongUsername = 2
             }
         }
+    
+    func Login(){
+        Auth.auth().signIn(withEmail: emailAddress, password: password) { result, error in
+            if error != nil {
+                print("Error")
+            } else {
+                showingMainScreen = true
+            }
+        }
+    }
 }
 
 struct Login_Previews: PreviewProvider {

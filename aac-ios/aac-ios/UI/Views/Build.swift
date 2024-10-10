@@ -134,7 +134,7 @@ struct Build: View {
                     BuildPopupView(visible: $addShowing, vm: vm, currentFolder: vm.currentFolder!)
                 }
             }
-            .padding(.horizontal, 40)
+            .padding(.horizontal, 54)
         }
         .navigationBarHidden(true)
     }

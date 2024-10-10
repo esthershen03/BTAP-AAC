@@ -19,7 +19,7 @@ struct GridTileStyle: ButtonStyle {
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(Color.black, lineWidth: 1)
                 )
-                .frame(width: 190, height: 190)
+                .frame(width: 170, height: 170)
             
             RoundedRectangle(cornerRadius: 10)
                 .foregroundColor(Color("AACGrey"))
@@ -28,7 +28,7 @@ struct GridTileStyle: ButtonStyle {
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(Color.black, lineWidth: 1)
                 )
-                .frame(width: 190, height: 190)
+                .frame(width: 170, height: 170)
             if (tileType == "Folder") {
                 VStack{
                     HStack {
@@ -78,7 +78,7 @@ struct GridTile: View {
         Button(action: onClick) {
             VStack {
                 Spacer()
-                    .frame(height: 15)
+                    .frame(height: 40)
                image
                     .resizable()
                     .aspectRatio(contentMode: .fill)
@@ -99,7 +99,7 @@ struct GridTile: View {
             }
             
         }
-        .frame(width:190,height:190)
+        .frame(width:170,height:170)
         .buttonStyle(GridTileStyle(tileType: tileType, onRemove: onRemove))
         .padding(20)
     }

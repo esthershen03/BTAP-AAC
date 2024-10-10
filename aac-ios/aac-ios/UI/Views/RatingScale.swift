@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Foundation
 
 struct RatingScale: View {
     @State private var is3levelPopoverVisible = false
@@ -17,6 +18,7 @@ struct RatingScale: View {
             Button(action: {
                 is3levelPopoverVisible.toggle()
                 selectedLevel = 3
+                saveSelectedLevel(selectedLevel: level)
             }) {
                 Text("3 levels")
                 
@@ -33,6 +35,7 @@ struct RatingScale: View {
             Button(action: {
                 is5levelPopoverVisible.toggle()
                            selectedLevel = 5
+                           saveSelectedLevel(level: selectedLevel!)
                        }) {
                            Text("5 levels")
                        }
@@ -60,9 +63,40 @@ struct RatingScale: View {
             .padding()
         }
         Spacer()
+        .onAppear {
+            selectedLevel = retrieveSelectedLevel()
+        }
         
     }
 }
+
+/* Allows for user's selected rating level to be saved 
+* @param selectedLevel: Int - the integer representing the rating scale 
+* UserDefaults is the instance that stores data
+* set saves the value and key is what it is saved as 
+* does it need to save multiple ratings???
+*/
+func saveSelectedLevel(selectedLevel: Int) {
+    UserDefaults.standard.set(selectedLevel, forKey: "savedLevel")
+}
+
+/* Allows for user's saved selected rating level to be retrieved 
+* @param selectedLevel: Int - the saved rating scale we want to get
+* let selectedLevel means the constant value
+* UserDefaults.standard.object retrieves value 
+* prints the value we foumnd
+*/
+func retrieveSelectedLevel() -> Int? {
+    if let retrievedLevel = UserDefaults.standard.object(forKey: "savedLevel") as? Int {
+        print("The saved rating level is \(selectedLevel).")
+        return retrievedLevel
+    } else {
+        print("No saved rating level found.")
+        return nil 
+    }
+}
+
+
 struct RatingPopoverView: View {
     @Binding var selectedLevel: Int?
     var body: some View {

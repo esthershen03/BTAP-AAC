@@ -7,12 +7,22 @@
 
 import Foundation
 import SwiftUI
+import Firebase
+
+// Defining the Rating model
+struct Rating {
+    var userId: String
+    var itemId: String
+    var ratingValue: Int
+    var timestamp: TimeInterval
+}
 
 struct RatingScaleActivity: View {
     @State private var selectedButton: String = "5 levels"
     @State private var numberButtons: Int = 5
     @State private var numSelected: String = "3.square"
     @State private var screenSelect: String? = nil
+    private let ref = Database.database().reference()
     
     var body: some View {
         NavigationView(){
@@ -21,7 +31,6 @@ struct RatingScaleActivity: View {
                 HStack{
                     Spacer()
                     NavigationLink(destination: RatingScaleGrid(), tag: "Rating Scale Grid", selection: $screenSelect) {
-                  
                             Image(systemName: "chevron.backward.circle").resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 45, height: 45)
@@ -38,8 +47,7 @@ struct RatingScaleActivity: View {
                     RatingScaleLevelButton(labelText: "5 levels", selected: selectedButton == "5 levels").onTapGesture {
                         selectedButton = "5 levels"
                         numberButtons = 5
-                        numSelected = "3.square"
-                        
+                        numSelected = "3.square"   
                     }
                     Spacer()
                     RatingScaleLevelButton(labelText: "7 levels", selected: selectedButton == "7 levels").onTapGesture {
@@ -77,6 +85,7 @@ struct RatingScaleActivity: View {
                         let imageRef = "\(level).square"
                         RatingScaleSelectionButton(image: imageRef, totalButtons: numberButtons).onTapGesture {
                             numSelected = imageRef
+                            saveRating(level: level) //Calls the saving rating scale method
                         }
                         Spacer()
                     }
@@ -90,6 +99,25 @@ struct RatingScaleActivity: View {
             .navigationBarHidden(true)
         Spacer()
 
+    }
+    private func saveRating(level: Int) {
+        guard let userId = Auth.auth().currentUser?.uid else {
+            print("User not logged in")
+            return
+        }
+        
+        let ratingData: [String: Any] = [
+            "userID": userId,
+            "ratingValue": level,
+            "timestamp": ServerValue.timestamp()
+        ]
+        ref.child("ratings").childByAutoId().setValue(ratingData) { error, _ in
+            if let error = error {
+                print("Error saving rating: \(error.localizedDescription)")
+            } else {
+                print("Rating saved successfully!")
+            }
+        }
     }
 }
 

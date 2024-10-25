@@ -1,4 +1,4 @@
-//
+                //
 //  RatingScaleNew.swift
 //  aac-ios
 //
@@ -7,9 +7,10 @@
 
 import Foundation
 import SwiftUI
+import Firebase
 
 struct RatingScaleGrid: View {
-    @State private var selectedScale: String? = nil
+    @State private var selectedScale: String? = UserDefaults.standard.string(forKey: "selectedScale") ?? nil
     var body: some View {
         NavigationView(){
             VStack{
@@ -18,18 +19,33 @@ struct RatingScaleGrid: View {
                     Spacer()
                     NavigationLink(destination: RatingScaleActivity(), tag: "Numeric", selection: $selectedScale){
                         RatingScaleCategoryButton(labelText: "Numeric", image: "list.number", imageColor: "AACBlack")
+                            .onTapGesture {
+                                saveSelectedScale("Numeric)
+                            }
                     }.buttonStyle(.plain)
                     Spacer()
+                        
                     NavigationLink(destination: RatingScaleActivityTwo(), tag: "Energy", selection: $selectedScale){
                         RatingScaleCategoryButton(labelText: "Energy", image: "bolt.batteryblock", imageColor: "BatteryGreen")
+                            .onTapGesture {
+                                saveSelectedScale("Energy")
+                            }
                     }.buttonStyle(.plain)
                     Spacer()
+                        
                     NavigationLink(destination: RatingScaleActivityThree(), tag: "Pain", selection: $selectedScale){
                         RatingScaleCategoryButton(labelText: "Pain", image: "bandage", imageColor: "BandageBrown")
+                            .onTapGesture {
+                                saveSelectedScale("Pain") // Save when tapped
+                            }
                     }.buttonStyle(.plain)
                     Spacer()
+                        
                     NavigationLink(destination: RatingScaleActivityFour(), tag: "Response", selection: $selectedScale){
                         RatingScaleCategoryButton(labelText: "Response", image: "questionmark.bubble", imageColor: "BlueQuestion")
+                            .onTapGesture {
+                                saveSelectedScale("Response") // Save when tapped
+                            }
                     }.buttonStyle(.plain)
                     Spacer()
                 }
@@ -64,6 +80,27 @@ struct RatingScaleGrid: View {
             .navigationBarTitle(Text("").font(.system(size:1)), displayMode: .inline)
             .navigationBarHidden(true)
         Spacer()
+    }
+    private func saveSelectedScale(_ scale: String) {
+        guard let userId = Auth.auth().currentUser?.uid else {
+            print("User not logged in")
+            return
+        }
+        
+        let scaleData: [String: Any] = [
+            "userID": userId,
+            "selectedScale": scale,
+            "timestamp": ServerValue.timestamp()
+        ]
+        
+        let ref = Database.database().reference()
+        ref.child("selectedScales").childByAutoId().setValue(scaleData) { error, _ in
+            if let error = error {
+                print("Error saving selected scale: \(error.localizedDescription)")
+            } else {
+                print("Selected scale saved successfully!")
+            }
+        }
     }
 }
 

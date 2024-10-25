@@ -16,7 +16,7 @@ struct Build: View {
     @State private var addShowing = false //hides the add button
 
     private let adaptiveColumns = [
-        GridItem(.adaptive(minimum: 170))
+        GridItem(.adaptive(minimum: 200))
     ]
     
     var body: some View {
@@ -72,9 +72,13 @@ struct Build: View {
                 .padding(.top, vm.currentFolder?.parent == nil ? 16 : 0)
                 .padding([.leading, .trailing, .bottom], 16)
             } else {
-                Text("No tiles to display.")
-                    .font(.title)
-                    .padding() //if there are no tiles to display, show that message
+                VStack{
+                    Spacer()
+                    Text("No tiles to display.")
+                        .font(.title)
+                        .padding()
+                    Spacer()
+                }
             }
             HStack {
                 ZStack {
@@ -130,7 +134,7 @@ struct Build: View {
                     BuildPopupView(visible: $addShowing, vm: vm, currentFolder: vm.currentFolder!)
                 }
             }
-            .padding(.horizontal, 40)
+            .padding(.horizontal, 54)
         }
         .navigationBarHidden(true)
     }

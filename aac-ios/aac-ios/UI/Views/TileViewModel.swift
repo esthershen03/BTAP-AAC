@@ -6,98 +6,81 @@
 //
 
 import Foundation
-import CoreData
+import Firebase
 
 
 class TileViewModel: ObservableObject {
     
-    let container: NSPersistentContainer
     @Published var tiles: [Tile] = []
     @Published var droppedTiles: [Tile] = []
     @Published var currentFolder: Tile? = nil
     
+    private var ref: DatabaseReference!
+    
     init() {
-        container = NSPersistentContainer(name: "AAC Core Data")
-        container.loadPersistentStores { description, error in
-            if let error = error {
-                print("Error Loading")
+        ref = Database.database().reference()
+        fetchTiles()
+    }
+    
+    func fetchTile() {
+        guard let currentFolderID = currentFolder?.id else { return }
+        
+        ref.child("tiles").observe(.value) { snapshot in
+            var fetchedTiles: [Tile] = []
+            for child in snapshot.children {
+                if let childSnapshot = child as? DataSnapshot,
+                   let tile = Tile(snapshot: childSnapshot) {
+                    fetchedTiles.append(tile)
+                }
             }
-        }
-        var curr = fetchTile(name: "main")
-        if (curr == nil) { // set up main folder
-            let newTile = Tile(context: self.container.viewContext)
-            newTile.name = "main"
-            newTile.imagePath = nil
-            newTile.type = "Folder"
-            newTile.parent = nil
-            saveData()
-        }
-        self.currentFolder = fetchTile(name: "main")!
-        fetchTiles(parent: currentFolder!)
-    }
-    
-    func fetchTile(name: String) -> Tile? {
-        let request : NSFetchRequest = {
-            let request = Tile.fetchRequest()
-            
-            request.predicate = NSPredicate(format: "name == %@", name)
-            
-            return request
-        }()
-        
-        var tiles: [Tile]
-        do {
-            tiles =  try container.viewContext.fetch(request)
-            if (tiles.isEmpty) {return nil}
-            return tiles[0]
-        } catch let error {
-            print("Error Fetching")
-        }
-        
-       return nil
-    }
-    
-    
-    func fetchTiles(parent: Tile) {
-        let request : NSFetchRequest = {
-            let request = Tile.fetchRequest()
-            
-            request.predicate = NSPredicate(format: "parent == %@", parent)
-            
-            return request
-        }()
-        
-        do {
-            tiles = try container.viewContext.fetch(request)
-        } catch let error {
-            print("Error Fetching")
+            self.tiles = fetchedTiles
         }
     }
+    
     
     func addTile(text: String, imagePath: String, type: String, parent: Tile) {
-        let newTile = Tile(context: container.viewContext)
-        newTile.id = UUID()
-        newTile.name = text
-        newTile.imagePath = imagePath
-        newTile.type = type
-        newTile.parent = parent
-        saveData()
-        fetchTiles(parent: parent)
+        let newTile = Tile(id: UUID().uuidString, name: text, imagePath: imagePath, type: type, parentID: parent.id!)
+        let tileData = [
+            "id": newTile.id!,
+            "name": newTile.name,
+            "imagePath": newTile.imagePath ?? "",
+            "type": newTile.type,
+            "parentID": newTile.parentID ?? ""
+        ] as [String : Any]
+        
+        ref.child("tiles").child(parent.id!).child(newTile.id!).setValue(tileData) { error, _ in
+            if let error = error {
+                print("Error adding tile: \(error.localizedDescription)")
+            } else {
+                print("Tile added successfully.")
+                self.fetchTiles() // Refresh the tile list after adding
+            }
+        }
     }
     
     func deleteTile(tile: Tile, parent: Tile) {
-        container.viewContext.delete(tile)
-        saveData()
-        fetchTiles(parent: parent)
-        print(self.tiles)
-    }
-    
-    func saveData() {
-        do {
-            try container.viewContext.save()
-        } catch let error {
-            print("Error Saving")
-            print(error)
+       ref.child("tiles").child(parent.id!).child(tile.id!).removeValue { error, _ in
+            if let error = error {
+                print("Error deleting tile: \(error.localizedDescription)")
+            } else {
+                print("Tile deleted successfully.")
+                self.fetchTiles() // Refresh the tile list after deletion
+            }
         }
+    }
+}
+    // Assume the Tile class is modified to support Firebase
+extension Tile {
+    // This initializer assumes a Firebase snapshot
+    convenience init?(snapshot: DataSnapshot) {
+        guard let value = snapshot.value as? [String: Any] else { return nil }
+        
+        let id = value["id"] as? String ?? ""
+        let name = value["name"] as? String ?? ""
+        let imagePath = value["imagePath"] as? String
+        let type = value["type"] as? String ?? ""
+        let parentID = value["parentID"] as? String
+        
+        self.init(id: id, name: name, imagePath: imagePath, type: type, parentID: parentID)
     }
 }

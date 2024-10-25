@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Firebase
 
 struct RatingScaleActivityFour: View {
     @State private var selectedButton: String = "3 levels"
@@ -61,6 +62,7 @@ struct RatingScaleActivityFour: View {
                         let imageRef = "\(personChoice).square"
                         RatingScaleSelectionButton(image: imageRef, totalButtons: numberButtons).onTapGesture {
                             numSelected = imageRef
+                            saveRating(personChoice: personChoice)
                         }
                         Spacer()
                     }
@@ -73,8 +75,29 @@ struct RatingScaleActivityFour: View {
             .navigationBarTitle(Text("").font(.system(size:1)), displayMode: .inline)
             .navigationBarHidden(true)
         Spacer()
-
     }
+
+    private func saveRating(personChoice: String) {
+    guard let userId = Auth.auth().currentUser?.uid else {
+        print("User not logged in")
+        return
+    }
+    
+    let ratingData: [String: Any] = [
+        "userID": userId,
+        "ratingValue": personChoice,
+        "timestamp": ServerValue.timestamp()
+    ]
+    
+    let ref = Database.database().reference()
+    ref.child("ratings").childByAutoId().setValue(ratingData) { error, _ in
+        if let error = error {
+            print("Error saving rating: \(error.localizedDescription)")
+        } else {
+            print("Rating saved successfully!")
+        }
+    }
+}
     // Helper function to handle battery percentage logic
     func getPerson(for level: Int) -> String {
             switch level {

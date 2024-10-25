@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Firebase
 
 struct RatingScaleActivityThree: View {
     @State private var selectedButton: String = "5 levels"
@@ -68,6 +69,7 @@ struct RatingScaleActivityThree: View {
                         let imageRef = emotion
                         RatingScaleSelectionButtonThree(image: imageRef, totalButtons: numberButtons).onTapGesture {
                             numSelected = imageRef
+                            saveRating(emotion: emotion)
                         }
                         Spacer()
                     }
@@ -107,7 +109,27 @@ struct RatingScaleActivityThree: View {
                 return "😫"
             }
         }
+    }
+    private func saveRating(emotion: String) {
+        guard let userId = Auth.auth().currentUser?.uid else {
+            print("User not logged in")
+            return
+        }
         
+        let ratingData: [String: Any] = [
+            "userID": userId,
+            "ratingValue": emotion,
+            "timestamp": ServerValue.timestamp()
+        ]
+        
+        let ref = Database.database().reference()
+        ref.child("ratings").childByAutoId().setValue(ratingData) { error, _ in
+            if let error = error {
+                print("Error saving rating: \(error.localizedDescription)")
+            } else {
+                print("Rating saved successfully!")
+            }
+        }
     }
 }
 

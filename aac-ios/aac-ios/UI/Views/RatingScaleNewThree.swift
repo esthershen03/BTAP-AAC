@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Firebase
 
 struct RatingScaleActivityTwo: View {
     @State private var selectedButton: String = "5 levels"
@@ -68,6 +69,7 @@ struct RatingScaleActivityTwo: View {
                         let imageRef = "battery.\(batteryPercent)percent"
                         RatingScaleSelectionButton(image: imageRef, totalButtons: numberButtons).onTapGesture {
                             numSelected = imageRef
+                            saveRating(level: level)
                         }
                         Spacer()
                     }
@@ -108,6 +110,8 @@ struct RatingScaleActivityTwo: View {
             }
         }
     }
+
+    
 }
 
 struct RatingScaleLevelButtonTwo: View {
@@ -128,6 +132,27 @@ struct RatingScaleLevelButtonTwo: View {
                    .multilineTextAlignment(.leading)
            }
        }
+    }
+    private func saveRating(level: Int) {
+        guard let userId = Auth.auth().currentUser?.uid else {
+            print("User not logged in")
+            return
+        }
+        
+        let ratingData: [String: Any] = [
+            "userID": userId,
+            "ratingValue": level,
+            "timestamp": ServerValue.timestamp()
+        ]
+        
+        let ref = Database.database().reference()
+        ref.child("ratings").childByAutoId().setValue(ratingData) { error, _ in
+            if let error = error {
+                print("Error saving rating: \(error.localizedDescription)")
+            } else {
+                print("Rating saved successfully!")
+            }
+        }
     }
 }
 

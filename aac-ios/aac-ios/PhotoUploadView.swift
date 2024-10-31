@@ -102,7 +102,11 @@ struct PhotoUploadView: View {
 class VSDImageViewModel: ObservableObject {
     private let imageKey = "VSDImageData"
 
-    func saveImage(_ image: UIImage) {
+    func saveImage(_ image: UIImage?) {
+        guard let image = image else {
+            UserDefaults.standard.set(nil, forKey: imageKey)
+            return
+        }
         if let imageData = image.jpegData(compressionQuality: 1.0) {
             UserDefaults.standard.set(imageData, forKey: imageKey)
         }

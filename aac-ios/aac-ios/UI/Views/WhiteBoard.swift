@@ -236,6 +236,11 @@ struct WhiteBoard: View {
                                         } )
                                     Button("Cancel", role: .cancel) {}
                                 }
+                                .onChange(of: showSaveConfirm) { newValue in
+                                    if newValue {
+                                        currentImageName = "" // Reset to an empty string when the alert is shown
+                                    }
+                                }
                                 .padding(5)
                             
                             // push color picker to right

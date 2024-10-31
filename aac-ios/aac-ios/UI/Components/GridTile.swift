@@ -68,6 +68,7 @@ struct GridTileStyle: ButtonStyle {
 }
 
 struct GridTile: View {
+    let id: String
     let labelText: String
     let image: Image
     let tileType: String

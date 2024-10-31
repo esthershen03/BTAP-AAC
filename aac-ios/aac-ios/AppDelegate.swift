@@ -6,23 +6,18 @@
 //
 
 import Foundation
-import CoreData
+import Firebase
 import SwiftUI
 import UIKit
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
-    lazy var persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "Model")
-        container.loadPersistentStores { storeDescription, error in
-            if let error = error as NSError? {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
-            }
-        }
-        return container
-    }()
-    
+    private var ref: DatabaseReference!
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // Initialize Firebase
+        FirebaseApp.configure()
+        ref = Database.database().reference()
+        
         print("App has started via AppDelegate.")
         
         // Save test values
@@ -38,59 +33,48 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-    func saveContext() {
-        let context = persistentContainer.viewContext
-        if context.hasChanges {
-            do {
-                try context.save()
-            } catch {
-                let nserror = error as NSError
-                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
-            }
-        }
-    }
     
     func saveTestValue(_ value: String) {
-        let context = persistentContainer.viewContext
-        let newEntity = NSEntityDescription.insertNewObject(forEntityName: "TestEntity", into: context)
-        newEntity.setValue(value, forKey: "testValue")
-        do {
-            try context.save()
-            print("Saved: \(value)")
-        } catch {
-            print("Could not save \(value): \(error)")
+       let newEntityRef = ref.child("TestEntity").childByAutoId()
+        newEntityRef.setValue(["testValue": value]) { error, _ in
+            if let error = error {
+                print("Could not save \(value): \(error.localizedDescription)")
+            } else {
+                print("Saved: \(value)")
+            }
         }
     }
     
     func fetchAndPrintTestValues() {
-        let context = persistentContainer.viewContext
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TestEntity")
-        do {
-            let results = try context.fetch(fetchRequest)
-            for managedObject in results {
-                guard let testValue = (managedObject as? NSManagedObject)?.value(forKey: "testValue") as? String else { continue }
-                print("Fetched Value: \(testValue)")
+        let fetchRef = ref.child("TestEntity")
+        fetchRef.observeSingleEvent(of: .value) { snapshot in
+            for child in snapshot.children {
+                if let childSnapshot = child as? DataSnapshot,
+                   let valueDict = childSnapshot.value as? [String: Any],
+                   let testValue = valueDict["testValue"] as? String {
+                    print("Fetched Value: \(testValue)")
+                }
             }
-        } catch {
-            print("Could not fetch: \(error)")
+        } withCancel: { error in
+            print("Could not fetch: \(error.localizedDescription)")
         }
     }
     
     func initializeGridDataIfNeeded() {
-            let context = persistentContainer.viewContext
-            let fetchRequest: NSFetchRequest<GridTileEntity> = GridTileEntity.fetchRequest()
-            do {
-                let count = try context.count(for: fetchRequest)
-                if count == 0 {
-                    for i in 1...20 {
-                        let newItem = GridTileEntity(context: context)
-                        newItem.labelText = String(i)
-                        newItem.orderIndex = Int16(i - 1)
-                    }
-                    try context.save()
+        let gridRef = ref.child("GridTileEntity")
+        gridRef.observeSingleEvent(of: .value) { snapshot in
+            if !snapshot.exists() {
+                for i in 1...20 {
+                    let newItem: [String: Any] = [
+                        "labelText": String(i),
+                        "orderIndex": Int(i - 1)
+                    ]
+                    gridRef.childByAutoId().setValue(newItem)
                 }
-            } catch {
-                print("Error initializing grid data: \(error)")
+                print("Initialized grid data.")
             }
+        } withCancel: { error in
+            print("Error initializing grid data: \(error.localizedDescription)")
         }
+    }
 }

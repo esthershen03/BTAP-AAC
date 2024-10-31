@@ -7,12 +7,17 @@
 
 import Foundation
 import SwiftUI
-import CoreData
+import FirebaseDatabase
 import UIKit
 
 class ViewController: UIViewController {
+    var ref: DatabaseReference!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        ref = Database.database().reference()
+        
         self.save(value: "Test1")
         self.save(value: "Test2")
         self.save(value: "Test3")
@@ -23,36 +28,29 @@ class ViewController: UIViewController {
 
 extension ViewController {
     func save(value: String) {
-        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
-            let context = appDelegate.persistentContainer.viewContext
-            guard let entityDescription = NSEntityDescription.entity(forEntityName: "TestEntity", in:
-                                                                        context) else { return }
-            let newValue = NSManagedObject(entity: entityDescription,
-                                           insertInto: context)
-            newValue.setValue(value, forKey: "testValue")
-            do {
-                try context.save()
+        let ref = Database.database().reference()
+        let newValueRef = ref.child("TestEntity").childByAutoId()
+        let newValue: [String: Any] = ["testValue": value]
+        newValueRef.setValue(newValue) { error, _ in
+            if let error = error {
+                print("Saving Error: \(error.localizedDescription)")
+            } else {
                 print("Saved: \(value)")
-            } catch {
-                print("Saving Error")
             }
         }
     }
     func retrieveValues() {
-        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
-            let context = appDelegate.persistentContainer.viewContext
-            let fetchRequest = NSFetchRequest<TestEntity>(entityName: "TestEntity")
-            do {
-                let results = try context.fetch(fetchRequest)
-                for result in results {
-                    if let testValue = result.testValue {
-                        print(testValue)
-                    }
+        let ref = Database.database().reference().child("TestEntity")
+        ref.observeSingleEvent(of: .value) { snapshot in
+            for child in snapshot.children {
+                if let childSnapshot = child as? DataSnapshot,
+                   let valueDict = childSnapshot.value as? [String: Any],
+                   let testValue = valueDict["testValue"] as? String {
+                    print(testValue)
                 }
-            } catch {
-                print("Could not retrieve")
             }
-            
+        } withCancel: { error in
+            print("Error fetching data: \(error.localizedDescription)")
         }
     }
 }

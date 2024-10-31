@@ -11,6 +11,7 @@ import SwiftUI
 struct MainScreen: View {
     @State private var selectedButton: String? = nil
     @State private var navigateToLogin = false
+    @StateObject private var tileViewModel = TileViewModel() 
 
     
     var body: some View {
@@ -50,6 +51,11 @@ struct MainScreen: View {
                         NavigationLink(destination: RatingScaleGrid(), tag: "RatingScale", selection: $selectedButton) {
                             NavigationButton(labelText: "Rating Scale", image: "face.smiling", selected: selectedButton == "RatingScale")
                         }.buttonStyle(.plain)
+
+                        NavigationLink(destination: TilesView(tileViewModel: tileViewModel), tag: "Tiles", selection: $selectedButton) {
+                            NavigationButton(labelText: "Your Tiles", image: "rectangle.grid.1x2", selected: selectedButton == "Tiles")
+                        }.buttonStyle(.plain)
+
                     }
                     .navigationBarHidden(true)
                     .padding(.top, 22)

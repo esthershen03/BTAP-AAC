@@ -1,61 +1,61 @@
 import Foundation
-import CoreData
+import FirebaseDatabase
 import SwiftUI
 
 @objc(LineEntity)
-public class LineEntity: NSManagedObject {
-    @NSManaged public var points: [NSValue]?
-    @NSManaged public var color: String?
-    @NSManaged public var lineWidth: Float
+public class LineEntity: NSObject {
+    var points: [NSValue]?
+    var color: String?
+    var lineWidth: Float
+
+    init(points: [NSValue]?, color: String?, lineWidth: Float) { // Added initializer
+        self.points = points
+        self.color = color
+        self.lineWidth = lineWidth
+    }
 }
 
 class LineViewModel: ObservableObject {
-    private let persistentContainer: NSPersistentContainer
+    private var ref: DatabaseReference!
     
     init() {
-        persistentContainer = NSPersistentContainer(name: "Model")
-        persistentContainer.loadPersistentStores { description, error in
+        ref = Database.database().reference()
+    }
+    
+    func addLine(points: [CGPoint], color: Color, lineWidth: CGFloat) {
+        let line = LineEntity(points: points.map { NSValue(cgPoint: $0) }, color: color.description, lineWidth: Float(lineWidth))
+        let newLineRef = ref.child("lines").childByAutoId()
+        let lineData: [String: Any] = [
+            "points": line.points?.map { ["x": $0.cgPointValue.x, "y": $0.cgPointValue.y] }, // Keep as is
+            "color": line.color ?? "", // Keep as is
+            "lineWidth": line.lineWidth // Keep as is
+        ]
+        newLineRef.setValue(lineData) { error, _ in
             if let error = error {
-                fatalError("Unable to load persistent stores: \(error)")
+                print("Saving Error: \(error.localizedDescription)")
+            } else {
+                print("Saved line data successfully!")
             }
         }
     }
     
-    func addLine(points: [CGPoint], color: Color, lineWidth: CGFloat) {
-        let line = LineEntity(context: persistentContainer.viewContext)
-        line.points = points.map { NSValue(cgPoint: $0) }
-        line.color = color.description
-        line.lineWidth = Float(lineWidth)
-        saveContext()
-    }
-    
     func fetchLines() -> [Line] {
-        let lineEntities = fetchLineEntities()
-        return lineEntities.map { entity in
-            let points = (entity.points as? [CGPoint] ?? []).map { $0 }
-            let color = Color(entity.color ?? "") // Convert string to Color
-            let lineWidth = CGFloat(entity.lineWidth)
-            return Line(points: points, color: color, lineWidth: lineWidth)
+        var lines: [Line] = []
+        let ref = Database.database().reference().child("lines")
+        ref.observeSingleEvent(of: .value) { snapshot in
+            for child in snapshot.children {
+                if let childSnapshot = child as? DataSnapshot,
+                   let lineDict = childSnapshot.value as? [String: Any],
+                   let pointsArray = lineDict["points"] as? [[String: CGFloat]],
+                   let colorString = lineDict["color"] as? String,
+                   let lineWidth = lineDict["lineWidth"] as? Float {
+                
+                    let points = pointsArray.map { CGPoint(x: $0["x"] ?? 0, y: $0["y"] ?? 0) }
+                    let color = Color(colorString) // Convert string to Color
+                    lines.append(Line(points: points, color: color, lineWidth: CGFloat(lineWidth)))
+                }
+            }
         }
-    }
-    
-    private func fetchLineEntities() -> [LineEntity] {
-        let fetchRequest: NSFetchRequest<LineEntity> = NSFetchRequest(entityName: "LineEntity")
-        do {
-            let result = try persistentContainer.viewContext.fetch(fetchRequest)
-            return result
-        } catch {
-            print("Failed to fetch line entities: \(error)")
-            return []
-        }
-    }
-
-    private func saveContext() {
-        do {
-            try persistentContainer.viewContext.save()
-            print("Saved!")
-        } catch {
-            print("Unable to save context: \(error)")
-        }
+        return lines
     }
 }

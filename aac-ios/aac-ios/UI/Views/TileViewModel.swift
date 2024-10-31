@@ -15,17 +15,16 @@ class TileViewModel: ObservableObject {
     @Published var droppedTiles: [Tile] = []
     @Published var currentFolder: Tile? = nil
     
-    private var ref: DatabaseReference!
+    private var ref: DatabaseReference = Database.database().reference()
     
     init() {
-        ref = Database.database().reference()
         fetchTiles()
     }
     
     func fetchTile() {
         guard let currentFolderID = currentFolder?.id else { return }
         
-        ref.child("tiles").observe(.value) { snapshot in
+        ref.child("tiles").child(currentFolderID).observe(.value) { snapshot in
             var fetchedTiles: [Tile] = []
             for child in snapshot.children {
                 if let childSnapshot = child as? DataSnapshot,
@@ -69,7 +68,7 @@ class TileViewModel: ObservableObject {
         }
     }
 }
-    // Assume the Tile class is modified to support Firebase
+
 extension Tile {
     // This initializer assumes a Firebase snapshot
     convenience init?(snapshot: DataSnapshot) {

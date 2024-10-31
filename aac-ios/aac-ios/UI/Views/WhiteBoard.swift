@@ -64,6 +64,7 @@ struct WhiteBoard: View {
                                 }
                             }.frame(maxWidth: .infinity, maxHeight: .infinity)
                                 .background(Color("AACGrey").opacity(inputImage == nil ? 1 : 0))
+                                .cornerRadius(10)
                                 .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .local).onChanged({ value in
                                     let newPoint = value.location
                                     if value.translation.width + value.translation.height == 0 {

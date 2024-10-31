@@ -25,8 +25,11 @@ struct PhotoUploadView: View {
         ZStack {
             Rectangle()
                 .fill(Color(UIColor.systemGray.withAlphaComponent(0)))
-                .border(Color.black)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.black, lineWidth: 1)
+                )
                 .padding(15)
                 .alignmentGuide(.top) { dimensions in
                     dimensions[VerticalAlignment.top]

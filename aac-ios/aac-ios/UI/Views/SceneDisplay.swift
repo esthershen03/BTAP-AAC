@@ -39,13 +39,13 @@ struct SceneDisplay: View {
                 VStack {
                     TextFieldsView()
                     Divider()
-                    HStack(spacing: 15) {
+                    HStack(spacing: 2) {
                         Button {
                             showSaveConfirm = true
                         } label: {
                             Image(systemName: "arrow.down.to.line.circle")
                                 .resizable()
-                                .frame(width: 65, height: 55)
+                                .frame(width: 55, height: 55)
                                 .foregroundColor(.black)
                                 .padding(20)
                         }
@@ -100,6 +100,7 @@ struct SceneDisplay: View {
                     .navigationBarHidden(true)
                     
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding(.bottom, -21)
@@ -113,8 +114,7 @@ struct SceneDisplay: View {
             // saved drawings pop-up (only show when showFolder is true)
             if showFolder {
                 ZStack { // outer z stack for entire sheet and grey background
-                    
-                    Color.black.opacity(0.15)
+                    Color("AACGrey")
                         .edgesIgnoringSafeArea(.all)
                         .onTapGesture {
                             // Hide the popup when the background is tapped
@@ -168,7 +168,6 @@ struct SceneDisplay: View {
             }
         }
     }
-        
 }
     
 
@@ -176,7 +175,6 @@ struct SceneDisplay: View {
 struct TextFieldsView: View {
     @State private var textValues: [String] = Array(repeating: "", count: 4)
     let speechSynthesizer = AVSpeechSynthesizer()
-
     
     var body: some View {
         List {
@@ -188,7 +186,6 @@ struct TextFieldsView: View {
                             .padding(15)
                             .cornerRadius(10)
                             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 2))
-                            .background(Color(UIColor.systemGray.withAlphaComponent(0.2)))
                             .padding(10)
                     } else {
                         TextField("Text", text: $textValues[index])
@@ -197,30 +194,50 @@ struct TextFieldsView: View {
                             .padding(15)
                             .cornerRadius(10)
                             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 2))
-                            .background(Color(UIColor.systemGray.withAlphaComponent(0.4)))
                             .padding(5)
                     }
                     
-                    Image(systemName: "pencil")
-                        .resizable()
-                        .frame(width: 30, height: 30)
-                        .padding()
-                        .background(RoundedRectangle(cornerRadius: 10).fill(Color("CustomGray")))
-                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 1))
-                    
-                    Image(systemName: "speaker.wave.2.fill")
-                        .resizable()
-                        .frame(width: 30, height: 30)
-                        .foregroundColor(.black) // Change the color to black
-                        .padding()
-                        .background(RoundedRectangle(cornerRadius: 10).fill(Color("CustomGray")))
-                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 1))
-                        .onTapGesture {
-                            speakText(text: textValues[index])
+                    Button {
+                    } label: {
+                        ZStack{
+                            RoundedRectangle(cornerRadius: 10)
+                                .frame(width: 60, height: 60)
+                                .foregroundColor(.black)
+                            Ellipse()
+                                .frame(width: 50, height: 50)
+                                .foregroundColor(.white)
+                            Image(systemName: "pencil.circle.fill")
+                                .resizable()
+                                .frame(width: 60, height: 60)
+                                .foregroundColor(.black)
                         }
+                        
+                    }
+                    Button(action: {
+                        speakText(text: textValues[index])
+                    }) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 10)
+                                .frame(width: 60, height: 60)
+                                .foregroundColor(.black)
+                            
+                            Ellipse()
+                                .frame(width: 50, height: 50)
+                                .foregroundColor(.white)
+                            
+                            Image(systemName: "speaker.wave.2.circle.fill")
+                                .resizable()
+                                .frame(width: 60, height: 60)
+                                .foregroundColor(.black)
+                        }
+                    }
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .listRowBackground(Color.white)
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(Color.white)
     }
     func speakText(text: String) {
         let speechUtterance = AVSpeechUtterance(string: text)

@@ -221,28 +221,29 @@ struct BuildPopupView: View {
             HStack {
                 Spacer()
                 Button(action: {visible = false}) { //button to x out of menu to add tile
-                    Image(systemName: "xmark.circle.fill")
-                        .frame(width: 20, height: 20)
-                        .foregroundColor(Color("AACBlueDark"))
+                    Image(systemName: "x.circle")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 35, height: 35)
                 }
+                .foregroundColor(.black)
                 .frame(width: 100, height: 100)
             }
             Text("Add a New Tile")
-                .padding()
-                .font(.system(size: 36))
-                .padding([.top, .trailing])
+                .font(.system(size: 50))
             TilePreview(labelText: labelText, image: iconImage)
                 .frame(width: 120, height: 150)
                 .padding()
+            Spacer(minLength: 20)
             VStack {
                 HStack {
                     Text("Set Icon: ")
-                        .font(.system(size: 36))
+                        .font(.system(size: 40))
                     PhotosPicker(selection: $iconItem, matching: .images) {
                         Image(systemName: "photo")
                             .font(.system(size: 50))
                             .foregroundColor(.black)
-                    }
+                    }.padding()
                 }
                 //sets the new icon image for the tile
                 .onChange(of: iconItem) { newItem in Task {
@@ -260,25 +261,31 @@ struct BuildPopupView: View {
                 //sets the label for the tile
                 HStack {
                     Text("Set Label: ")
-                        .font(.system(size: 36))
+                        .font(.system(size: 40))
                     TextField("Tile label", text: $labelText)
                         .font(.title)
                         .frame(width: 150, height: 20)
                         .padding()
                         .background(RoundedRectangle(cornerRadius: 10).fill(Color.white))
                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color(.black), lineWidth: 1))
+                        .padding()
                 }
                 //sets type (folder or tile)
                 HStack {
                     Text("Set Type:  ")
-                        .font(.system(size: 36))
+                        .font(.system(size: 40))
                     Picker("Type", selection: $type) {
                         Text("Tile")
                             .tag("Tile") //default is tile
+                            .font(.system(size: 40))
+                            .foregroundColor(Color("AACDarkBlue"))
                         Text("Folder")
                             .tag("Folder")
+                            .font(.system(size: 40))
+                            .foregroundColor(Color("AACDarkBlue"))
                     }
-                    .scaleEffect(2.0)
+                    .scaleEffect(2.5)
+                    .frame(maxWidth: .infinity)
                 }
                 .frame(maxWidth: 400)
                 if iconImage != nil && !labelText.isEmpty { //doesnt allow you to add until fields are completed
@@ -291,14 +298,14 @@ struct BuildPopupView: View {
                             .foregroundColor(.black)
                             .padding()
                             .frame(minWidth: 0, maxWidth: 200)
-                            .background(Color("AACBlueDark"))
+                            .background(Color("AACBlue"))
                             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color(.black), lineWidth: 2))
                             .cornerRadius(10)
        
                     }
                     .padding()
                 }
-                Spacer()
+                Spacer(minLength: 20)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding()
@@ -315,13 +322,9 @@ struct TilePreview: View {
             ZStack {
                 Rectangle()
                     .fill(Color.clear)
-                    .frame(width: 90, height: 90)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.white, lineWidth: 8)
-                    )
+                    .frame(width: 140, height: 80)
                     .cornerRadius(10)
-                    .padding(.top, 16)
+                    .padding(16)
                 if let image = image {
                     image
                         .resizable()
@@ -333,14 +336,20 @@ struct TilePreview: View {
                 }
             }
             Text(labelText)
-                .font(.system(size: 22))
+                .font(.system(size: 32))
                 .foregroundColor(.black)
-                .frame(maxWidth: .infinity)
+                .frame(width: 120)
+                .frame(height: 40)
                 .cornerRadius(8)
+                .padding(10)
         }
         .padding(5)
         .background(Color("AACGrey"))
         .cornerRadius(12)
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(Color.black, lineWidth: 1)
+        )
     }
 }
 

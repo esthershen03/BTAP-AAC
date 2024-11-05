@@ -27,15 +27,63 @@ struct SceneDisplay: View {
         @State var galleryClicked = false
         @State var cameraClicked = false
         @State var inputImage: UIImage? = nil
+<<<<<<< Updated upstream
+=======
+        @State var savedSceneDisplayNames: [String] = []
+        @State var currentSceneDisplayName: String = ""
+        @State private var showSaveConfirm: Bool = false
+    
+        @State var imageDisplayed : UIImage? = nil
+    @State var textFieldValues : [String] = Array.init(repeating: "", count: 4)
+    
+        @State private var selectedSceneDisplay: SavedSD = SavedSD()
+        @State private var savedSDs : [SavedSD] = []
+>>>>>>> Stashed changes
 
         var body: some View {
             
             HStack() {
                 PhotoUploadView(galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData, inputImage: $inputImage, screen: "VSD")
                 VStack {
-                    TextFieldsView()
+                    TextFieldsView(textValues: $textFieldValues, savedSD: $selectedSceneDisplay)
                     Divider()
+<<<<<<< Updated upstream
                     HStack(spacing: 50) {
+=======
+                    HStack(spacing: 2) {
+                        Button {
+                            showSaveConfirm = true
+                        } label: {
+                            Image(systemName: "arrow.down.to.line.circle")
+                                .resizable()
+                                .frame(width: 55, height: 55)
+                                .foregroundColor(.black)
+                                .padding(20)
+                        }
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color.black, lineWidth: 2)
+                                .shadow(color: Color.black, radius: false ? 15 : 25, x: 0, y: 20)
+                        )
+                        .background(Color("AACBlue"))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .padding(.vertical, 15)
+                        .padding(.horizontal)
+                        .foregroundColor(.red)
+                        .alert("Enter the name of your drawing.", isPresented: $showSaveConfirm) {
+                            TextField("scene display name", text: $currentSceneDisplayName)
+                            // replace action with real save functionality
+                            Button("Save", action: {
+                                savedSDs.append(SavedSD(imageData: inputImage!, name: currentSceneDisplayName, texts: textFieldValues))
+                                } )
+                            Button("Cancel", role: .cancel) {}
+                        }
+                        .onChange(of: showSaveConfirm) { newValue in
+                            if newValue {
+                                currentSceneDisplayName = "" // Reset to an empty string when the alert is shown
+                            }
+                        }
+>>>>>>> Stashed changes
                         PhotoUploadView.ButtonWithIcon(systemName: "camera.fill", galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData)
                         PhotoUploadView.ButtonWithIcon(systemName: "photo", galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData)
                     }
@@ -50,6 +98,73 @@ struct SceneDisplay: View {
                 }
                 return
             }
+<<<<<<< Updated upstream
+=======
+            // saved drawings pop-up (only show when showFolder is true)
+            if showFolder {
+                ZStack { // outer z stack for entire sheet and grey background
+                    Color("AACGrey")
+                        .edgesIgnoringSafeArea(.all)
+                        .onTapGesture {
+                            // Hide the popup when the background is tapped
+                            withAnimation {
+                                showFolder.toggle()
+                            }
+                        }
+                    
+                    
+                    ZStack(alignment: .topLeading) { // inner zstack for drawings area
+                        
+                        // Main popup content
+                        VStack {
+                            Text("Saved Scene Displays")
+                                .font(.system(size: 40))
+                                .padding()
+                            
+                            
+                            ScrollView {
+                                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 20), count: 4), spacing: 60) {
+                                    // Create a button for each category
+                                    ForEach(savedSDs, id: \.self) { display in
+                                        Button {
+                                            withAnimation {
+                                                selectedSceneDisplay = display
+                                                textFieldValues = selectedSceneDisplay.texts
+                                                inputImage = selectedSceneDisplay.imageData
+                                                showFolder = false
+                                            }
+                                        } label: {
+                                            SceneDisplayTile(savedSD: display)
+                                        }
+                                    }
+                                }
+                                .padding()
+                            }                        }
+                        
+                        .frame(width: 1000, height: 750)
+                        .background(Color.white)
+                        .cornerRadius(20)
+                        .shadow(radius: 20)
+                        
+                        // Close button (top-right)
+                        Image(systemName: "x.circle")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 35, height: 35)
+                            .padding(25)
+                            .onTapGesture {
+                                withAnimation {
+                                    showFolder.toggle()
+                                }
+                            }
+                    }
+                    .frame(width: 1000, height: 750)
+                }
+                
+                .transition(.move(edge: .bottom)) // Apply the transition to the inner z stack
+                .animation(.easeInOut)
+            }
+>>>>>>> Stashed changes
         }
         
 }
@@ -57,7 +172,8 @@ struct SceneDisplay: View {
 
 
 struct TextFieldsView: View {
-    @State private var textValues: [String] = Array(repeating: "", count: 4)
+    @Binding var textValues: [String]
+    @Binding var savedSD : SavedSD
     let speechSynthesizer = AVSpeechSynthesizer()
 
     
@@ -112,6 +228,77 @@ struct TextFieldsView: View {
     }
 }
 
+<<<<<<< Updated upstream
+=======
+// tile for saved scene display
+struct SceneDisplayTile: View {
+    let labelText: String = ""
+    let image: String = "photo.circle" // should be replaced with preview of image
+    let savedSD : SavedSD
+    var available: Bool = false
+    var imageColor: String = "AACBlack"
+    var body: some View {
+        VStack{}
+       .frame(width: 160,height: 160)
+       .padding()
+       .accentColor(Color.black)
+       .cornerRadius(10.0)
+       .background(Color("AACGrey"))
+       .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 2))
+       .overlay {
+           VStack{
+           Spacer()
+               .frame(height: 10)
+               
+               if(available) {
+                   HStack {
+                       Spacer()
+                           .frame(width: 135)
+                       Image(systemName: "chevron.right.circle")
+                           .resizable()
+                           .aspectRatio(contentMode: .fit)
+                           .frame(width: 25, height: 25)
+                   }
+               }
+               
+               Spacer()
+                   .frame(height: 5)
+               
+
+               // currently using logos as placeholder; must be replaced with preview of drawing
+
+               Image(uiImage: savedSD.imageData ?? UIImage())
+                   .resizable()
+                   .aspectRatio(contentMode: .fit)
+                   .frame(width: 125, height: 125)
+                   .foregroundColor(Color(imageColor))
+
+               
+               Spacer()
+                   .frame(height: 10)
+    
+               
+               Text(savedSD.name)
+                   .font(.system(size: 26))
+                   .multilineTextAlignment(.leading)
+                   .padding(.horizontal)
+               
+               Spacer()
+                   .frame(height: 10)
+           }
+           
+       }
+       
+    }
+}
+
+struct SavedSD : Hashable {
+    var imageData : UIImage = UIImage()
+    var name : String = ""
+    var texts : [String] = []
+}
+
+>>>>>>> Stashed changes
 struct SceneDisplay_Previews: PreviewProvider {
     static var previews: some View {
         SceneDisplay()

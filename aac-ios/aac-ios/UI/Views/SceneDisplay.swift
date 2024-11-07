@@ -31,13 +31,19 @@ struct SceneDisplay: View {
         @State var savedSceneDisplayNames: [String] = []
         @State var currentSceneDisplayName: String = ""
         @State private var showSaveConfirm: Bool = false
+    
+        @State var imageDisplayed : UIImage? = nil
+        @State var textFieldValues : [String] = Array.init(repeating: "", count: 4)
+        
+        @State private var selectedSceneDisplay: SavedSD = SavedSD()
+        @State private var savedSDs : [SavedSD] = []
 
     var body: some View {
         ZStack {
             HStack() {
                 PhotoUploadView(galleryClicked: $galleryClicked, cameraClicked: $cameraClicked, imageData: $viewState.imageData, inputImage: $inputImage, screen: "VSD")
                 VStack {
-                    TextFieldsView()
+                    TextFieldsView(textValues: $textFieldValues, savedSD: $selectedSceneDisplay)
                     Divider()
                     HStack(spacing: 2) {
                         Button {
@@ -63,8 +69,9 @@ struct SceneDisplay: View {
                             TextField("scene display name", text: $currentSceneDisplayName)
                             // replace action with real save functionality
                             Button("Save", action: {
-                                imageViewModel.saveImage(nil)
-                                savedSceneDisplayNames.append(currentSceneDisplayName)
+//                                imageViewModel.saveImage(nil)
+//                                savedSceneDisplayNames.append(currentSceneDisplayName)
+                                savedSDs.append(SavedSD(imageData: inputImage ?? UIImage(), name: currentSceneDisplayName, texts: textFieldValues))
                                 } )
                             Button("Cancel", role: .cancel) {}
                         }
@@ -136,8 +143,17 @@ struct SceneDisplay: View {
                             ScrollView {
                                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 20), count: 4), spacing: 60) {
                                     // Create a button for each category
-                                    ForEach(savedSceneDisplayNames, id: \.self) { name in
-                                        SceneDisplayTile(labelText: name)
+                                    ForEach(savedSDs, id: \.self) { display in
+                                        Button {
+                                            withAnimation {
+                                                selectedSceneDisplay = display
+                                                textFieldValues = selectedSceneDisplay.texts
+                                                inputImage = selectedSceneDisplay.imageData
+                                                showFolder = false
+                                            }
+                                        } label: {
+                                            SceneDisplayTile(savedSD: display, image: display.imageData)
+                                        }
                                     }
                                 }
                                 .padding()
@@ -173,7 +189,8 @@ struct SceneDisplay: View {
 
 
 struct TextFieldsView: View {
-    @State private var textValues: [String] = Array(repeating: "", count: 4)
+    @Binding var textValues: [String]
+        @Binding var savedSD : SavedSD
     let speechSynthesizer = AVSpeechSynthesizer()
     
     var body: some View {
@@ -248,8 +265,8 @@ struct TextFieldsView: View {
 
 // tile for saved scene display
 struct SceneDisplayTile: View {
-    let labelText: String
-    let image: String = "photo.circle" // should be replaced with preview of image
+    var savedSD : SavedSD
+    let image: UIImage // should be replaced with preview of image
     var available: Bool = false
     var imageColor: String = "AACBlack"
     var body: some View {
@@ -269,7 +286,7 @@ struct SceneDisplayTile: View {
                    HStack {
                        Spacer()
                            .frame(width: 135)
-                       Image(systemName: "chevron.right.circle")
+                       Image(uiImage: savedSD.imageData)
                            .resizable()
                            .aspectRatio(contentMode: .fit)
                            .frame(width: 25, height: 25)
@@ -282,7 +299,7 @@ struct SceneDisplayTile: View {
 
                // currently using logos as placeholder; must be replaced with preview of drawing
 
-               Image(systemName: image)
+               Image(uiImage: image)
                    .resizable()
                    .aspectRatio(contentMode: .fit)
                    .frame(width: 75, height: 75)
@@ -293,7 +310,7 @@ struct SceneDisplayTile: View {
                    .frame(height: 10)
     
                
-               Text(labelText)
+               Text(savedSD.name)
                    .font(.system(size: 26))
                    .multilineTextAlignment(.leading)
                    .padding(.horizontal)
@@ -305,6 +322,12 @@ struct SceneDisplayTile: View {
        }
        
     }
+}
+
+struct SavedSD : Hashable {
+    var imageData : UIImage = UIImage()
+    var name : String = ""
+    var texts : [String] = []
 }
 
 struct SceneDisplay_Previews: PreviewProvider {

@@ -7,12 +7,17 @@
 
 import Foundation
 import SwiftUI
+import CoreData
 
 struct RatingScaleActivityTwo: View {
     @State private var selectedButton: String = "5 levels"
     @State private var numberButtons: Int = 5
     @State private var numSelected: String = "battery.50percent"
     @State private var screenSelect: String? = nil
+
+    @Environment(\.managedObjectContext) private var viewContext
+    @FetchRequest(entity: Rating.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \Rating.level, ascending: true)])
+    private var ratings: FetchedResults<Rating>
     
     var body: some View {
         NavigationView(){
@@ -21,7 +26,6 @@ struct RatingScaleActivityTwo: View {
                 HStack{
                     Spacer()
                     NavigationLink(destination: RatingScaleGrid(), tag: "Rating Scale Grid", selection: $screenSelect) {
-                  
                             Image(systemName: "chevron.backward.circle").resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 45, height: 45)
@@ -68,6 +72,7 @@ struct RatingScaleActivityTwo: View {
                         let imageRef = "battery.\(batteryPercent)percent"
                         RatingScaleSelectionButton(image: imageRef, totalButtons: numberButtons).onTapGesture {
                             numSelected = imageRef
+                            saveRating(level: level, batteryPercent: batteryPercent)
                         }
                         Spacer()
                     }
@@ -108,7 +113,21 @@ struct RatingScaleActivityTwo: View {
             }
         }
     }
+    // Save the rating to Core Data
+    func saveRating(level: Int, batteryPercent: Int) {
+        let newRating = Rating(context: viewContext)
+        newRating.level = Int16(level)
+        newRating.batteryPercent = Int16(batteryPercent)
+
+        do {
+            try viewContext.save()
+        } catch {
+            // Handle any errors
+            print("Error saving rating: \(error.localizedDescription)")
+        }
+    }
 }
+
 
 struct RatingScaleLevelButtonTwo: View {
     let labelText: String

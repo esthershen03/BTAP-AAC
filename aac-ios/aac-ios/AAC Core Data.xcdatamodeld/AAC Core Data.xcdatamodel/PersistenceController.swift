@@ -1,0 +1,50 @@
+import CoreData
+
+struct PersistenceController {
+    static let shared = PersistenceController()
+
+    let container: NSPersistentContainer
+
+    init(inMemory: Bool = false) {
+        container = NSPersistentContainer(name: "AAC Core Data") // Replace with your model name
+        if inMemory {
+            container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
+        }
+        container.loadPersistentStores { (storeDescription, error) in
+            if let error = error as NSError? {
+                fatalError("Unresolved error \(error), \(error.userInfo)")
+            }
+        }
+    }
+
+    func saveContext () {
+        let context = container.viewContext
+        if context.hasChanges {
+            do {
+                try context.save()
+            } catch {
+                let nsError = error as NSError
+                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+            }
+        }
+    }
+
+    static var preview: PersistenceController = {
+        let result = PersistenceController(inMemory: true)
+        let viewContext = result.container.viewContext
+        
+        // Adding mock data for preview
+        let newTile = Tile(context: viewContext)
+        newTile.id = UUID()
+        newTile.name = "Sample Tile"
+        newTile.type = "Folder"
+        
+        do {
+            try viewContext.save()
+        } catch {
+            fatalError("Unresolved error")
+        }
+        
+        return result
+    }()
+}

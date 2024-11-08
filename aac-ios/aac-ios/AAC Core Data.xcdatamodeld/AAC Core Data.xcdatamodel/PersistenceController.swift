@@ -6,7 +6,7 @@ struct PersistenceController {
     let container: NSPersistentContainer
 
     init(inMemory: Bool = false) {
-        container = NSPersistentContainer(name: "AAC Core Data") // Replace with your model name
+        container = NSPersistentContainer(name: "AAC Core Data") 
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         }

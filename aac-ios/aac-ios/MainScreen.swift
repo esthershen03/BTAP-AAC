@@ -63,6 +63,7 @@ struct MainScreen: View {
             .navigationBarHidden(true)
             .navigationBarTitle(Text("").font(.system(size:1)), displayMode: .inline)
             .navigationViewStyle(StackNavigationViewStyle())
+            .environment(\.managedObjectContext, persistenceController.context)
     }
 }
 

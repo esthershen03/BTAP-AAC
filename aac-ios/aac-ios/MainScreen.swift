@@ -12,6 +12,8 @@ struct MainScreen: View {
     @State private var selectedButton: String? = nil
     @State private var navigateToLogin = false
 
+    let persistenceController = PersistenceController.shared
+
     
     var body: some View {
         NavigationView(){

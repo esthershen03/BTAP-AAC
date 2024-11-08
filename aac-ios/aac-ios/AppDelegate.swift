@@ -12,8 +12,9 @@ import UIKit
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
+    
     lazy var persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "Model")
+        let container = NSPersistentContainer(name: "AAC_Core_Data")
         container.loadPersistentStores { storeDescription, error in
             if let error = error as NSError? {
                 fatalError("Unresolved error \(error), \(error.userInfo)")

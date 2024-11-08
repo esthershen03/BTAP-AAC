@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct GridTileStyle: ButtonStyle {
     let tileType: String
     let onRemove: () -> Void
+    
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
             RoundedRectangle(cornerRadius: 10)
@@ -68,9 +70,7 @@ struct GridTileStyle: ButtonStyle {
 }
 
 struct GridTile: View {
-    let labelText: String
-    let image: Image
-    let tileType: String
+    @ObservedObject var tile: Tile // Core Data Tile object
     let onRemove: () -> Void
     let onClick: () -> Void
     
@@ -79,6 +79,7 @@ struct GridTile: View {
             VStack {
                 Spacer()
                     .frame(height: 40)
+                if let imagePath = tile.imagePath, let image = Image(imagePath) {
                image
                     .resizable()
                     .aspectRatio(contentMode: .fill)

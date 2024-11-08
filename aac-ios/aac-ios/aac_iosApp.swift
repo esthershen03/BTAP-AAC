@@ -15,6 +15,7 @@ struct aac_iosApp: App {
     var body: some Scene {
         WindowGroup {
             MainScreen()
+                .environment(\.managedObjectContext, appDelegate.persistentContainer.viewContext)
         }
     }
 }

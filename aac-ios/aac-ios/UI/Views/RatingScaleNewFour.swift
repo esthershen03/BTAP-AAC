@@ -7,8 +7,13 @@
 
 import Foundation
 import SwiftUI
+import CoreData
 
 struct RatingScaleActivityThree: View {
+    @Environment(\.managedObjectContext) private var viewContext
+    @FetchRequest(entity: RatingEntry.entity(), sortDescriptors: [])
+    private var ratingEntries: FetchedResults<RatingEntry>
+    
     @State private var selectedButton: String = "5 levels"
     @State private var numberButtons: Int = 5
     @State private var numSelected: String = "😐"
@@ -21,11 +26,9 @@ struct RatingScaleActivityThree: View {
                 HStack{
                     Spacer()
                     NavigationLink(destination: RatingScaleGrid(), tag: "Rating Scale Grid", selection: $screenSelect) {
-                  
                             Image(systemName: "chevron.backward.circle").resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 45, height: 45)
-
                     }.buttonStyle(.plain)
                     
                     Spacer()
@@ -51,7 +54,6 @@ struct RatingScaleActivityThree: View {
                 Spacer()
 
                 HStack{
-                    
                     Text(numSelected)
                         .font(.system(size:300))
                     
@@ -68,6 +70,7 @@ struct RatingScaleActivityThree: View {
                         let imageRef = emotion
                         RatingScaleSelectionButtonThree(image: imageRef, totalButtons: numberButtons).onTapGesture {
                             numSelected = imageRef
+                            saveRating()
                         }
                         Spacer()
                     }
@@ -106,8 +109,22 @@ struct RatingScaleActivityThree: View {
             default:
                 return "😫"
             }
+        }    
+    }
+    
+    // Save the rating to CoreData
+    private func saveRating() {
+        let newRating = RatingEntry(context: viewContext)
+        newRating.selectedButton = selectedButton
+        newRating.numSelected = numSelected
+        newRating.numberButtons = Int16(numberButtons)
+
+        do {
+            try viewContext.save()
+        } catch {
+            // Handle the error appropriately
+            print("Error saving rating: \(error.localizedDescription)")
         }
-        
     }
 }
 

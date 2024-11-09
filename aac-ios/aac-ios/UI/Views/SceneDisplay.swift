@@ -14,6 +14,7 @@ import AVFoundation
 
 class ViewStateData: ObservableObject {
     @Published var imageData: Data?
+    
 
     init(imageData: Data? = nil) {
         self.imageData = imageData
@@ -23,6 +24,7 @@ class ViewStateData: ObservableObject {
 let imageViewModel = VSDImageViewModel()
 
 struct SceneDisplay: View {
+        @Environment(\.managedObjectContext) var moc
         @StateObject private var viewState = ViewStateData()
         @State var galleryClicked = false
         @State var cameraClicked = false
@@ -71,7 +73,10 @@ struct SceneDisplay: View {
                             Button("Save", action: {
 //                                imageViewModel.saveImage(nil)
 //                                savedSceneDisplayNames.append(currentSceneDisplayName)
-                                savedSDs.append(SavedSD(imageData: inputImage ?? UIImage(), name: currentSceneDisplayName, texts: textFieldValues))
+                                let curr = SavedSD(imageData: inputImage ?? UIImage(), name: currentSceneDisplayName, texts: textFieldValues)
+                                curr.saveToCoreData(context: moc)
+                                savedSDs.append(curr)
+                                
                                 } )
                             Button("Cancel", role: .cancel) {}
                         }
@@ -143,7 +148,7 @@ struct SceneDisplay: View {
                             ScrollView {
                                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 20), count: 4), spacing: 60) {
                                     // Create a button for each category
-                                    ForEach(savedSDs, id: \.self) { display in
+                                    ForEach(SavedSD.fetchAll(from: moc), id: \.self) { display in
                                         Button {
                                             withAnimation {
                                                 selectedSceneDisplay = display
@@ -324,11 +329,11 @@ struct SceneDisplayTile: View {
     }
 }
 
-struct SavedSD : Hashable {
-    var imageData : UIImage = UIImage()
-    var name : String = ""
-    var texts : [String] = []
-}
+//struct SavedSD : Hashable {
+//    var imageData : UIImage = UIImage()
+//    var name : String = ""
+//    var texts : [String] = []
+//}
 
 struct SceneDisplay_Previews: PreviewProvider {
     static var previews: some View {

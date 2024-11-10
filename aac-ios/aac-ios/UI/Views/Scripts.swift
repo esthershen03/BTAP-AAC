@@ -197,6 +197,8 @@ struct ScriptsMakePopUp: View {
     @State private var iconImage: Image?
     @State private var imagePath: String = ""
     @State private var type: String = "Tiles"
+
+    var scriptsViewModel: ScriptsViewModel
     
     var body: some View {
         VStack {
@@ -236,10 +238,11 @@ struct ScriptsMakePopUp: View {
                         }
                         if let savedPath = saveImageToDocumentDirectory(uiImage) {
                             self.imagePath = savedPath
-                        }
+                        } 
+                        scriptsViewModel.saveImage(categoryName: labelText, image: uiImage)
                     }
                 }
-                }
+            }
                 Spacer(minLength: 20)
                 //sets the label for the tile
                 HStack {

@@ -6,151 +6,60 @@
 //
 
 import Foundation
-import CoreData
-import SwiftUI
 
 class ScriptsViewModel: ObservableObject {
-    private let context = PersistenceController.shared.context
+    private let key = "scripts"
+    private let key2 = "scriptOrder"
 
     func saveScripts(_ categoryTexts: [String: [String]]?) {
         guard let categoryTexts = categoryTexts else {
-            clearScriptsData()
+            UserDefaults.standard.set(nil, forKey: key)
             return
         }
-
-        clearScriptsData()
-        
-        for (categoryTitle, texts) in categoryTexts {
-            let category = Category(context: context)
-            category.title = categoryTitle
-            category.imagePath = categoryImages?[categoryTitle]
-
-            for text in texts {
-                let script = Script(context: context)
-                script.text = text
-                script.category = category
-            }
+        do {
+            let data = try JSONEncoder().encode(categoryTexts)
+            UserDefaults.standard.set(data, forKey: key)
+        } catch {
+            print("Error encoding scripts data: \(error)")
         }
-
-        saveContext()
     }
 
     func loadScripts() -> [String: [String]]? {
-        let fetchRequest: NSFetchRequest<Category> = Category.fetchRequest()
-        
-        do {
-            let categories = try context.fetch(fetchRequest)
-            var categoryTexts: [String: [String]] = [:]
-            
-            for category in categories {
-                if let title = category.title {
-                    let scripts = category.scripts?.compactMap { ($0 as? Script)?.text } ?? []
-                    categoryTexts[title] = scripts
-                }
-            }
-            
-            return categoryTexts
-        } catch {
-            print("Error decoding scripts data: \(error)")
-            return nil
-        }
-    }
-
-    func loadCategoryImages() -> [String: String]? {
-        let fetchRequest: NSFetchRequest<Category> = Category.fetchRequest()
-        
-        do {
-            let categories = try context.fetch(fetchRequest)
-            var categoryImages: [String: String] = [:]
-            
-            for category in categories {
-                if let title = category.title, let imagePath = category.imagePath {
-                    categoryImages[title] = imagePath
-                }
-            }
-            
-            return categoryImages
-        } catch {
-            print("Error decoding image paths: \(error)")
-            return nil
-        }
-    }
-    
-    func saveOrder(_ categoryOrder: [Int: String]?) {
-        guard let categoryOrder = categoryOrder else {
-            clearOrderData()
-            return
-        }
-        
-        clearOrderData()
-        
-        for (order, categoryTitle) in categoryOrder {
-            let category = Category(context: context)
-            category.title = categoryTitle
-            category.order = Int16(order)
-        }
-        
-        saveContext()
-    }
-    
-    func loadOrder() -> [Int: String]? {
-        let fetchRequest: NSFetchRequest<Category> = Category.fetchRequest()
-        
-        do {
-            let categories = try context.fetch(fetchRequest)
-            var categoryOrder: [Int: String] = [:]
-            
-            for category in categories {
-                if let title = category.title {
-                    categoryOrder[Int(category.order)] = title
-                }
-            }
-            
-            return categoryOrder
-        } catch {
-            print("Error decoding script order data: \(error)")
-            return nil
-        }
-    }
-
-    func saveImageToDocumentDirectory(_ image: UIImage) -> String? {
-        let fileManager = FileManager.default
-        guard let documentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
-        
-        let imagePath = documentDirectory.appendingPathComponent("\(UUID().uuidString).png")
-        
-        if let data = image.pngData() {
+        if let data = UserDefaults.standard.data(forKey: key) {
             do {
-                try data.write(to: imagePath)
-                return imagePath.path // Returns the file path to the image
+                let categoryTexts = try JSONDecoder().decode([String: [String]].self, from: data)
+                return categoryTexts
             } catch {
-                print("Error saving image: \(error)")
+                print("Error decoding scripts data: \(error)")
+                return nil
             }
         }
         return nil
     }
-
-    private func saveContext() {
+    
+    func saveOrder(_ categoryOrder: [Int: String]?) {
+        guard let categoryOrder = categoryOrder else {
+            UserDefaults.standard.set(nil, forKey: key2)
+            return
+        }
         do {
-            try context.save()
+            let data = try JSONEncoder().encode(categoryOrder)
+            UserDefaults.standard.set(data, forKey: key2)
         } catch {
-            print("Error saving context: \(error)")
+            print("Error encoding script order data: \(error)")
         }
     }
-
-    private func clearScriptsData() {
-        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = Category.fetchRequest()
-        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-        
-        do {
-            try context.execute(deleteRequest)
-            try context.save()
-        } catch {
-            print("Error clearing scripts data: \(error)")
+    
+    func loadOrder() -> [Int: String]? {
+        if let data = UserDefaults.standard.data(forKey: key2) {
+            do {
+                let categoryOrder = try JSONDecoder().decode([Int: String].self, from: data)
+                return categoryOrder
+            } catch {
+                print("Error decoding script order data: \(error)")
+                return nil
+            }
         }
-    }
-
-    private func clearOrderData() {
-        clearScriptsData()
+        return nil
     }
 }

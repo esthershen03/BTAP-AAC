@@ -6,10 +6,14 @@
 //
 
 import Foundation
+import CoreData
+import SwiftUI
 
 class ScriptsViewModel: ObservableObject {
     private let key = "scripts"
     private let key2 = "scriptOrder"
+
+    private let context = PersistenceController.shared.container.viewContext
 
     func saveScripts(_ categoryTexts: [String: [String]]?) {
         guard let categoryTexts = categoryTexts else {
@@ -59,6 +63,34 @@ class ScriptsViewModel: ObservableObject {
                 print("Error decoding script order data: \(error)")
                 return nil
             }
+        }
+        return nil
+    }
+    
+    func saveImage(categoryName: String, image: UIImage) {
+        let imageData = image.jpegData(compressionQuality: 1.0)
+        let newImage = CategoryImage(context: context)
+        newImage.categoryName = categoryName
+        newImage.imageData = imageData
+
+        do {
+            try context.save()
+        } catch {
+            print("Failed to save image: \(error)")
+        }
+    }
+    
+    func loadImage(for categoryName: String) -> UIImage? {
+        let fetchRequest: NSFetchRequest<CategoryImage> = CategoryImage.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "categoryName == %@", categoryName)
+
+        do {
+            let result = try context.fetch(fetchRequest)
+            if let categoryImage = result.first, let imageData = categoryImage.imageData {
+                return UIImage(data: imageData)
+            }
+        } catch {
+            print("Failed to fetch image: \(error)")
         }
         return nil
     }

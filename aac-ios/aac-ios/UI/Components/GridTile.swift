@@ -6,12 +6,18 @@
 //
 
 import SwiftUI
-import CoreData
+
+func saveTileStateToUserDefaults(tileType: String, isRemoved: Bool) {
+    UserDefaults.standard.set(isRemoved, forKey: tileType)
+}
+
+func fetchTileStateFromUserDefaults(tileType: String) -> Bool {
+    return UserDefaults.standard.bool(forKey: tileType)
+}
 
 struct GridTileStyle: ButtonStyle {
     let tileType: String
     let onRemove: () -> Void
-    
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
             RoundedRectangle(cornerRadius: 10)
@@ -70,16 +76,30 @@ struct GridTileStyle: ButtonStyle {
 }
 
 struct GridTile: View {
-    @ObservedObject var tile: Tile // Core Data Tile object
+    let labelText: String
+    let image: Image
+    let tileType: String
     let onRemove: () -> Void
     let onClick: () -> Void
+
+    @State private var isTileRemoved: Bool = false
+    
+    init(labelText: String, image: Image, tileType: String, onRemove: @escaping () -> Void, onClick: @escaping () -> Void) {
+        self.labelText = labelText
+        self.image = image
+        self.tileType = tileType
+        self.onRemove = onRemove
+        self.onClick = onClick
+        
+        // Fetch tile state from UserDefaults when initializing
+        self._isTileRemoved = State(initialValue: fetchTileStateFromUserDefaults(tileType: tileType))
+    }
     
     var body: some View {
         Button(action: onClick) {
             VStack {
                 Spacer()
                     .frame(height: 40)
-                if let imagePath = tile.imagePath, let image = Image(imagePath) {
                image
                     .resizable()
                     .aspectRatio(contentMode: .fill)
@@ -103,6 +123,14 @@ struct GridTile: View {
         .frame(width:170,height:170)
         .buttonStyle(GridTileStyle(tileType: tileType, onRemove: onRemove))
         .padding(20)
+        .onAppear {
+            // Fetch the state from UserDefaults when the view appears
+            self.isTileRemoved = fetchTileStateFromUserDefaults(tileType: tileType)
+        }
+        .onChange(of: isTileRemoved) { newValue in
+            // Save the new state to UserDefaults when the removal state changes
+            saveTileStateToUserDefaults(tileType: tileType, isRemoved: newValue)
+        }
     }
 }
 

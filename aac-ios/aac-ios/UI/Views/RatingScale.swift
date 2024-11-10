@@ -6,54 +6,19 @@
 //
 
 import SwiftUI
-import CoreData
-
-class RatingLevelMOHHandler { //Core Data handler class for RatingLevel activity
-    static func clearRatingLevelMO(moc: NSManagedObjectContext) {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "RatingLevel")
-        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-        do {
-            try moc.execute(batchDeleteRequest)
-        } catch {
-            print("Could not delete RatingLevel entity records. \(error)")
-        }
-    }
-    static func saveSelectedLevel(_ selectedLevel: Int, moc: NSManagedObjectContext) {
-        // Clear previous rating data
-        RatingLevelMOHandler.clearRatingLevelMO(moc: moc)
-        
-        if let entity = NSEntityDescription.entity(forEntityName: "RatingLevel", in: moc) {
-            let ratingLevelMO = NSManagedObject(entity: entity, insertInto: moc)
-            ratingLevelMO.setValue(selectedLevel, forKey: "selectedLevel")
-            ratingLevelMO.setValue(Date(), forKey: "timestamp")
-            
-            do {
-                try moc.save()
-            } catch let error as NSError {
-                print("Could not save. \(error), \(error.userInfo)")
-            }
-        }
-    }
-    static func fetchSavedRatingLevel(in moc: NSManagedObjectContext) -> Int? {
-        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "RatingLevel")
-        do {
-            let ratingLevels = try moc.fetch(fetchRequest)
-            if let savedLevel = ratingLevels.first {
-                return savedLevel.value(forKey: "selectedLevel") as? Int
-            }
-        } catch let error as NSError {
-            print("Could not fetch. \(error), \(error.userInfo)")
-        }
-        return nil
-    }
-}
-    
 
 struct RatingScale: View {
     @State private var is3levelPopoverVisible = false
     @State private var is5levelPopoverVisible = false
     @State private var selectedLevel: Int?
-    @Environment(\.managedObjectContext) private var moc
+        didSet {
+            saveSelectedLevel()
+        }
+    }
+    
+    init() {
+        loadSelectedLevel()
+    }
     
     var body: some View {
         HStack() {
@@ -89,10 +54,7 @@ struct RatingScale: View {
                        .padding()
 
             Button(action: {
-                // Save the selected level to Core Data when the button is pressed
-                if let selectedLevel = selectedLevel {
-                    RatingLevelMOHandler.saveSelectedLevel(selectedLevel, moc: moc)
-                }
+                
             }) {
                 VStack {
                     Image(systemName: "plus.app")
@@ -105,13 +67,20 @@ struct RatingScale: View {
             .cornerRadius(10)
             .padding()
         }
-        .onAppear {
-            // Fetch the saved rating level on appear
-            if let savedLevel = RatingLevelMOHandler.fetchSavedRatingLevel(in: moc) {
-            selectedLevel = savedLevel
-            }
-        }
         Spacer()
+        
+    }
+
+    private func saveSelectedLevel() {
+        if let level = selectedLevel {
+            UserDefaults.standard.set(level, forKey: "selectedLevel")
+        }
+    }
+
+    private func loadSelectedLevel() {
+        if let level = UserDefaults.standard.value(forKey: "selectedLevel") as? Int {
+            selectedLevel = level
+        }
     }
 }
 struct RatingPopoverView: View {

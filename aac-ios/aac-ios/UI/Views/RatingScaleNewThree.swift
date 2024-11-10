@@ -7,7 +7,6 @@
 
 import Foundation
 import SwiftUI
-import CoreData
 
 struct RatingScaleActivityTwo: View {
     @State private var selectedButton: String = "5 levels"
@@ -15,9 +14,9 @@ struct RatingScaleActivityTwo: View {
     @State private var numSelected: String = "battery.50percent"
     @State private var screenSelect: String? = nil
 
-    @Environment(\.managedObjectContext) private var viewContext
-    @FetchRequest(entity: Rating.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \Rating.level, ascending: true)])
-    private var ratings: FetchedResults<Rating>
+    private let selectedButtonKey = "selectedButton"
+    private let numberButtonsKey = "numberButtons"
+    private let numSelectedKey = "numSelected"
     
     var body: some View {
         NavigationView(){
@@ -26,6 +25,7 @@ struct RatingScaleActivityTwo: View {
                 HStack{
                     Spacer()
                     NavigationLink(destination: RatingScaleGrid(), tag: "Rating Scale Grid", selection: $screenSelect) {
+                  
                             Image(systemName: "chevron.backward.circle").resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 45, height: 45)
@@ -72,15 +72,17 @@ struct RatingScaleActivityTwo: View {
                         let imageRef = "battery.\(batteryPercent)percent"
                         RatingScaleSelectionButton(image: imageRef, totalButtons: numberButtons).onTapGesture {
                             numSelected = imageRef
-                            saveRating(level: level, batteryPercent: batteryPercent)
                         }
                         Spacer()
                     }
                     Spacer()
                 }
             }
-
-        }.navigationViewStyle(StackNavigationViewStyle())
+        }
+         .onAppear {
+            loadState()
+        }
+        .navigationViewStyle(StackNavigationViewStyle())
             .navigationBarBackButtonHidden(true)
             .navigationBarTitle(Text("").font(.system(size:1)), displayMode: .inline)
             .navigationBarHidden(true)
@@ -113,21 +115,22 @@ struct RatingScaleActivityTwo: View {
             }
         }
     }
-    // Save the rating to Core Data
-    func saveRating(level: Int, batteryPercent: Int) {
-        let newRating = Rating(context: viewContext)
-        newRating.level = Int16(level)
-        newRating.batteryPercent = Int16(batteryPercent)
-
-        do {
-            try viewContext.save()
-        } catch {
-            // Handle any errors
-            print("Error saving rating: \(error.localizedDescription)")
+    func saveState() {
+        UserDefaults.standard.set(selectedButton, forKey: selectedButtonKey)
+        UserDefaults.standard.set(numberButtons, forKey: numberButtonsKey)
+        UserDefaults.standard.set(numSelected, forKey: numSelectedKey)
+    }
+    
+    func loadState() {
+        if let savedSelectedButton = UserDefaults.standard.string(forKey: selectedButtonKey) {
+            selectedButton = savedSelectedButton
+        }
+        numberButtons = UserDefaults.standard.integer(forKey: numberButtonsKey)
+        if let savedNumSelected = UserDefaults.standard.string(forKey: numSelectedKey) {
+            numSelected = savedNumSelected
         }
     }
 }
-
 
 struct RatingScaleLevelButtonTwo: View {
     let labelText: String
@@ -183,4 +186,3 @@ struct RatingScaleActivityTwo_Preview: PreviewProvider {
         
     }
 }
-

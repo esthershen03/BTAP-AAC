@@ -23,6 +23,7 @@ class ScriptsViewModel: ObservableObject {
         for (categoryTitle, texts) in categoryTexts {
             let category = Category(context: context)
             category.title = categoryTitle
+            category.imagePath = categoryImages?[categoryTitle]
 
             for text in texts {
                 let script = Script(context: context)
@@ -51,6 +52,26 @@ class ScriptsViewModel: ObservableObject {
             return categoryTexts
         } catch {
             print("Error decoding scripts data: \(error)")
+            return nil
+        }
+    }
+
+    func loadCategoryImages() -> [String: String]? {
+        let fetchRequest: NSFetchRequest<Category> = Category.fetchRequest()
+        
+        do {
+            let categories = try context.fetch(fetchRequest)
+            var categoryImages: [String: String] = [:]
+            
+            for category in categories {
+                if let title = category.title, let imagePath = category.imagePath {
+                    categoryImages[title] = imagePath
+                }
+            }
+            
+            return categoryImages
+        } catch {
+            print("Error decoding image paths: \(error)")
             return nil
         }
     }
@@ -90,6 +111,23 @@ class ScriptsViewModel: ObservableObject {
             print("Error decoding script order data: \(error)")
             return nil
         }
+    }
+
+    func saveImageToDocumentDirectory(_ image: UIImage) -> String? {
+        let fileManager = FileManager.default
+        guard let documentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
+        
+        let imagePath = documentDirectory.appendingPathComponent("\(UUID().uuidString).png")
+        
+        if let data = image.pngData() {
+            do {
+                try data.write(to: imagePath)
+                return imagePath.path // Returns the file path to the image
+            } catch {
+                print("Error saving image: \(error)")
+            }
+        }
+        return nil
     }
 
     private func saveContext() {

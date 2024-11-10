@@ -7,17 +7,12 @@
 
 import Foundation
 import SwiftUI
-import CoreData
 
 struct RatingScaleActivityFour: View {
-    @State private var selectedButton: String = "3 levels"
-    @State private var numberButtons: Int = 3
-    @State private var numSelected: String = "questionmark.square"
+    @State private var selectedButton: String = UserDefaults.standard.string(forKey: "selectedButton") ?? "3 levels"
+    @State private var numberButtons: Int = UserDefaults.standard.integer(forKey: "numberButtons") == 0 ? 3 : UserDefaults.standard.integer(forKey: "numberButtons")
+    @State private var numSelected: String = UserDefaults.standard.string(forKey: "numSelected") ?? "questionmark.square"
     @State private var screenSelect: String? = nil
-
-    @Environment(\.managedObjectContext) private var moc // Access to the managed object context
-    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \RatingScaleSelection.timestamp, ascending: true)], animation: .default)
-    private var selections: FetchedResults<RatingScaleSelection> // Fetch saved selections
     
     var body: some View {
         NavigationView(){
@@ -29,6 +24,7 @@ struct RatingScaleActivityFour: View {
                             Image(systemName: "chevron.backward.circle").resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 45, height: 45)
+
                     }.buttonStyle(.plain)
                     
                     Spacer()
@@ -39,6 +35,7 @@ struct RatingScaleActivityFour: View {
                     }
                     Spacer()
                     Spacer()
+
 
                 }
                 Spacer()
@@ -63,7 +60,6 @@ struct RatingScaleActivityFour: View {
                         let imageRef = "\(personChoice).square"
                         RatingScaleSelectionButton(image: imageRef, totalButtons: numberButtons).onTapGesture {
                             numSelected = imageRef
-                            saveSelection(level: level)
                         }
                         Spacer()
                     }
@@ -80,27 +76,25 @@ struct RatingScaleActivityFour: View {
     }
     // Helper function to handle battery percentage logic
     func getPerson(for level: Int) -> String {
-        switch level {
-        case 1:
-            return "checkmark"
-        case 2:
-            return "questionmark"
-        default:
-            return "xmark"
-        }
+            switch level {
+            case 1:
+                return "checkmark"
+            case 2:
+                return "questionmark"
+            default:
+                return "xmark"
+            }
+    }
+    private func saveSelectedButton() {
+        UserDefaults.standard.set(selectedButton, forKey: "selectedButton")
     }
     
-    // Core Data Save Method
-    private func saveSelection(level: Int) {
-        let newSelection = RatingScaleSelection(context: moc)
-        newSelection.level = Int16(level)
-        newSelection.timestamp = Date()
-
-        do {
-            try moc.save()  // Save the selection to Core Data
-        } catch {
-            print("Error saving selection: \(error.localizedDescription)")
-        }
+    private func saveNumberButtons() {
+        UserDefaults.standard.set(numberButtons, forKey: "numberButtons")
+    }
+    
+    private func saveNumSelected() {
+        UserDefaults.standard.set(numSelected, forKey: "numSelected")
     }
 }
 
@@ -131,7 +125,7 @@ struct RatingScaleSelectionButtonFour: View {
     var totalButtons: Int = 5
     var body: some View {
         VStack{}
-        .frame(width: totalButtons <= 5 ? 125 : CGFloat(450/totalButtons) , height: totalButtons <= 5 ? 125 : CGFloat(450/totalButtons) )
+            .frame(width: totalButtons <= 5 ? 125 : CGFloat(450/totalButtons) , height: totalButtons <= 5 ? 125 : CGFloat(450/totalButtons) )
        .padding()
        .accentColor(Color.black)
        .cornerRadius(10.0)
@@ -158,4 +152,3 @@ struct RatingScaleActivityFour_Preview: PreviewProvider {
         
     }
 }
-

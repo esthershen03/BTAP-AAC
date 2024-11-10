@@ -7,17 +7,12 @@
 
 import Foundation
 import SwiftUI
-import CoreData
 
 struct RatingScaleActivity: View {
-    @State private var selectedButton: String = "5 levels"
-    @State private var numberButtons: Int = 5
-    @State private var numSelected: String = "3.square"
+    @State private var selectedButton: String = UserDefaults.standard.string(forKey: "selectedButton") ?? "5 levels"
+    @State private var numberButtons: Int = UserDefaults.standard.integer(forKey: "numberButtons") > 0 ? UserDefaults.standard.integer(forKey: "numberButtons") : 5
+    @State private var numSelected: String = UserDefaults.standard.string(forKey: "numSelected") ?? "3.square"
     @State private var screenSelect: String? = nil
-
-    @Environment(\.managedObjectContext) private var moc // Access to the managed object context
-    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \RatingScaleSelection.timestamp, ascending: true)], animation: .default)
-    private var selections: FetchedResults<RatingScaleSelection> // Fetch saved selections
     
     var body: some View {
         NavigationView(){
@@ -38,14 +33,12 @@ struct RatingScaleActivity: View {
                         selectedButton = "3 levels"
                         numberButtons = 3
                         numSelected = "2.square"
-                        saveSelection(level: 3)
                     }
                     Spacer()
                     RatingScaleLevelButton(labelText: "5 levels", selected: selectedButton == "5 levels").onTapGesture {
                         selectedButton = "5 levels"
                         numberButtons = 5
                         numSelected = "3.square"
-                        saveSelection(level: 5)
                         
                     }
                     Spacer()
@@ -53,18 +46,18 @@ struct RatingScaleActivity: View {
                         selectedButton = "7 levels"
                         numberButtons = 7
                         numSelected = "4.square"
-                        saveSelection(level: 7)
                     }
                     Spacer()
                     RatingScaleLevelButton(labelText: "10 levels", selected: selectedButton == "10 levels").onTapGesture {
                         selectedButton = "10 levels"
                         numberButtons = 10
                         numSelected = "5.square"
-                        saveSelection(level: 10)
                     }
                     Spacer()
 
                 }
+                Spacer()
+                Spacer()
                 Spacer()
 
                 HStack{
@@ -75,6 +68,7 @@ struct RatingScaleActivity: View {
                 }
                 Spacer()                    
                 Spacer()
+                Spacer()
 
                 HStack{
                     Spacer()
@@ -83,7 +77,6 @@ struct RatingScaleActivity: View {
                         let imageRef = "\(level).square"
                         RatingScaleSelectionButton(image: imageRef, totalButtons: numberButtons).onTapGesture {
                             numSelected = imageRef
-                            saveSelection(level: level)
                         }
                         Spacer()
                     }
@@ -98,18 +91,10 @@ struct RatingScaleActivity: View {
         Spacer()
 
     }
-
-    // Save selection to Core Data
-    private func saveSelection(level: Int) {
-        let newSelection = RatingScaleSelection(context: moc)
-        newSelection.level = Int16(level)
-        newSelection.timestamp = Date()
-
-        do {
-            try moc.save()
-        } catch {
-            print("Error saving selection: \(error.localizedDescription)")
-        }
+    private func saveData() {
+        UserDefaults.standard.set(selectedButton, forKey: "selectedButton")
+        UserDefaults.standard.set(numberButtons, forKey: "numberButtons")
+        UserDefaults.standard.set(numSelected, forKey: "numSelected")
     }
 }
 
@@ -155,7 +140,8 @@ struct RatingScaleSelectionButton: View {
                    .foregroundColor(Color(imageColor))
            }
            
-       }   
+       }
+       
     }
 }
 
@@ -166,4 +152,3 @@ struct RatingScaleActivity_Preview: PreviewProvider {
         
     }
 }
-

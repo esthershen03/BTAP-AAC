@@ -14,6 +14,11 @@ struct MainScreen: View {
 
     let persistenceController = PersistenceController.shared
 
+    init() {
+        if let lastSelected = UserDefaults.standard.string(forKey: "lastSelectedButton") {
+            _selectedButton = State(initialValue: lastSelected)
+        }
+    }
     
     var body: some View {
         NavigationView(){
@@ -21,6 +26,7 @@ struct MainScreen: View {
                 HorizontalNavBar(onLogout: {
                     print("logging out")
                     navigateToLogin = true // Trigger navigation to the login screen
+                    UserDefaults.standard.set(false, forKey: "isLoggedIn")
                 })
                 NavigationLink(destination: LoginScreen(), isActive: $navigateToLogin) {
                     EmptyView()
@@ -59,6 +65,9 @@ struct MainScreen: View {
             }.navigationBarBackButtonHidden(true)
                 .navigationBarHidden(true)
                 .navigationBarTitle(Text("").font(.system(size:1)), displayMode: .inline)
+                .onChange(of: selectedButton) { newValue in
+                    UserDefaults.standard.set(newValue, forKey: "lastSelectedButton")
+                }
         } .navigationBarBackButtonHidden(true)
             .navigationBarHidden(true)
             .navigationBarTitle(Text("").font(.system(size:1)), displayMode: .inline)

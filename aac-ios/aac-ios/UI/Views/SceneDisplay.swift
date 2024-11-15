@@ -39,6 +39,7 @@ struct SceneDisplay: View {
         
         @State private var selectedSceneDisplay: SavedSD = SavedSD()
         @State private var savedSDs : [SavedSD] = []
+    @State private var imageNotSelected: Bool = false
 
     var body: some View {
         ZStack {
@@ -71,14 +72,18 @@ struct SceneDisplay: View {
                             TextField("scene display name", text: $currentSceneDisplayName)
                             // replace action with real save functionality
                             Button("Save", action: {
-//                                imageViewModel.saveImage(nil)
-//                                savedSceneDisplayNames.append(currentSceneDisplayName)
-                                let curr = SavedSD(imageData: inputImage ?? UIImage(), name: currentSceneDisplayName, texts: textFieldValues)
-                                curr.saveToCoreData(context: moc)
-                                savedSDs.append(curr)
+                                if let image = inputImage {
+                                    let curr = SavedSD(imageData: image, name: currentSceneDisplayName, texts: textFieldValues)
+                                    curr.saveToCoreData(context: moc)
+                                } else {
+                                    imageNotSelected = true
+                                }
                                 
                                 } )
                             Button("Cancel", role: .cancel) {}
+                        }
+                        .alert("You must select an image in your scene display before saving.", isPresented: $imageNotSelected) {
+                            Button("Ok", role: .cancel) {}
                         }
                         .onChange(of: showSaveConfirm) { newValue in
                             if newValue {

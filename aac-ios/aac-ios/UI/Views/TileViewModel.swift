@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreData
+import SwiftUI
 
 
 class TileViewModel: ObservableObject {
@@ -15,7 +16,9 @@ class TileViewModel: ObservableObject {
     @Published var tiles: [Tile] = []
     @Published var droppedTiles: [Tile] = []
     @Published var currentFolder: Tile? = nil
-    
+
+    @Environment(\.managedObjectContext) private var viewContext
+
     init() {
         container = NSPersistentContainer(name: "AAC Core Data")
         container.loadPersistentStores { description, error in
@@ -37,40 +40,29 @@ class TileViewModel: ObservableObject {
     }
     
     func fetchTile(name: String) -> Tile? {
-        let request : NSFetchRequest = {
-            let request = Tile.fetchRequest()
-            
-            request.predicate = NSPredicate(format: "name == %@", name)
-            
-            return request
-        }()
+        let request : NSFetchRequest<Tile> = Tile.fetchRequest()
+        request.predicate = NSPredicate(format: "name == %@", name)
         
         var tiles: [Tile]
         do {
-            tiles =  try container.viewContext.fetch(request)
-            if (tiles.isEmpty) {return nil}
+            tiles = try container.viewContext.fetch(request)
+            if (tiles.isEmpty) { return nil }
             return tiles[0]
         } catch let error {
-            print("Error Fetching")
+            print("Error Fetching Tile: \(error)")
         }
-        
-       return nil
+        return nil
     }
     
     
     func fetchTiles(parent: Tile) {
-        let request : NSFetchRequest = {
-            let request = Tile.fetchRequest()
-            
-            request.predicate = NSPredicate(format: "parent == %@", parent)
-            
-            return request
-        }()
+        let request: NSFetchRequest<Tile> = Tile.fetchRequest()
+        request.predicate = NSPredicate(format: "parent == %@", parent)
         
         do {
             tiles = try container.viewContext.fetch(request)
         } catch let error {
-            print("Error Fetching")
+            print("Error Fetching Tiles: \(error)")
         }
     }
     
@@ -99,5 +91,22 @@ class TileViewModel: ObservableObject {
             print("Error Saving")
             print(error)
         }
+    }
+    
+    func fetchTilesFromPersistence() {
+        let request: NSFetchRequest<Tile> = Tile.fetchRequest()
+        
+        do {
+            let fetchedTiles = try container.viewContext.fetch(request)
+            tiles = fetchedTiles
+        } catch let error {
+            print("Error Fetching Tiles from Persistence: \(error)")
+        }
+    }
+    func addToDroppedTiles(tile: Tile) {
+        droppedTiles.append(tile)
+    }
+    func removeFromDroppedTiles(tile: Tile) {
+        droppedTiles.removeAll { $0.id == tile.id }
     }
 }

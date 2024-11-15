@@ -29,6 +29,10 @@ struct Scripts: View {
             categoryTexts = savedScripts
         }
         
+        if let savedImages = scriptsViewModel.loadImages() {
+        categoryImages = savedImages.mapValues { Image(uiImage: $0) }
+        }
+        
         if categoryTexts.isEmpty {
             self._categories = State(initialValue: ["Health", "Food", "Activities", "TV"])
             categoryImages = ["Health" : Image(systemName: "heart.text.clipboard.fill"), "Food" : Image(systemName: "fork.knife"), "Activities" : Image(systemName: "figure.run"), "TV" : Image(systemName: "play.tv.fill")]

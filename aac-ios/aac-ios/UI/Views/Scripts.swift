@@ -16,6 +16,8 @@ struct Scripts: View {
     // Define your categories here
     @State private var addShowing = false
     @State private var categories: [String]
+
+    let scriptsViewModel = ScriptsViewModel()
     
 
     
@@ -47,6 +49,7 @@ struct Scripts: View {
             
             scriptsViewModel.saveScripts(categoryTexts)
             scriptsViewModel.saveOrder(categoryOrder)
+            scriptsViewModel.saveImages(categoryImages)
         } else {
             if let savedOrder = scriptsViewModel.loadOrder() {
                 categoryOrder = savedOrder

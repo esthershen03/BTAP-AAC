@@ -10,9 +10,13 @@ import Foundation
 class ScriptsViewModel: ObservableObject {
     private let key = "scripts"
     private let key2 = "scriptOrder"
-    private let imageKey = "categoryImages"
+    @Published var scripts: [Script] = []
+    private var context: NSManagedObjectContext
 
-    @Published var lastModified: Date?
+    init(context: NSManagedObjectContext) {
+        self.context = context
+        fetchScripts()
+    }
 
     func saveScripts(_ categoryTexts: [String: [String]]?) {
         guard let categoryTexts = categoryTexts else {
@@ -101,11 +105,65 @@ class ScriptsViewModel: ObservableObject {
         return nil
     }
 
-    func clearAllData() {
-        UserDefaults.standard.removeObject(forKey: key)
-        UserDefaults.standard.removeObject(forKey: key2)
-        UserDefaults.standard.removeObject(forKey: imageKey)
-        lastModified = Date()
-        print("All data cleared.")
+    func fetchScripts() {
+        let fetchRequest: NSFetchRequest<ScriptEntity> = ScriptEntity.fetchRequest()
+        
+        do {
+            let results = try context.fetch(fetchRequest)
+            self.scripts = results.map { Script(entity: $0) } // Assuming you have a Script model that can be initialized from ScriptEntity
+        } catch {
+            print("Failed to fetch scripts: \(error)")
+        }
+    }
+}
+
+struct SavedScript: Hashable {
+    var imageData: Data? = nil
+    var name: String = ""
+    var texts: [String] = []
+
+    // Save to CoreData
+    func saveToCoreData(context: NSManagedObjectContext) {
+        let entity = SavedScriptEntity(context: context)
+        entity.imageData = imageData
+        entity.name = name
+        entity.texts = texts as NSObject
+
+        do {
+            try context.save()
+            print("Script saved successfully")
+        } catch {
+            print("Failed to save: \(error)")
+        }
+    }
+
+    static func fetchAll(from context: NSManagedObjectContext) -> [SavedScript] {
+        let fetchRequest: NSFetchRequest<SavedScriptEntity> = SavedScriptEntity.fetchRequest()
+
+        do {
+            let results = try context.fetch(fetchRequest)
+            return results.compactMap { entity in
+                guard let data = entity.imageData else { return SavedScript() }
+                return SavedScript(imageData: data, name: entity.name ?? "", texts: entity.texts as? [String] ?? [])
+            }
+        } catch {
+            print("Failed to fetch: \(error)")
+            return []
+        }
+    }
+
+    func deleteFromCoreData(context: NSManagedObjectContext) {
+        let fetchRequest: NSFetchRequest<SavedScriptEntity> = SavedScriptEntity.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "name == %@", name)
+
+        do {
+            let results = try context.fetch(fetchRequest)
+            for object in results {
+                context.delete(object)
+            }
+            try context.save()
+        } catch {
+            print("Failed to delete: \(error)")
+        }
     }
 }

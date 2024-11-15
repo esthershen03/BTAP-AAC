@@ -12,6 +12,8 @@ class ScriptsViewModel: ObservableObject {
     private let key2 = "scriptOrder"
     private let imageKey = "categoryImages"
 
+    @Published var lastModified: Date?
+
     func saveScripts(_ categoryTexts: [String: [String]]?) {
         guard let categoryTexts = categoryTexts else {
             UserDefaults.standard.set(nil, forKey: key)
@@ -20,6 +22,7 @@ class ScriptsViewModel: ObservableObject {
         do {
             let data = try JSONEncoder().encode(categoryTexts)
             UserDefaults.standard.set(data, forKey: key)
+            lastModified = Date()
         } catch {
             print("Error encoding scripts data: \(error)")
         }
@@ -49,6 +52,7 @@ class ScriptsViewModel: ObservableObject {
             }
             let data = try JSONEncoder().encode(imageDataDict)
             UserDefaults.standard.set(data, forKey: imageKey)
+            lastModified = Date()
         } catch {
             print("Error encoding images data: \(error)")
         }
@@ -78,6 +82,7 @@ class ScriptsViewModel: ObservableObject {
         do {
             let data = try JSONEncoder().encode(categoryOrder)
             UserDefaults.standard.set(data, forKey: key2)
+            lastModified = Date() 
         } catch {
             print("Error encoding script order data: \(error)")
         }
@@ -94,5 +99,13 @@ class ScriptsViewModel: ObservableObject {
             }
         }
         return nil
+    }
+
+    func clearAllData() {
+        UserDefaults.standard.removeObject(forKey: key)
+        UserDefaults.standard.removeObject(forKey: key2)
+        UserDefaults.standard.removeObject(forKey: imageKey)
+        lastModified = Date()
+        print("All data cleared.")
     }
 }

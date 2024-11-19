@@ -179,6 +179,7 @@ struct WhiteBoard: View {
                                 showConfirmation = true
                             }) {
                                 ZStack {
+                                    
                                     RoundedRectangle(cornerRadius: 10)
                                         .frame(width: 60, height: 60)
                                         .foregroundColor(.black)

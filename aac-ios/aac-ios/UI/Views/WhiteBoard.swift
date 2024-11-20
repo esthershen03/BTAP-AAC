@@ -227,14 +227,13 @@ struct WhiteBoard: View {
                             .alert("Enter the name of your drawing.", isPresented: $showSaveConfirm) {
                                 TextField("Drawing name", text: $currentImageName)
                                 Button("Save") {
-                                        let image = captureWhiteBoardImage()
-                                        WhiteBoardManager.shared.saveWhiteBoard(name: currentImageName, drawingImage: image)
-                                        savedDrawingNames.append(currentImageName) // Update the list of saved drawings
-                                        lines = [Line]()
-                                        deletedLines = [Line]()
-                                        inputImage = nil
-                                        whiteboardImageViewModel.saveImage(nil)
-
+                                    let image = captureWhiteBoardImage()
+                                    WhiteBoardManager.shared.saveWhiteBoard(name: currentImageName, drawingImage: image)
+                                    savedDrawingNames.append(currentImageName) // Update the list of saved drawings
+                                    lines = [Line]()
+                                    deletedLines = [Line]()
+                                    inputImage = nil
+                                    whiteboardImageViewModel.saveImage(nil)
                                 }
                                 Button("Cancel", role: .cancel) {}
                             }
@@ -367,11 +366,16 @@ struct WhiteBoard: View {
     func captureWhiteBoardImage() -> UIImage {
         let renderer = UIGraphicsImageRenderer(size: UIScreen.main.bounds.size)
         let img = renderer.image { ctx in
+            // Draw the input image if it exists
+            if let inputImage = inputImage {
+                inputImage.draw(in: CGRect(origin: .zero, size: UIScreen.main.bounds.size))
+            }
+
             // This will render the whiteboard lines onto the context
             for line in lines {
                 let path = engine.createPath(for: line.points)
                 let cgPath = path.cgPath // Convert the SwiftUI Path to CGPath
-                
+
                 ctx.cgContext.setStrokeColor(line.color.cgColor ?? UIColor.black.cgColor) // Use black as fallback if cgColor is nil
                 ctx.cgContext.setLineWidth(line.lineWidth)
                 ctx.cgContext.setLineCap(.round)
@@ -382,15 +386,16 @@ struct WhiteBoard: View {
         }
         return img
     }
+
     
     func loadSavedDrawing(named name: String) {
-            // Fetch the drawing from CoreData based on the name
-            if let selectedWhiteBoard = WhiteBoardManager.shared.fetchWhiteBoards().first(where: { $0.name == name }),
-               let drawingData = selectedWhiteBoard.drawingData {
-                // Load the image from the stored data
-                inputImage = UIImage(data: drawingData)
-            }
+        // Fetch the drawing from CoreData based on the name
+        if let selectedWhiteBoard = WhiteBoardManager.shared.fetchWhiteBoards().first(where: { $0.name == name }),
+           let drawingData = selectedWhiteBoard.drawingData {
+            // Load the image from the stored data
+            inputImage = UIImage(data: drawingData)
         }
+    }
 
 } // white board struct
 

@@ -323,10 +323,15 @@ struct WhiteBoard: View {
                                                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 20), count: 4), spacing: 60) {
                                                     ForEach(savedDrawingNames, id: \.self) { name in
                                                         WhiteBoardTile(labelText: name, tapAction: { drawingName in
+                                                            lines = [Line]()
+                                                            deletedLines = [Line]()
+                                                            inputImage = nil
+                                                            whiteboardImageViewModel.saveImage(nil)
                                                             loadSavedDrawing(named: drawingName)
                                                             withAnimation {
                                                                 showFolder.toggle()
                                                             }
+                                                            
                                                         })
                                                     }
                                                 }

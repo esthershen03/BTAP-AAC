@@ -230,6 +230,10 @@ struct WhiteBoard: View {
                                         let image = captureWhiteBoardImage()
                                         WhiteBoardManager.shared.saveWhiteBoard(name: currentImageName, drawingImage: image)
                                         savedDrawingNames.append(currentImageName) // Update the list of saved drawings
+                                        lines = [Line]()
+                                        deletedLines = [Line]()
+                                        inputImage = nil
+                                        whiteboardImageViewModel.saveImage(nil)
 
                                 }
                                 Button("Cancel", role: .cancel) {}
@@ -320,6 +324,9 @@ struct WhiteBoard: View {
                                                     ForEach(savedDrawingNames, id: \.self) { name in
                                                         WhiteBoardTile(labelText: name, tapAction: { drawingName in
                                                             loadSavedDrawing(named: drawingName)
+                                                            withAnimation {
+                                                                showFolder.toggle()
+                                                            }
                                                         })
                                                     }
                                                 }

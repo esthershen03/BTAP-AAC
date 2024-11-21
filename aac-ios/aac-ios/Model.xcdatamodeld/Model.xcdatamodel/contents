@@ -20,4 +20,8 @@
     <entity name="TestEntity" representedClassName="TestEntity" syncable="YES" codeGenerationType="class">
         <attribute name="testValue" optional="YES" attributeType="String"/>
     </entity>
+     <entity name="ScriptsEntity" representedClassName="ScriptsEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="texts" optional="YES" attributeType="String"/>
+    </entity>
 </model>

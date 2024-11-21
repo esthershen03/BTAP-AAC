@@ -6,12 +6,19 @@
 //
 
 import Foundation
+import CoreData
+import UIKit
+
+
 
 class ScriptsViewModel: ObservableObject {
     private let key = "scripts"
     private let key2 = "scriptOrder"
-    @Published var scripts: [Script] = []
+    private let imageKey = "categoryImages"
+    @Published var scripts: [Scripts] = []
     private var context: NSManagedObjectContext
+    
+    private var lastModified: Date?
 
     init(context: NSManagedObjectContext) {
         self.context = context
@@ -51,7 +58,7 @@ class ScriptsViewModel: ObservableObject {
             return
         }
         do {
-            let imageDataDict = try categoryImages.mapValues { image in
+            let imageDataDict = categoryImages.mapValues { image in
                 image.pngData() ?? Data()
             }
             let data = try JSONEncoder().encode(imageDataDict)
@@ -106,7 +113,7 @@ class ScriptsViewModel: ObservableObject {
     }
 
     func fetchScripts() {
-        let fetchRequest: NSFetchRequest<ScriptEntity> = ScriptEntity.fetchRequest()
+        let fetchRequest: NSFetchRequest<Scripts> = Scripts.fetchRequest()
         
         do {
             let results = try context.fetch(fetchRequest)

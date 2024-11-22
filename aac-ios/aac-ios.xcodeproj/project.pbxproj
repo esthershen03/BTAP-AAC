@@ -27,6 +27,7 @@
 		821CD4422BCF315E007D45EF /* AAC Core Data.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 821CD4402BCF315E007D45EF /* AAC Core Data.xcdatamodeld */; };
 		82653FB32BA3AAE80089F1AD /* TileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82653FB22BA3AAE80089F1AD /* TileViewModel.swift */; };
 		82DA4FA92B845DC6005BFFB7 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		8D238D4B2CEBFCE90002207E /* WhiteBoardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D238D4A2CEBFCE30002207E /* WhiteBoardManager.swift */; };
 		8E09CD9B2AE15B3300239660 /* GridTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E09CD9A2AE15B3300239660 /* GridTile.swift */; };
 		8E0EC37D2ACDD1D30019F3B4 /* SceneDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0EC37C2ACDD1D30019F3B4 /* SceneDisplay.swift */; };
 		8E0EC37F2ACDD2170019F3B4 /* WhiteBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0EC37E2ACDD2170019F3B4 /* WhiteBoard.swift */; };
@@ -90,6 +91,7 @@
 		68EA44452ACE09F2008C3C69 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		821CD4412BCF315E007D45EF /* AAC Core Data.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "AAC Core Data.xcdatamodel"; sourceTree = "<group>"; };
 		82653FB22BA3AAE80089F1AD /* TileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileViewModel.swift; sourceTree = "<group>"; };
+		8D238D4A2CEBFCE30002207E /* WhiteBoardManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteBoardManager.swift; sourceTree = "<group>"; };
 		8E09CD9A2AE15B3300239660 /* GridTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridTile.swift; sourceTree = "<group>"; };
 		8E0EC37C2ACDD1D30019F3B4 /* SceneDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDisplay.swift; sourceTree = "<group>"; };
 		8E0EC37E2ACDD2170019F3B4 /* WhiteBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteBoard.swift; sourceTree = "<group>"; };
@@ -168,6 +170,7 @@
 			isa = PBXGroup;
 			children = (
 				821CD4402BCF315E007D45EF /* AAC Core Data.xcdatamodeld */,
+				8D238D4A2CEBFCE30002207E /* WhiteBoardManager.swift */,
 				3F219AE12BBF040500FF0441 /* LineViewModel.swift */,
 				425550D82B1BCA9B00623989 /* ViewController.swift */,
 				3F219AE32BBFA2E600FF0441 /* PhotoUploadView.swift */,
@@ -425,6 +428,7 @@
 				821CD4422BCF315E007D45EF /* AAC Core Data.xcdatamodeld in Sources */,
 				D5E092652B168FAA002C5DE0 /* DrawingEngine.swift in Sources */,
 				3F8303782AD628D40012E832 /* PopUp.swift in Sources */,
+				8D238D4B2CEBFCE90002207E /* WhiteBoardManager.swift in Sources */,
 				3D3DAF662CE00065009EB025 /* SavedSD.swift in Sources */,
 				4244468B2B7B24A90019219E /* AppDelegate.swift in Sources */,
 				3F219AE42BBFA2E600FF0441 /* PhotoUploadView.swift in Sources */,

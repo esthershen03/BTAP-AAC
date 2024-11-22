@@ -218,25 +218,25 @@ struct WhiteBoard: View {
                                     Ellipse()
                                         .frame(width: 50, height: 50)
                                         .foregroundColor(.white)
-
                                     Image(systemName: "arrow.down.to.line.circle.fill")
-
                                         .resizable()
                                         .frame(width: 60, height: 60)
                                         .foregroundColor(.black)
                                 }
                             }
-
-                                .foregroundColor(.red)
-                                .alert("Enter the name of your drawing.", isPresented: $showSaveConfirm) {
-                                    TextField("drawing name", text: $currentImageName)
-                                    // replace action with real save functionality
-                                    Button("Save", action: {
-                                        whiteboardImageViewModel.saveImage(nil)
-                                        savedDrawingNames.append(currentImageName)
-                                        } )
-                                    Button("Cancel", role: .cancel) {}
+                            .alert("Enter the name of your drawing.", isPresented: $showSaveConfirm) {
+                                TextField("Drawing name", text: $currentImageName)
+                                Button("Save") {
+                                    let image = captureWhiteBoardImage()
+                                    WhiteBoardManager.shared.saveWhiteBoard(name: currentImageName, drawingImage: image)
+                                    savedDrawingNames.append(currentImageName) // Update the list of saved drawings
+                                    lines = [Line]()
+                                    deletedLines = [Line]()
+                                    inputImage = nil
+                                    whiteboardImageViewModel.saveImage(nil)
                                 }
+                                Button("Cancel", role: .cancel) {}
+                            }
                                 .onChange(of: showSaveConfirm) { newValue in
                                     if newValue {
                                         currentImageName = "" // Reset to an empty string when the alert is shown
@@ -303,122 +303,120 @@ struct WhiteBoard: View {
             
             // saved drawings pop-up (only show when showFolder is true)
             if showFolder {
-                ZStack { // outer z stack for entire sheet and grey background
+                                ZStack {
+                                    Color.black.opacity(0.15)
+                                        .edgesIgnoringSafeArea(.all)
+                                        .onTapGesture {
+                                            withAnimation {
+                                                showFolder.toggle()
+                                            }
+                                        }
 
-                    Color.black.opacity(0.15)
-                        .edgesIgnoringSafeArea(.all)
-                        .onTapGesture {
-                            // Hide the popup when the background is tapped
-                            withAnimation {
-                                showFolder.toggle()
-                            }
-                        }
+                                    ZStack(alignment: .topLeading) {
+                                        VStack {
+                                            Text("Saved Drawings")
+                                                .font(.system(size: 40))
+                                                .padding()
 
-
-                    ZStack(alignment: .topLeading) { // inner zstack for drawings area
-
-                        // Main popup content
-                        VStack {
-                            Text("Saved Drawings")
-                                .font(.system(size: 40))
-                                .padding()
-
-                            
-                            ScrollView {
-                                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 20), count: 4), spacing: 60) {
-                                    // Create a button for each category
-                                    ForEach(savedDrawingNames, id: \.self) { name in
-                                        WhiteBoardTile(labelText: name)
+                                            ScrollView {
+                                                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 20), count: 4), spacing: 60) {
+                                                    ForEach(savedDrawingNames, id: \.self) { name in
+                                                        WhiteBoardTile(labelText: name, tapAction: { drawingName in
+                                                            lines = [Line]()
+                                                            deletedLines = [Line]()
+                                                            inputImage = nil
+                                                            whiteboardImageViewModel.saveImage(nil)
+                                                            loadSavedDrawing(named: drawingName)
+                                                            withAnimation {
+                                                                showFolder.toggle()
+                                                            }
+                                                            
+                                                        })
+                                                    }
+                                                }
+                                                .padding()
+                                            }
+                                        }
+                                        .frame(width: 1000, height: 750)
+                                        .background(Color.white)
+                                        .cornerRadius(20)
+                                        .shadow(radius: 20)
+                                        
+                                        Image(systemName: "x.circle")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 35, height: 35)
+                                            .padding(25)
+                                            .onTapGesture {
+                                                withAnimation {
+                                                    showFolder.toggle()
+                                                }
+                                            }
                                     }
                                 }
-                                .padding()
-                            }                        }
-
-                        .frame(width: 1000, height: 750)
-                        .background(Color.white)
-                        .cornerRadius(20)
-                        .shadow(radius: 20)
-
-                        // Close button (top-right)
-                        Image(systemName: "x.circle")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 35, height: 35)
-                            .padding(25)
-                            .onTapGesture {
-                                withAnimation {
-                                    showFolder.toggle()
-                                }
+                                .transition(.move(edge: .bottom))
+                                .animation(.easeInOut)
                             }
+                        }
+                        .onAppear {
+                            // Initialize the list of saved drawing names
+                            savedDrawingNames = WhiteBoardManager.shared.fetchWhiteBoards().map { $0.name ?? "" }
+                        }
                     }
-                    .frame(width: 1000, height: 750)
-                }
+    func captureWhiteBoardImage() -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: UIScreen.main.bounds.size)
+        let img = renderer.image { ctx in
+            // Draw the input image if it exists
+            if let inputImage = inputImage {
+                inputImage.draw(in: CGRect(origin: .zero, size: UIScreen.main.bounds.size))
+            }
 
-                .transition(.move(edge: .bottom)) // Apply the transition to the inner z stack
-                .animation(.easeInOut)
-            } // end of outer z stack
-        } // end of entire z stack for the whole view
-    } //body view
+            // This will render the whiteboard lines onto the context
+            for line in lines {
+                let path = engine.createPath(for: line.points)
+                let cgPath = path.cgPath // Convert the SwiftUI Path to CGPath
+
+                ctx.cgContext.setStrokeColor(line.color.cgColor ?? UIColor.black.cgColor) // Use black as fallback if cgColor is nil
+                ctx.cgContext.setLineWidth(line.lineWidth)
+                ctx.cgContext.setLineCap(.round)
+                ctx.cgContext.setLineJoin(.round)
+                ctx.cgContext.addPath(cgPath)  // Add the CGPath to the context
+                ctx.cgContext.strokePath()     // Stroke the path
+            }
+        }
+        return img
+    }
+
+    
+    func loadSavedDrawing(named name: String) {
+        // Fetch the drawing from CoreData based on the name
+        if let selectedWhiteBoard = WhiteBoardManager.shared.fetchWhiteBoards().first(where: { $0.name == name }),
+           let drawingData = selectedWhiteBoard.drawingData {
+            // Load the image from the stored data
+            inputImage = UIImage(data: drawingData)
+        }
+    }
+
 } // white board struct
 
 // tile for saved drawing
 struct WhiteBoardTile: View {
     let labelText: String
-    let image: String = "photo.artframe" // should be replaced with preview of image
-    var available: Bool = false
-    var imageColor: String = "AACBlack"
+    var tapAction: (String) -> Void  // Closure to handle tap action
+
     var body: some View {
-        VStack{}
-       .frame(width: 160,height: 160)
-       .padding()
-       .accentColor(Color.black)
-       .cornerRadius(10.0)
-       .background(Color("AACGrey"))
-       .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 2))
-       .overlay {
-           VStack{
-           Spacer()
-               .frame(height: 10)
-               
-               if(available) {
-                   HStack {
-                       Spacer()
-                           .frame(width: 135)
-                       Image(systemName: "chevron.right.circle")
-                           .resizable()
-                           .aspectRatio(contentMode: .fit)
-                           .frame(width: 25, height: 25)
-                   }
-               }
-               
-               Spacer()
-                   .frame(height: 5)
-               
-
-               // currently using logos as placeholder; must be replaced with preview of drawing
-
-               Image(systemName: image)
-                   .resizable()
-                   .aspectRatio(contentMode: .fit)
-                   .frame(width: 75, height: 75)
-                   .foregroundColor(Color(imageColor))
-
-               
-               Spacer()
-                   .frame(height: 10)
-    
-               
-               Text(labelText)
-                   .font(.system(size: 26))
-                   .multilineTextAlignment(.leading)
-                   .padding(.horizontal)
-               
-               Spacer()
-                   .frame(height: 10)
-           }
-           
-       }
-       
+        VStack {
+            Text(labelText)
+                .font(.system(size: 16))
+        }
+        .frame(width: 160, height: 160)
+        .padding()
+        .background(Color("AACGrey"))
+        .cornerRadius(10)
+        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 2))
+        .onTapGesture {
+            tapAction(labelText) // Trigger the action when tile is clicked
+        }
     }
 }
 

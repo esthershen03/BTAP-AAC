@@ -79,7 +79,7 @@ struct PhotoUploadView: View {
             Button(action: {
                 if systemName == "photo" {
                     galleryClicked = true
-                } else if systemName == "camera" {
+                } else if systemName == "camera.fill" {
                     cameraClicked = true
                 }
             }) {

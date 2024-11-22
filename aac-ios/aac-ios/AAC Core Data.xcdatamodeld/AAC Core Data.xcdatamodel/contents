@@ -5,6 +5,7 @@
         <attribute name="imagePath" optional="YES" attributeType="String"/>
         <attribute name="name" attributeType="String"/>
         <attribute name="type" attributeType="String"/>
+        <attribute name="isDropped" optional="NO" attributeType="Boolean" defaultValueString="false" usesScalarValueType="YES"/>
         <relationship name="contains" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tile" inverseName="parent" inverseEntity="Tile"/>
         <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Tile" inverseName="contains" inverseEntity="Tile"/>
     </entity>

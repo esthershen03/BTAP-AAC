@@ -92,6 +92,20 @@ class TileViewModel: ObservableObject {
         print(self.tiles)
     }
     
+    func saveTile(name: String, imagePath: String, type: String) {
+        let context = container.viewContext
+        let tile = Tile(context: context)
+        tile.name = name
+        tile.imagePath = imagePath
+        tile.type = type
+        
+        do {
+            try context.save()
+        } catch {
+            print("Error saving tile: \(error)")
+        }
+    }
+    
     func saveData() {
         do {
             try container.viewContext.save()

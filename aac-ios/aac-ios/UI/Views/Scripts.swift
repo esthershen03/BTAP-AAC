@@ -2,23 +2,27 @@ import SwiftUI
 import PhotosUI
 import Foundation
 import AVFoundation
+import CoreData
+
 
 var categoryTexts: [String: [String]] = [:]
 var categoryImages: [String : Image] = [:]
-let scriptsViewModel = ScriptsViewModel() // currently only saves category titles and scripts inside; needs to be modified to account for images also
+let scriptsViewModel = ScriptsViewModel()
 var currScriptLabel = "hi"
-
 
 var categoryOrder: [Int: String] = [:]
 var orderNum = 1
 
 struct Scripts: View {
-    // Define your categories here
+    @Environment(\.managedObjectContext) var moc
     @State private var addShowing = false
-    @State private var categories: [String]
+    @State private var categories: [String] = []
+    @State private var showScriptText = false
+    @State private var showError = false
+    @State private var newCategoryName = ""
+    @Environment(\.managedObjectContext) private var viewContext
     
 
-    
     init() {
         // Rough code for resetting scripts - just for testing, should implement deleting/clearing tiles later
         // Uncomment next two lines to reset
@@ -28,11 +32,11 @@ struct Scripts: View {
         if let savedScripts = scriptsViewModel.loadScripts() {
             categoryTexts = savedScripts
         }
-        
+            
         if categoryTexts.isEmpty {
             self._categories = State(initialValue: ["Health", "Food", "Activities", "TV"])
             categoryImages = ["Health" : Image(systemName: "heart.text.clipboard.fill"), "Food" : Image(systemName: "fork.knife"), "Activities" : Image(systemName: "figure.run"), "TV" : Image(systemName: "play.tv.fill")]
-            
+                
             // Initialize categoryTexts and categoryOrder based on default categories above
             var num = 1
             for defaultCategory in categories {
@@ -45,7 +49,7 @@ struct Scripts: View {
             scriptsViewModel.saveOrder(categoryOrder)
         } else {
             if let savedOrder = scriptsViewModel.loadOrder() {
-                categoryOrder = savedOrder
+            categoryOrder = savedOrder
             }
             
             // Initialize categories list based on order stored in categoryOrder
@@ -60,11 +64,7 @@ struct Scripts: View {
             categoryImages = ["Health" : Image(systemName: "heart.text.clipboard.fill"), "Food" : Image(systemName: "fork.knife"), "Activities" : Image(systemName: "figure.run"), "TV" : Image(systemName: "play.tv.fill")]
         }
     }
-    @State private var showScriptText = false
-    @State private var showError = false
 
-    // State variable to hold the new category name
-    @State private var newCategoryName = ""
     
     var body: some View {
         // Create a grid layout with 3 columns
@@ -87,7 +87,7 @@ struct Scripts: View {
                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 2))
 
                 }.sheet(isPresented: $addShowing) {
-                    ScriptsMakePopUp(visible: $addShowing, categories: $categories)
+                    ScriptsMakePopUp(visible: $addShowing, categories: $categories, viewModel: scriptsViewModel)
                 }
             
 
@@ -104,7 +104,7 @@ struct Scripts: View {
             .padding(15)
             .sheet(isPresented: $showScriptText) {
                 // This is the view that will be shown when showScriptText is true
-                ScriptTextScreen(showScriptText: $showScriptText)
+                ScriptTextScreen(showScriptText: $showScriptText, viewModel: scriptsViewModel)
             }
             .alert(isPresented: $showError) {
                 Alert(
@@ -115,9 +115,7 @@ struct Scripts: View {
         .onAppear{
             if let savedScripts = scriptsViewModel.loadScripts() {
                 categoryTexts = savedScripts
-                return
             }
-            return
         }
     }
 }
@@ -128,6 +126,7 @@ struct ScriptTextScreen: View {
     @State private var textValues: [String] = categoryTexts[currScriptLabel] ?? Array(repeating: "", count: 6)
     let speechSynthesizer = AVSpeechSynthesizer()
     @State private var searchText: String = ""
+    @StateObject var viewModel: ScriptsViewModel
 
     var body: some View {
         VStack(spacing:30) {
@@ -165,7 +164,7 @@ struct ScriptTextScreen: View {
                     categoryTexts["Text\(index + 1)"]?.append(text)
                 }
                 categoryTexts[currScriptLabel] = textValues
-                scriptsViewModel.saveScripts(categoryTexts)
+                viewModel.saveScripts(categoryTexts)
             }) {
                 Text("Save")
                     .font(.system(size:30)) // Increase the font size
@@ -197,6 +196,7 @@ struct ScriptsMakePopUp: View {
     @State private var iconImage: Image?
     @State private var imagePath: String = ""
     @State private var type: String = "Tiles"
+    @StateObject var viewModel: ScriptsViewModel
     
     var body: some View {
         VStack {
@@ -268,8 +268,8 @@ struct ScriptsMakePopUp: View {
                             // add image to list of images
                             categoryImages[labelText] = iconImage
                             
-                            scriptsViewModel.saveScripts(categoryTexts)
-                            scriptsViewModel.saveOrder(categoryOrder)
+                            viewModel.saveScripts(categoryTexts)
+                            viewModel.saveOrder(categoryOrder)
                             self.labelText = ""
                             // vm.addTile(text: labelText, imagePath: imagePath, type: type, parent: self.currentFolder) //adds and saves the new tile
                         }}) {

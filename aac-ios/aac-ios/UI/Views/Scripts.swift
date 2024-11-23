@@ -4,7 +4,7 @@ import Foundation
 import AVFoundation
 
 var categoryTexts: [String: [String]] = [:]
-var categoryImages: [String : Image] = [:]
+var categoryImages: [String : String] = [:]
 let scriptsViewModel = ScriptsViewModel() // currently only saves category titles and scripts inside; needs to be modified to account for images also
 var currScriptLabel = "hi"
 
@@ -12,59 +12,71 @@ var currScriptLabel = "hi"
 var categoryOrder: [Int: String] = [:]
 var orderNum = 1
 
+func saveImageToDocumentDirectory2(_ image: UIImage) -> String? {
+    guard let data = image.pngData() else { return nil }
+    let fileName = UUID().uuidString + ".png"
+    let filePath = getDocumentsDirectory().appendingPathComponent(fileName)
+    do {
+        try data.write(to: filePath)
+        return fileName // Return file name for persistence
+    } catch {
+        print("Failed to save image: \(error)")
+        return nil
+    }
+}
+
+
+func getDocumentsDirectory() -> URL {
+    FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+}
+
+
+
+
 struct Scripts: View {
     // Define your categories here
     @State private var addShowing = false
     @State private var categories: [String]
+    @State private var showScriptText = false
+    @State private var showError = false
     
 
     
     init() {
-        // Rough code for resetting scripts - just for testing, should implement deleting/clearing tiles later
-        // Uncomment next two lines to reset
-        //scriptsViewModel.saveScripts([:])
-        //scriptsViewModel.saveOrder([:])
-        
         if let savedScripts = scriptsViewModel.loadScripts() {
             categoryTexts = savedScripts
         }
-        
+        categoryOrder = scriptsViewModel.loadOrder() ?? [:]
+        categoryImages = scriptsViewModel.loadImages()
+
+        // Handle case where no saved scripts exist
         if categoryTexts.isEmpty {
             self._categories = State(initialValue: ["Health", "Food", "Activities", "TV"])
-            categoryImages = ["Health" : Image(systemName: "heart.text.clipboard.fill"), "Food" : Image(systemName: "fork.knife"), "Activities" : Image(systemName: "figure.run"), "TV" : Image(systemName: "play.tv.fill")]
-            
-            // Initialize categoryTexts and categoryOrder based on default categories above
+
+            // Use strings for default SF Symbols
+            categoryImages = [
+                "Health": "heart.text.clipboard.fill",
+                "Food": "fork.knife",
+                "Activities": "figure.run",
+                "TV": "play.tv.fill"
+            ]
+
             var num = 1
-            for defaultCategory in categories {
-                categoryTexts[defaultCategory] = Array(repeating: "", count: 6)
-                categoryOrder[num] = defaultCategory
+            for category in self._categories.wrappedValue {
+                categoryTexts[category] = Array(repeating: "", count: 6)
+                categoryOrder[num] = category
                 num += 1
             }
-            
+
             scriptsViewModel.saveScripts(categoryTexts)
             scriptsViewModel.saveOrder(categoryOrder)
+            scriptsViewModel.saveImages(categoryImages)
         } else {
-            if let savedOrder = scriptsViewModel.loadOrder() {
-                categoryOrder = savedOrder
-            }
-            
-            // Initialize categories list based on order stored in categoryOrder
-            var tempCategories: [String] = []
-            for i in 1...(categoryTexts.keys.count) {
-                tempCategories.append(categoryOrder[i] ?? "")
-            }
-            
-            self._categories = State(initialValue: tempCategories)
-            
-            // TEMPORARY, SHOULD BE CHANGED ONCE PERSISTENCE FOR IMAGES EXISTS
-            categoryImages = ["Health" : Image(systemName: "heart.text.clipboard.fill"), "Food" : Image(systemName: "fork.knife"), "Activities" : Image(systemName: "figure.run"), "TV" : Image(systemName: "play.tv.fill")]
+            // Populate categories based on saved order
+            self._categories = State(initialValue: Array(categoryOrder.values))
         }
     }
-    @State private var showScriptText = false
-    @State private var showError = false
 
-    // State variable to hold the new category name
-    @State private var newCategoryName = ""
     
     var body: some View {
         // Create a grid layout with 3 columns
@@ -93,14 +105,26 @@ struct Scripts: View {
 
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 60) {
-                    // Create a button for each category
-                    ForEach($categories, id: \.self) { category in
-                        let imageToUse = categoryImages[category.wrappedValue] ?? Image(systemName: "rectangle")
-                        ScriptsCategoryButton(labelText: category, image: imageToUse, available: false, imageColor: "red", showScriptText: $showScriptText)
+                    ForEach(categories, id: \.self) { category in
+                        let imageToUse = categoryImages[category].flatMap { imagePath in
+                            let fullPath = getDocumentsDirectory().appendingPathComponent(imagePath).path
+                            return UIImage(contentsOfFile: fullPath).map { Image(uiImage: $0) }
+                        } ?? Image(systemName: "rectangle") // Default fallback
+
+                        ScriptsCategoryButton(
+                            labelText: .constant(category),
+                            image: imageToUse,
+                            available: false,
+                            imageColor: "red",
+                            showScriptText: $showScriptText
+                        )
                     }
                 }
                 .padding()
             }
+
+
+
             .padding(15)
             .sheet(isPresented: $showScriptText) {
                 // This is the view that will be shown when showScriptText is true
@@ -213,10 +237,13 @@ struct ScriptsMakePopUp: View {
             }
             Text("Add a New Tile")
                 .font(.system(size: 50))
+            
             TilePreview(labelText: labelText, image: iconImage)
                 .frame(width: 120, height: 150)
                 .padding()
+            
             Spacer(minLength: 50)
+            
             VStack {
                 HStack {
                     Text("Set Icon: ")
@@ -228,18 +255,20 @@ struct ScriptsMakePopUp: View {
                     }.padding()
                 }
                 //sets the new icon image for the tile
-                .onChange(of: iconItem) { newItem in Task {
-                    if let data = try? await newItem?.loadTransferable(type: Data.self),
-                       let uiImage = UIImage(data: data) {
-                        DispatchQueue.main.async {
-                            self.iconImage = Image(uiImage: uiImage)
-                        }
-                        if let savedPath = saveImageToDocumentDirectory(uiImage) {
-                            self.imagePath = savedPath
+                .onChange(of: iconItem) { newItem in
+                    Task {
+                        if let data = try? await newItem?.loadTransferable(type: Data.self),
+                           let uiImage = UIImage(data: data) {
+                            DispatchQueue.main.async {
+                                self.iconImage = Image(uiImage: uiImage)
+                            }
+                            if let savedPath = saveImageToDocumentDirectory2(uiImage) {
+                                self.imagePath = savedPath
+                            }
                         }
                     }
                 }
-                }
+
                 Spacer(minLength: 20)
                 //sets the label for the tile
                 HStack {
@@ -255,24 +284,30 @@ struct ScriptsMakePopUp: View {
                 }
                 if iconImage != nil && !labelText.isEmpty { //doesnt allow you to add until fields are completed
                     Button(action: {
-                        visible = false
-                        if !categories.contains(labelText) {
-                            self.categories.append(labelText)
-                            categoryTexts[labelText] = Array(repeating: "", count: 6)
-                            
-                            // Keep track of tile order
-                            orderNum = categories.count
-                            categoryOrder[orderNum] = labelText
-                            orderNum += 1
-                            
-                            // add image to list of images
-                            categoryImages[labelText] = iconImage
-                            
-                            scriptsViewModel.saveScripts(categoryTexts)
-                            scriptsViewModel.saveOrder(categoryOrder)
-                            self.labelText = ""
-                            // vm.addTile(text: labelText, imagePath: imagePath, type: type, parent: self.currentFolder) //adds and saves the new tile
-                        }}) {
+                        Task {
+                            visible = false
+                            if !categories.contains(labelText) {
+                                categories.append(labelText)
+                                categoryTexts[labelText] = Array(repeating: "", count: 6)
+                                
+                                if let data = try? await iconItem?.loadTransferable(type: Data.self),
+                                   let uiImage = UIImage(data: data),
+                                   let savedPath = saveImageToDocumentDirectory2(uiImage) {
+                                    categoryImages[labelText] = savedPath
+                                }
+                                
+                                // Keep track of tile order
+                                orderNum = categories.count
+                                categoryOrder[orderNum] = labelText
+                                orderNum += 1
+                                
+                                
+                                scriptsViewModel.saveScripts(categoryTexts)
+                                scriptsViewModel.saveOrder(categoryOrder)
+                                scriptsViewModel.saveImages(categoryImages)
+                                labelText = ""
+                                // vm.addTile(text: labelText, imagePath: imagePath, type: type, parent: self.currentFolder) //adds and saves the new tile
+                            }}}) {
                         Text("Add Tile") //button to confirm tile adding
                             .font(.title)
                             .foregroundColor(.black)

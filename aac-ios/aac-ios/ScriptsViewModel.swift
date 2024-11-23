@@ -10,6 +10,8 @@ import Foundation
 class ScriptsViewModel: ObservableObject {
     private let key = "scripts"
     private let key2 = "scriptOrder"
+    private let keyImages = "scriptsImages"
+
 
     func saveScripts(_ categoryTexts: [String: [String]]?) {
         guard let categoryTexts = categoryTexts else {
@@ -62,4 +64,25 @@ class ScriptsViewModel: ObservableObject {
         }
         return nil
     }
+    
+    func saveImages(_ categoryImages: [String: String]) {
+        do {
+            let data = try JSONEncoder().encode(categoryImages)
+            UserDefaults.standard.set(data, forKey: keyImages)
+        } catch {
+            print("Error encoding images data: \(error)")
+        }
+    }
+    
+    func loadImages() -> [String: String] {
+        if let data = UserDefaults.standard.data(forKey: keyImages) {
+            do {
+                return try JSONDecoder().decode([String: String].self, from: data)
+            } catch {
+                print("Error decoding images data: \(error)")
+            }
+        }
+        return [:] // Return an empty dictionary if no data is found
+    }
+
 }

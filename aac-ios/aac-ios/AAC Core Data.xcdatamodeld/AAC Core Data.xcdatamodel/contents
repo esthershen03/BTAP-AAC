@@ -3,7 +3,9 @@
     <entity name="Tile" representedClassName="Tile" syncable="YES" codeGenerationType="class">
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="imagePath" optional="YES" attributeType="String"/>
+        <attribute name="isDropped" optional="NO" attributeType="Boolean" defaultValueString="false" usesScalarValueType="YES"/>
         <attribute name="name" attributeType="String"/>
+        <attribute name="orderIndex" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
         <attribute name="type" attributeType="String"/>
         <relationship name="contains" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tile" inverseName="parent" inverseEntity="Tile"/>
         <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Tile" inverseName="contains" inverseEntity="Tile"/>

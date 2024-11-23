@@ -9,6 +9,10 @@ import Foundation
 import SwiftUI
 
 struct RatingScaleGrid: View {
+    @State private var selectedButton: String = UserDefaults.standard.string(forKey: "selectedButton") ?? "5 levels"
+    @State private var numberButtons: Int = UserDefaults.standard.integer(forKey: "numberButtons")
+    @State private var numSelected: String = UserDefaults.standard.string(forKey: "numSelected") ?? "3.square"
+    @State private var screenSelect: String? = nil
     @State private var selectedScale: String? = nil
     var body: some View {
         NavigationView(){

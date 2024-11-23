@@ -34,6 +34,7 @@ class TileViewModel: ObservableObject {
         }
         self.currentFolder = fetchTile(name: "main")!
         fetchTiles(parent: currentFolder!)
+        fetchDroppedTiles()
     }
     
     func fetchTile(name: String) -> Tile? {
@@ -100,4 +101,48 @@ class TileViewModel: ObservableObject {
             print(error)
         }
     }
+    
+    func fetchDroppedTiles() {
+        let request: NSFetchRequest<Tile> = Tile.fetchRequest()
+        request.predicate = NSPredicate(format: "isDropped == true")
+        request.sortDescriptors = [NSSortDescriptor(key: "orderIndex", ascending: true)] // Maintain order
+        
+        do {
+            droppedTiles = try container.viewContext.fetch(request)
+        } catch {
+            print("Error Fetching Dropped Tiles: \(error)")
+        }
+    }
+    
+    func addTileToDroppedTiles(tile: Tile) {
+        if !droppedTiles.contains(where: { $0.id == tile.id }) && droppedTiles.count < 4 {
+            tile.isDropped = true
+            tile.orderIndex = Int16(droppedTiles.count) // Assign orderIndex
+            droppedTiles.append(tile)
+            saveData()
+        }
+    }
+    
+    func removeTileFromDroppedTiles(tile: Tile) {
+        if let index = droppedTiles.firstIndex(where: { $0.id == tile.id }) {
+            droppedTiles.remove(at: index)
+            tile.isDropped = false
+            tile.orderIndex = -1
+            saveData()
+            // Update orderIndex for remaining tiles
+            for (newIndex, remainingTile) in droppedTiles.enumerated() {
+                remainingTile.orderIndex = Int16(newIndex)
+            }
+            saveData()
+        }
+    }
+    
+    func createPlaceholderTile() -> Tile {
+        let placeholderTile = Tile(context: container.viewContext)
+        placeholderTile.name = "Placeholder"
+        placeholderTile.type = "Temporary"
+        placeholderTile.imagePath = nil
+        return placeholderTile
+    }
+
 }

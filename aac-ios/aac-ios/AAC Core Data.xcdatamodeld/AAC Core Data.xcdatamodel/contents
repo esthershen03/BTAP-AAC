@@ -10,11 +10,4 @@
         <relationship name="contains" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tile" inverseName="parent" inverseEntity="Tile"/>
         <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Tile" inverseName="contains" inverseEntity="Tile"/>
     </entity>
-    <entity name="RatingScale" representedClassName="RatingScale" syncable="YES" codeGenerationType="class">
-        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="selectedLevel" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
-        <attribute name="currentValue" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
-        <attribute name="levels" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
-        <attribute name="name" attributeType="String"/>
-    </entity>
 </model>

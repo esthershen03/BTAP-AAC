@@ -27,7 +27,10 @@
 		821CD4422BCF315E007D45EF /* AAC Core Data.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 821CD4402BCF315E007D45EF /* AAC Core Data.xcdatamodeld */; };
 		82653FB32BA3AAE80089F1AD /* TileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82653FB22BA3AAE80089F1AD /* TileViewModel.swift */; };
 		82DA4FA92B845DC6005BFFB7 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		8D1495462CF3B5BA00C74C4C /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 8D1495452CF3B5BA00C74C4C /* FirebaseAuth */; };
+		8D1495482CF3B5BA00C74C4C /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 8D1495472CF3B5BA00C74C4C /* FirebaseFirestore */; };
 		8D238D4B2CEBFCE90002207E /* WhiteBoardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D238D4A2CEBFCE30002207E /* WhiteBoardManager.swift */; };
+		8DFDCC042CF3BA5A00286538 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8DFDCC032CF3BA5A00286538 /* GoogleService-Info.plist */; };
 		8E09CD9B2AE15B3300239660 /* GridTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E09CD9A2AE15B3300239660 /* GridTile.swift */; };
 		8E0EC37D2ACDD1D30019F3B4 /* SceneDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0EC37C2ACDD1D30019F3B4 /* SceneDisplay.swift */; };
 		8E0EC37F2ACDD2170019F3B4 /* WhiteBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0EC37E2ACDD2170019F3B4 /* WhiteBoard.swift */; };
@@ -92,6 +95,7 @@
 		821CD4412BCF315E007D45EF /* AAC Core Data.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "AAC Core Data.xcdatamodel"; sourceTree = "<group>"; };
 		82653FB22BA3AAE80089F1AD /* TileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TileViewModel.swift; sourceTree = "<group>"; };
 		8D238D4A2CEBFCE30002207E /* WhiteBoardManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteBoardManager.swift; sourceTree = "<group>"; };
+		8DFDCC032CF3BA5A00286538 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8E09CD9A2AE15B3300239660 /* GridTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridTile.swift; sourceTree = "<group>"; };
 		8E0EC37C2ACDD1D30019F3B4 /* SceneDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDisplay.swift; sourceTree = "<group>"; };
 		8E0EC37E2ACDD2170019F3B4 /* WhiteBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteBoard.swift; sourceTree = "<group>"; };
@@ -125,6 +129,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8D1495462CF3B5BA00C74C4C /* FirebaseAuth in Frameworks */,
+				8D1495482CF3B5BA00C74C4C /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -191,6 +197,7 @@
 				8E3422AE2A990C8C000A3055 /* Preview Content */,
 				3D3DAF632CDFF9F1009EB025 /* SceneDisplayViewModel.swift */,
 				3D3DAF652CE00065009EB025 /* SavedSD.swift */,
+				8DFDCC032CF3BA5A00286538 /* GoogleService-Info.plist */,
 			);
 			path = "aac-ios";
 			sourceTree = "<group>";
@@ -287,6 +294,8 @@
 			);
 			name = "aac-ios";
 			packageProductDependencies = (
+				8D1495452CF3B5BA00C74C4C /* FirebaseAuth */,
+				8D1495472CF3B5BA00C74C4C /* FirebaseFirestore */,
 			);
 			productName = "aac-ios";
 			productReference = 8E3422A52A990C8B000A3055 /* aac-ios.app */;
@@ -366,6 +375,7 @@
 			mainGroup = 8E34229C2A990C8B000A3055;
 			packageReferences = (
 				DA9995E02BB73DE500955B80 /* XCRemoteSwiftPackageReference "SymbolPicker" */,
+				8D1495442CF3B5BA00C74C4C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = 8E3422A62A990C8B000A3055 /* Products */;
 			projectDirPath = "";
@@ -384,6 +394,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				68EA44462ACE09F2008C3C69 /* Images.xcassets in Resources */,
+				8DFDCC042CF3BA5A00286538 /* GoogleService-Info.plist in Resources */,
 				8E3422B02A990C8C000A3055 /* Preview Assets.xcassets in Resources */,
 				8E3422AD2A990C8C000A3055 /* Assets.xcassets in Resources */,
 			);
@@ -770,6 +781,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		8D1495442CF3B5BA00C74C4C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.5.0;
+			};
+		};
 		DA9995E02BB73DE500955B80 /* XCRemoteSwiftPackageReference "SymbolPicker" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/xnth97/SymbolPicker.git";
@@ -779,6 +798,19 @@
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		8D1495452CF3B5BA00C74C4C /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8D1495442CF3B5BA00C74C4C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		8D1495472CF3B5BA00C74C4C /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8D1495442CF3B5BA00C74C4C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		425550D32B1BC48200623989 /* Model.xcdatamodeld */ = {

@@ -15,8 +15,11 @@
 import Foundation
 import SwiftUI
 import AuthenticationServices
+import Firebase
+import FirebaseAuth
 
 struct LoginScreen: View {
+    @State private var emailAddress = ""
     @State private var username = ""
     @State private var password = ""
     @State private var wrongUsername: Float = 0
@@ -83,7 +86,7 @@ struct LoginScreen: View {
                                 )
                                 .padding()
                             }
-                            TextField("Username", text: $username)
+                            TextField("Email", text: $emailAddress)
                                 .padding()
                                 .frame(width: 550, height: 50)
                                 .background(Color.black.opacity(0.05))
@@ -100,7 +103,7 @@ struct LoginScreen: View {
                         .padding()
                         
                         Button("Sign In") {
-                            authenticateUser(username: username, password: password)
+                            Login()
                         }
                         .foregroundColor(.black)
                         .frame(width: 250, height: 50)
@@ -181,6 +184,28 @@ struct LoginScreen: View {
                 wrongUsername = 2
             }
         }
+    
+    func Login() {
+        // Check if fields are empty
+        guard !emailAddress.trimmingCharacters(in: .whitespaces).isEmpty,
+              !password.isEmpty else {
+            // Handle empty fields, e.g., show an alert or change the UI
+            print("Email or Password cannot be empty.")
+            return
+        }
+
+        Auth.auth().signIn(withEmail: emailAddress, password: password) { result, error in
+            if let error = error {
+                // Handle the error (e.g., show an alert)
+                print("Login failed: \(error.localizedDescription)")
+            } else {
+                // Successfully logged in
+                showingMainScreen = true
+                print("Login successful!")
+            }
+        }
+    }
+    
 }
 
 struct Login_Previews: PreviewProvider {

@@ -322,6 +322,7 @@ struct SceneDisplayTile: View {
                
                Text(savedSD.name)
                    .font(.system(size: 26))
+                   .foregroundColor(.black)
                    .multilineTextAlignment(.leading)
                    .padding(.horizontal)
                

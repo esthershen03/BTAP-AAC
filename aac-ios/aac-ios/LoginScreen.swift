@@ -25,6 +25,7 @@ struct LoginScreen: View {
     @State private var wrongUsername: Float = 0
     @State private var wrongPassword: Float = 0
     @State private var showingMainScreen = false
+    @State private var showingRecoveryScreen = false
     @State private var showingSignup = false
     @State private var forgotUserColor: Color = .black
     @State private var forgotPassColor: Color = .black
@@ -126,7 +127,7 @@ struct LoginScreen: View {
                                 
         
                         Button("Recover Password") {
-                            
+                            showingRecoveryScreen = true
                         }
                         .foregroundColor(.black)
                         .frame(width: 173, height: 40)
@@ -136,6 +137,9 @@ struct LoginScreen: View {
                             RoundedRectangle(cornerRadius: 10)
                                 .stroke(Color.black, lineWidth: 1)
                         )
+                        NavigationLink(destination: PasswordRecoveryScreen(), isActive: $showingRecoveryScreen) {
+                                    EmptyView()
+                                }
                         Spacer().frame(height:20)
                     }
                    
@@ -205,6 +209,8 @@ struct LoginScreen: View {
             }
         }
     }
+
+
     
 }
 

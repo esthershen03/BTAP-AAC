@@ -16,7 +16,10 @@ import Foundation
 import SwiftUI
 import AuthenticationServices
 import Firebase
+import FirebaseCore
 import FirebaseAuth
+import GoogleSignIn
+
 
 struct LoginScreen: View {
     @State private var emailAddress = ""
@@ -70,12 +73,24 @@ struct LoginScreen: View {
                                 .frame(maxWidth: 250)
                                 .cornerRadius(10)
                                 .padding()
-                                Button(action: {}) {
-                                    Image("Google-Logo")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 25, height: 25)
-                                    Text("Sign in with Google")
+                                
+                                Button(action: {
+                                    signInWithGoogle()
+                                }) {
+                                    HStack {
+                                        Image("Google-Logo")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 25, height: 25)
+                                        Text("Sign in with Google")
+                                            .foregroundColor(.black)
+                                    }
+                                    .frame(width: 250, height: 48)
+                                    .background(Color("AACGreen"))
+                                    .cornerRadius(10)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 1)
+                                    )
                                 }
                                 .foregroundColor(.black)
                                 .frame(width: 250, height: 48)
@@ -205,6 +220,59 @@ struct LoginScreen: View {
             }
         }
     }
+    
+    func signInWithGoogle() {
+        // Ensure Firebase is properly configured
+        guard let clientID = FirebaseApp.app()?.options.clientID else {
+            print("Missing clientID from Firebase configuration.")
+            return
+        }
+
+        // Configure Google Sign-In
+        let config = GIDConfiguration(clientID: clientID)
+
+        // Start sign-in flow
+        GIDSignIn.sharedInstance.signIn(
+            withPresenting: UIApplication.shared.windows.first?.rootViewController ?? UIViewController(),
+            completion: { result, error in
+                if let error = error {
+                    print("Google Sign-In failed: \(error.localizedDescription)")
+                    return
+                }
+
+                // Access the signed-in user and their authentication tokens
+                guard let user = result?.user else {
+                    print("Failed to retrieve Google user.")
+                    return
+                }
+
+                // Safely unwrap idToken and accessToken
+                guard let idToken = user.idToken?.tokenString else {
+                    print("Failed to retrieve idToken.")
+                    return
+                }
+                let accessToken = user.accessToken.tokenString
+
+                // Create a Firebase credential using Google credentials
+                let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: accessToken)
+
+                // Authenticate with Firebase
+                Auth.auth().signIn(with: credential) { authResult, error in
+                    if let error = error {
+                        print("Firebase authentication failed: \(error.localizedDescription)")
+                    } else {
+                        print("Successfully signed in with Google!")
+                        showingMainScreen = true // Navigate to the main screen on success
+                    }
+                }
+            }
+        )
+    }
+
+
+
+
+
     
 }
 

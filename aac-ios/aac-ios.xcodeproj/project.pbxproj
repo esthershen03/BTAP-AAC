@@ -45,6 +45,7 @@
 		8E3422C62A990C8C000A3055 /* aac_iosUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3422C52A990C8C000A3055 /* aac_iosUITestsLaunchTests.swift */; };
 		8E960F0A2ACDD4D200948CC5 /* AddButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E960F092ACDD4D200948CC5 /* AddButton.swift */; };
 		8EB02D7B2ABDE21B0097CC0C /* NavigationButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB02D7A2ABDE21B0097CC0C /* NavigationButton.swift */; };
+		916728202D98C9A00036462D /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 9167281F2D98C9A00036462D /* GoogleSignIn */; };
 		D5E092652B168FAA002C5DE0 /* DrawingEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E092642B168FAA002C5DE0 /* DrawingEngine.swift */; };
 		D5E092672B168FC9002C5DE0 /* ColorPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E092662B168FC9002C5DE0 /* ColorPickerView.swift */; };
 		DA3B55222C9489C60060C1A2 /* RatingScaleNewThree.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3B55212C9489C60060C1A2 /* RatingScaleNewThree.swift */; };
@@ -113,6 +114,7 @@
 		8E3422C52A990C8C000A3055 /* aac_iosUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = aac_iosUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		8E960F092ACDD4D200948CC5 /* AddButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddButton.swift; sourceTree = "<group>"; };
 		8EB02D7A2ABDE21B0097CC0C /* NavigationButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationButton.swift; sourceTree = "<group>"; };
+		9167281E2D98C6870036462D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D5E092642B168FAA002C5DE0 /* DrawingEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingEngine.swift; sourceTree = "<group>"; };
 		D5E092662B168FC9002C5DE0 /* ColorPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPickerView.swift; sourceTree = "<group>"; };
 		DA3B55212C9489C60060C1A2 /* RatingScaleNewThree.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RatingScaleNewThree.swift; sourceTree = "<group>"; };
@@ -131,6 +133,7 @@
 			files = (
 				8D1495462CF3B5BA00C74C4C /* FirebaseAuth in Frameworks */,
 				8D1495482CF3B5BA00C74C4C /* FirebaseFirestore in Frameworks */,
+				916728202D98C9A00036462D /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -175,6 +178,7 @@
 		8E3422A72A990C8B000A3055 /* aac-ios */ = {
 			isa = PBXGroup;
 			children = (
+				9167281E2D98C6870036462D /* Info.plist */,
 				821CD4402BCF315E007D45EF /* AAC Core Data.xcdatamodeld */,
 				8D238D4A2CEBFCE30002207E /* WhiteBoardManager.swift */,
 				3F219AE12BBF040500FF0441 /* LineViewModel.swift */,
@@ -296,6 +300,7 @@
 			packageProductDependencies = (
 				8D1495452CF3B5BA00C74C4C /* FirebaseAuth */,
 				8D1495472CF3B5BA00C74C4C /* FirebaseFirestore */,
+				9167281F2D98C9A00036462D /* GoogleSignIn */,
 			);
 			productName = "aac-ios";
 			productReference = 8E3422A52A990C8B000A3055 /* aac-ios.app */;
@@ -376,6 +381,7 @@
 			packageReferences = (
 				DA9995E02BB73DE500955B80 /* XCRemoteSwiftPackageReference "SymbolPicker" */,
 				8D1495442CF3B5BA00C74C4C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				9167281D2D98C4C50036462D /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			productRefGroup = 8E3422A62A990C8B000A3055 /* Products */;
 			projectDirPath = "";
@@ -619,6 +625,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"aac-ios/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "aac-ios/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -648,6 +655,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"aac-ios/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "aac-ios/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -789,6 +797,14 @@
 				minimumVersion = 11.5.0;
 			};
 		};
+		9167281D2D98C4C50036462D /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
 		DA9995E02BB73DE500955B80 /* XCRemoteSwiftPackageReference "SymbolPicker" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/xnth97/SymbolPicker.git";
@@ -809,6 +825,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8D1495442CF3B5BA00C74C4C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFirestore;
+		};
+		9167281F2D98C9A00036462D /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9167281D2D98C4C50036462D /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
 		};
 /* End XCSwiftPackageProductDependency section */
 

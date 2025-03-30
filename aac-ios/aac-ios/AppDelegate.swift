@@ -10,6 +10,7 @@ import CoreData
 import SwiftUI
 import UIKit
 import FirebaseCore
+import Firebase
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?

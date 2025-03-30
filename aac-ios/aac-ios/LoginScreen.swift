@@ -222,7 +222,7 @@ struct LoginScreen: View {
     }
     
     func signInWithGoogle() {
-        // Ensure Firebase is properly configured
+        // Initialize clientID from firebase config
         guard let clientID = FirebaseApp.app()?.options.clientID else {
             print("Missing clientID from Firebase configuration.")
             return
@@ -246,7 +246,7 @@ struct LoginScreen: View {
                     return
                 }
 
-                // Safely unwrap idToken and accessToken
+                // Unwrap idToken
                 guard let idToken = user.idToken?.tokenString else {
                     print("Failed to retrieve idToken.")
                     return

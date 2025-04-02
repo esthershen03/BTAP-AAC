@@ -15,17 +15,15 @@ struct PasswordRecoveryScreen: View {
     @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
-        NavigationView {
+        GeometryReader { geometry in
             VStack {
-                HStack {
-                    Image("logo")
-                        .resizable()
-                        .frame(width: 150, height: 150)
-                }
-                
+                Image("logo")
+                    .resizable()
+                    .frame(width: 150, height: 150)
+
                 ZStack {
                     RoundedRectangle(cornerRadius: 30)
-                        .frame(width: 600, height: 300)
+                        .frame(width: geometry.size.width * 0.8, height: 300) // Scaled width
                         .foregroundColor(Color.white)
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
@@ -40,7 +38,7 @@ struct PasswordRecoveryScreen: View {
                         
                         TextField("Email", text: $email)
                             .padding()
-                            .frame(width: 550, height: 50)
+                            .frame(width: geometry.size.width * 0.75, height: 50)
                             .background(Color.black.opacity(0.05))
                             .cornerRadius(10)
 
@@ -60,7 +58,6 @@ struct PasswordRecoveryScreen: View {
                         Text(message)
                             .foregroundColor(isSuccess ? .green : .red)
    
-                        
                         Button("Back to Login") {
                             presentationMode.wrappedValue.dismiss()
                         }
@@ -74,9 +71,10 @@ struct PasswordRecoveryScreen: View {
                         )
                     }
                 }
-                
-
+                .frame(maxWidth: .infinity)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color(UIColor.systemBackground))
         }
         .navigationBarBackButtonHidden(true)
         .navigationBarHidden(true)
@@ -101,7 +99,6 @@ struct PasswordRecoveryScreen: View {
         }
     }
 }
-
 
 #Preview {
     PasswordRecoveryScreen()

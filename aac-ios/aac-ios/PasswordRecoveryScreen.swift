@@ -10,99 +10,68 @@ import FirebaseAuth
 
 struct PasswordRecoveryScreen: View {
     @State private var email = ""
-    @State private var message = ""
-    @State private var isSuccess = false
-    @Environment(\.presentationMode) var presentationMode
+    @State private var showAlert = false
+    @State private var alertMessage = ""
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        NavigationView {
-            VStack {
-                HStack {
-                    Image("logo")
-                        .resizable()
-                        .frame(width: 150, height: 150)
-                }
-                
-                ZStack {
-                    RoundedRectangle(cornerRadius: 30)
-                        .frame(width: 600, height: 300)
-                        .foregroundColor(Color.white)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.gray, lineWidth: 1)
-                        )
-                        .padding()
-                    
-                    VStack {
-                        Text("Enter your email to reset your password")
-                            .font(.headline)
-                            .padding(.bottom, 5)
-                        
-                        TextField("Email", text: $email)
-                            .padding()
-                            .frame(width: 550, height: 50)
-                            .background(Color.black.opacity(0.05))
-                            .cornerRadius(10)
+        VStack(spacing: 20) {
+            Text("Recover Password")
+                .font(.largeTitle)
+                .padding(.top, 40)
 
-                        Button("Send Reset Link") {
-                            sendPasswordReset()
-                        }
-                        .foregroundColor(.black)
-                        .frame(width: 250, height: 50)
-                        .background(Color("AACBlue"))
-                        .cornerRadius(10)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.black, lineWidth: 1)
-                        )
-                        .padding(.top, 10)
+            TextField("Enter your email", text: $email)
+                .autocapitalization(.none)
+                .padding()
+                .background(Color.black.opacity(0.05))
+                .cornerRadius(10)
+                .frame(width: 350, height: 50)
 
-                        Text(message)
-                            .foregroundColor(isSuccess ? .green : .red)
-   
-                        
-                        Button("Back to Login") {
-                            presentationMode.wrappedValue.dismiss()
-                        }
-                        .foregroundColor(.black)
-                        .frame(width: 250, height: 50)
-                        .background(Color("AACGreen"))
-                        .cornerRadius(10)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.black, lineWidth: 1)
-                        )
-                    }
-                }
-                
-
+            Button("Send Reset Link") {
+                sendPasswordReset()
             }
+            .foregroundColor(.black)
+            .frame(width: 200, height: 50)
+            .background(Color("AACBlue"))
+            .cornerRadius(10)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.black, lineWidth: 1)
+            )
+            Button("Back to Login") {
+                dismiss()
+            }
+            .foregroundColor(.black)
+            .frame(width: 200, height: 50)
+            .background(Color("AACGreen"))
+            .cornerRadius(10)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.black, lineWidth: 1)
+            )
+
+            Spacer()
         }
-        .navigationBarBackButtonHidden(true)
-        .navigationBarHidden(true)
-        .navigationBarTitle("", displayMode: .inline)
+        .padding()
+        .alert(isPresented: $showAlert) {
+            Alert(title: Text("Password Reset"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+        }
     }
 
     func sendPasswordReset() {
         guard !email.trimmingCharacters(in: .whitespaces).isEmpty else {
-            message = "Please enter a valid email."
-            isSuccess = false
+            alertMessage = "Please enter your email."
+            showAlert = true
             return
         }
 
         Auth.auth().sendPasswordReset(withEmail: email) { error in
             if let error = error {
-                message = "Error: \(error.localizedDescription)"
-                isSuccess = false
+                alertMessage = "Error: \(error.localizedDescription)"
             } else {
-                message = "Password reset email sent!"
-                isSuccess = true
+                alertMessage = "A password reset email has been sent to \(email)."
             }
+            showAlert = true
         }
     }
-}
-
-
-#Preview {
-    PasswordRecoveryScreen()
 }

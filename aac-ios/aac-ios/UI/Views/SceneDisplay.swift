@@ -200,76 +200,109 @@ struct SceneDisplay: View {
 
 struct TextFieldsView: View {
     @Binding var textValues: [String]
-        @Binding var savedSD : SavedSD
-    let speechSynthesizer = AVSpeechSynthesizer()
+    @Binding var savedSD: SavedSD
     
+    private let speechSynthesizer = AVSpeechSynthesizer()
+    @FocusState private var focusedIndex: Int?
+    
+    private let minRows = 1
+    private let maxRows = 5   // ⟵ hard cap at 5
+
     var body: some View {
-        List {
-            ForEach(0..<textValues.count, id: \.self) { index in
-                HStack {
-                    if #available(iOS 16.0, *) {
-                        TextField("Text", text: $textValues[index], axis: .vertical)
-                            .font(.title)
-                            .padding(15)
-                            .cornerRadius(10)
-                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 2))
-                            .padding(10)
-                    } else {
-                        TextField("Text", text: $textValues[index])
-                            .font(.title)
-                            .frame(height: 40)
-                            .padding(15)
-                            .cornerRadius(10)
-                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 2))
-                            .padding(5)
-                    }
-                    
-                    Button {
-                    } label: {
-                        ZStack{
-                            RoundedRectangle(cornerRadius: 10)
-                                .frame(width: 60, height: 60)
-                                .foregroundColor(.black)
-                            Ellipse()
-                                .frame(width: 50, height: 50)
-                                .foregroundColor(.white)
-                            Image(systemName: "pencil.circle.fill")
-                                .resizable()
-                                .frame(width: 60, height: 60)
-                                .foregroundColor(.black)
+        VStack(spacing: 0) {
+            List {
+                ForEach(Array(textValues.enumerated()), id: \.offset) { index, _ in
+                    HStack {
+                        if #available(iOS 16.0, *) {
+                            TextField("Text", text: $textValues[index], axis: .vertical)
+                                .font(.title)
+                                .padding(15)
+                                .cornerRadius(10)
+                                .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 2))
+                                .padding(10)
+                                .onSubmit { speakText(textValues[index]) }
+                                .focused($focusedIndex, equals: index)
+                        } else {
+                            TextField("Text", text: $textValues[index])
+                                .font(.title)
+                                .frame(height: 40)
+                                .padding(15)
+                                .cornerRadius(10)
+                                .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 2))
+                                .padding(5)
+                                .focused($focusedIndex, equals: index)
                         }
-                        
-                    }
-                    Button(action: {
-                        speakText(text: textValues[index])
-                    }) {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 10)
-                                .frame(width: 60, height: 60)
-                                .foregroundColor(.black)
-                            
-                            Ellipse()
-                                .frame(width: 50, height: 50)
-                                .foregroundColor(.white)
-                            
-                            Image(systemName: "speaker.wave.2.circle.fill")
-                                .resizable()
-                                .frame(width: 60, height: 60)
-                                .foregroundColor(.black)
+
+                        Button { /* optional edit */ } label: {
+                            ZStack{
+                                RoundedRectangle(cornerRadius: 10).frame(width: 60, height: 60).foregroundColor(.black)
+                                Ellipse().frame(width: 50, height: 50).foregroundColor(.white)
+                                Image(systemName: "pencil.circle.fill")
+                                    .resizable().frame(width: 60, height: 60).foregroundColor(.black)
+                            }
                         }
+
+                        Button { speakText(textValues[index]) } label: {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 10).frame(width: 60, height: 60).foregroundColor(.black)
+                                Ellipse().frame(width: 50, height: 50).foregroundColor(.white)
+                                Image(systemName: "speaker.wave.2.circle.fill")
+                                    .resizable().frame(width: 60, height: 60).foregroundColor(.black)
+                            }
+                        }
+                        .accessibilityLabel("Speak row \(index + 1)")
                     }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .listRowBackground(Color.white)
+                    .id(index)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .listRowBackground(Color.white)
             }
+            .scrollContentBackground(.hidden)
+            .background(Color.white)
+            
+            HStack(spacing: 16) {
+                Button {
+                    withAnimation(.spring()) { addRow() }
+                } label: {
+                    Label("Add", systemImage: "plus.circle.fill").font(.title2)
+                }
+                .disabled(textValues.count >= maxRows)
+
+                Button {
+                    withAnimation(.spring()) { removeLastRow() }
+                } label: {
+                    Label("Remove Last", systemImage: "minus.circle.fill").font(.title2)
+                }
+                .disabled(textValues.count <= minRows)
+            }
+            .frame(maxWidth: .infinity)
+            .multilineTextAlignment(.center)
+            .padding(.vertical, 10)
         }
-        .scrollContentBackground(.hidden)
-        .background(Color.white)
     }
-    func speakText(text: String) {
-        let speechUtterance = AVSpeechUtterance(string: text)
-        speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
-        speechSynthesizer.speak(speechUtterance)
+
+    private func addRow() {
+        guard textValues.count < maxRows else { return }
+        textValues.append("")
+        DispatchQueue.main.async { focusedIndex = textValues.count - 1 }
+    }
+
+    private func removeLastRow() {
+        guard textValues.count > minRows else { return }
+        if focusedIndex == textValues.count - 1 { focusedIndex = max(minRows - 1, 0) }
+        _ = textValues.popLast()
+    }
+
+    private func speakText(_ text: String) {
+        let t = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !t.isEmpty else { return }
+        if speechSynthesizer.isSpeaking { speechSynthesizer.stopSpeaking(at: .immediate) }
+        try? AVAudioSession.sharedInstance().setCategory(.playback, options: [.duckOthers])
+        try? AVAudioSession.sharedInstance().setActive(true)
+        let u = AVSpeechUtterance(string: t)
+        u.rate = AVSpeechUtteranceDefaultSpeechRate
+        u.voice = AVSpeechSynthesisVoice(language: "en-US")
+        speechSynthesizer.speak(u)
     }
 }
 

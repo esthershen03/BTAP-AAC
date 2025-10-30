@@ -25,6 +25,11 @@ struct SignupScreen: View {
     
     
     var body: some View {
+        let hasEight = password.count >= 8
+        let hasNumber = password.range(of: "[0-9]", options: .regularExpression) != nil
+        let hasLetter = password.range(of: "[A-Za-z]", options: .regularExpression) != nil
+        let hasSpecial = password.range(of: "[!&^%$#@()/]", options: .regularExpression) != nil
+
         NavigationView{
             VStack {
                 HStack {
@@ -95,11 +100,24 @@ struct SignupScreen: View {
                             
                             
                             VStack(alignment: .leading, spacing: 2) {
-                                Text("Please enter a password with at least 8 characters, containing at least 1 number, 1 letter, and 1 special character.")
-                                    .font(.system(size: 14))
-                                    .lineLimit(nil) // Allows the text to wrap to multiple lines
-                                    .fixedSize(horizontal: false, vertical: true) // Ensures wrapping in vertical direction
-                                    .padding(.bottom, 2)
+                                Text("Password must include:").font(.system(size: 14))
+                                    
+                                    Label("At least 8 characters",
+                                          systemImage: hasEight ? "checkmark.circle.fill" : "circle")
+                                        .foregroundColor(hasEight ? .green : .secondary)
+                                        .font(.system(size: 14))
+                                    Label("At least 1 number (0–9)",
+                                          systemImage: hasNumber ? "checkmark.circle.fill" : "circle")
+                                        .foregroundColor(hasNumber ? .green : .secondary)
+                                        .font(.system(size: 14))
+                                    Label("At least 1 letter (A–Z or a–z)",
+                                          systemImage: hasLetter ? "checkmark.circle.fill" : "circle")
+                                        .foregroundColor(hasLetter ? .green : .secondary)
+                                        .font(.system(size: 14))
+                                    Label("At least 1 special character (!&^%$#@()/)",
+                                          systemImage: hasSpecial ? "checkmark.circle.fill" : "circle")
+                                        .foregroundColor(hasSpecial ? .green : .secondary)
+                                        .font(.system(size: 14))
                                 
                                 ZStack(alignment: .leading) {
                                     // Icon

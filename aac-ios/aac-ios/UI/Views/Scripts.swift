@@ -146,65 +146,167 @@ struct Scripts: View {
     }
 }
 
+struct ToolbarCircleStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.system(size: 16, weight: .bold))
+            .frame(width: 36, height: 36)
+            .background(Color("AACGrey"))
+            .clipShape(Circle())
+            .overlay(Circle().stroke(Color.black, lineWidth: 1))
+            .opacity(configuration.isPressed ? 0.7 : 1.0)
+            .accessibilityAddTraits(.isButton)
+    }
+}
+
+struct ScriptLineRow: View {
+    @Binding var text: String
+    let canDelete: Bool
+    let onSpeak: () -> Void
+    let onDelete: () -> Void
+
+    var body: some View {
+        HStack(alignment: .center, spacing: 12) {
+            TextField("Enter script here", text: $text, axis: .vertical)
+                .font(.system(size: 24))
+                .padding(.vertical, 10)
+                .padding(.leading, 12)
+
+            // trailing mini-toolbar
+            HStack(spacing: 8) {
+                Button(action: onSpeak) {
+                    Image(systemName: "speaker.wave.2.fill")
+                        .accessibilityLabel("Speak line")
+                }
+                .buttonStyle(ToolbarCircleStyle())
+
+                Button(action: onDelete) {
+                    Image(systemName: "trash")
+                        .accessibilityLabel("Delete line")
+                }
+                .buttonStyle(ToolbarCircleStyle())
+                .disabled(!canDelete)
+                .opacity(canDelete ? 1 : 0.4)
+            }
+            .padding(6)
+            .background(.thinMaterial, in: Capsule())
+            .overlay(Capsule().stroke(Color.black, lineWidth: 1))
+        }
+        .padding(.horizontal, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(text.isEmpty ? .white : Color("AACBlue"))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(Color.black, lineWidth: 1)
+        )
+    }
+}
+
+
 struct ScriptTextScreen: View {
     @Binding var showScriptText: Bool
     @Environment(\.presentationMode) var presentationMode
-    @State private var textValues: [String] = categoryTexts[currScriptLabel] ?? Array(repeating: "", count: 6)
+
+    private let maxLines = 8
+    private let minLines = 1
     let speechSynthesizer = AVSpeechSynthesizer()
-    @State private var searchText: String = ""
+
+    // Start from saved values for the current category.
+    // Ensure at least 1 line and at most 8 on load.
+    @State private var textValues: [String] =
+        {
+            let saved = categoryTexts[currScriptLabel] ?? [""]
+            let nonEmpty = saved.isEmpty ? [""] : saved
+            return Array(nonEmpty.prefix(8))
+        }()
+
+    @State private var searchText: String = ""   // (kept for parity with your original)
 
     var body: some View {
-        VStack(spacing:30) {
-            Text(currScriptLabel)
-                .font(.system(size: 40))
-            ForEach(0..<textValues.count, id: \.self) { index in
-                HStack {
-                    
-                    HStack {
-                        TextField("Enter script here", text: $textValues[index], axis: .vertical).font(.system(size: 24))
-                            .padding(10)
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 2)
-                        ZStack{
-                            RoundedRectangle(cornerRadius: 10)
-                                .frame(width: 30, height: 30)
-                            Ellipse()
-                                .frame(width: 20, height: 20)
-                                .foregroundColor(.white)
-                            Image(systemName: "speaker.wave.2.circle.fill")
-                                .resizable()
-                                .frame(width: 30, height: 30)
-                                .onTapGesture {
-                                    speakText(text: textValues[index])
-                                }
-                        }.padding()
-                    }.background(RoundedRectangle(cornerRadius: 10).fill(textValues[index].isEmpty ? .white : Color("AACBlue")))
-                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color(.black), lineWidth: 1))
-                    
+        VStack(spacing: 20) {
+            // Header with title and quick actions
+            HStack {
+                Text(currScriptLabel)
+                    .font(.system(size: 40))
+                Spacer()
+                // Add line button
+                Button {
+                    addLine()
+                } label: {
+                    Label("Add line", systemImage: "plus.circle.fill")
+                        .font(.title2)
                 }
+                .disabled(textValues.count >= maxLines)
+
             }
-            Button(action: {
-                self.showScriptText = false
-                for (index, text) in self.textValues.enumerated() {
-                    categoryTexts["Text\(index + 1)"]?.append(text)
+
+            // Fields live in a ScrollView so the UI never overflows
+            ScrollView {
+                VStack(spacing: 16) {
+                    ForEach(Array(textValues.indices), id: \.self) { index in
+                        ScriptLineRow(
+                            text: $textValues[index],
+                            canDelete: textValues.count > minLines,
+                            onSpeak: { speakText(text: textValues[index]) },
+                            onDelete: { removeLine(at: index) }
+                        )
+                    }
                 }
-                categoryTexts[currScriptLabel] = textValues
-                scriptsViewModel.saveScripts(categoryTexts)
-            }) {
+                .padding(.vertical, 4)
+            }
+
+
+            // Add line button at bottom too (handy when many lines)
+            Button {
+                addLine()
+            } label: {
+                Label("Add line", systemImage: "plus.circle.fill")
+                    .font(.title3)
+                    .padding(.horizontal)
+            }
+            .disabled(textValues.count >= maxLines)
+
+            // Save
+            Button(action: save) {
                 Text("Save")
-                    .font(.system(size:30)) // Increase the font size
-                    .frame(width: 110, height: 60) // Set a specific width and height
+                    .font(.system(size: 30))
+                    .frame(width: 110, height: 60)
                     .background(Color("AACBlue"))
                     .foregroundColor(.black)
                     .cornerRadius(10)
                     .overlay(RoundedRectangle(cornerRadius: 10)
                         .stroke(Color.black, lineWidth: 2))
             }
+            .padding(.top, 4)
         }
         .padding(30)
     }
 
-    func speakText(text: String) {
+    // MARK: - Actions
+
+    private func addLine() {
+        guard textValues.count < maxLines else { return }
+        textValues.append("")
+    }
+
+    private func removeLine(at index: Int) {
+        guard textValues.count > minLines else { return }
+        textValues.remove(at: index)
+    }
+
+    private func save() {
+        // Clamp just in case and persist
+        textValues = Array(textValues.prefix(maxLines))
+        if textValues.isEmpty { textValues = [""] }
+
+        categoryTexts[currScriptLabel] = textValues
+        scriptsViewModel.saveScripts(categoryTexts)
+        showScriptText = false
+    }
+
+    private func speakText(text: String) {
         let speechUtterance = AVSpeechUtterance(string: text)
         speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
         speechSynthesizer.speak(speechUtterance)

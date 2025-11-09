@@ -9,6 +9,7 @@ let scriptsViewModel = ScriptsViewModel() // currently only saves category title
 var currScriptLabel = "hi"
 
 
+
 var categoryOrder: [Int: String] = [:]
 var orderNum = 1
 
@@ -252,24 +253,72 @@ struct ScriptTextScreen: View {
                             onSpeak: { speakText(text: textValues[index]) },
                             onDelete: { removeLine(at: index) }
                         )
+        VStack(spacing:30) {
+            Text(currScriptLabel)
+                .font(.system(size: 40))
+            Button(action: {
+                Task {
+                    isGenerating = true
+                    do {
+                        let generated = try await scriptGenerator.generateScripts(for: currScriptLabel)
+                        textValues = generated.map { $0.text }
+                        categoryTexts[currScriptLabel] = textValues
+                        scriptsViewModel.saveScripts(categoryTexts)
+                    } catch {
+                        print("⚠️ Failed to generate scripts: \(error)")
                     }
+                    isGenerating = false
                 }
-                .padding(.vertical, 4)
+            }) {
+                if isGenerating {
+                    ProgressView("Generating scripts…")
+                        .progressViewStyle(CircularProgressViewStyle())
+                        .font(.system(size: 24))
+                        .padding()
+                } else {
+                    Text("✨ Generate Scripts")
+                        .font(.system(size: 28))
+                        .frame(width: 280, height: 60)
+                        .background(Color("AACBlue"))
+                        .foregroundColor(.black)
+                        .cornerRadius(10)
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 2))
+                }
             }
-
-
-            // Add line button at bottom too (handy when many lines)
-            Button {
-                addLine()
-            } label: {
-                Label("Add line", systemImage: "plus.circle.fill")
-                    .font(.title3)
-                    .padding(.horizontal)
+            ForEach(0..<textValues.count, id: \.self) { index in
+                HStack {
+                    
+                    HStack {
+                        TextField("Enter script here", text: $textValues[index], axis: .vertical).font(.system(size: 24))
+                            .padding(10)
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 2)
+                        ZStack{
+                            RoundedRectangle(cornerRadius: 10)
+                                .frame(width: 30, height: 30)
+                            Ellipse()
+                                .frame(width: 20, height: 20)
+                                .foregroundColor(.white)
+                            Image(systemName: "speaker.wave.2.circle.fill")
+                                .resizable()
+                                .frame(width: 30, height: 30)
+                                .onTapGesture {
+                                    speakText(text: textValues[index])
+                                }
+                        }.padding()
+                    }.background(RoundedRectangle(cornerRadius: 10).fill(textValues[index].isEmpty ? .white : Color("AACBlue")))
+                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color(.black), lineWidth: 1))
+                    
+                }
             }
-            .disabled(textValues.count >= maxLines)
-
-            // Save
-            Button(action: save) {
+            Button(action: {
+                self.showScriptText = false
+                for (index, text) in self.textValues.enumerated() {
+                    categoryTexts["Text\(index + 1)"]?.append(text)
+                }
+                categoryTexts[currScriptLabel] = textValues
+                scriptsViewModel.saveScripts(categoryTexts)
+            }) {
                 Text("Save")
                     .font(.system(size: 30))
                     .frame(width: 110, height: 60)
@@ -323,6 +372,7 @@ struct ScriptsMakePopUp: View {
     @State private var iconImage: Image?
     @State private var imagePath: String = ""
     @State private var type: String = "Tiles"
+    @State private var scriptGenerator = ScriptGenerator()
     
     var body: some View {
         VStack {

@@ -2,7 +2,8 @@
 //  ScriptGenerationViewModel.swift
 //  aac-ios
 //
-//  Created for handling async generating/fetching generated scripts
+// Created by Samiya Pathak 11/7/25 
+// Created for handling async generating/fetching generated scripts
 //
 
 import Foundation
@@ -58,7 +59,7 @@ class ScriptGenerationViewModel: ObservableObject {
             saveScripts(for: category)
         } catch {
             errorMessage = "Failed to generate scripts: \(error.localizedDescription)"
-            print("⚠️ Script generation error: \(error)")
+            print("Script generation error: \(error)")
         }
         
         isGenerating = false

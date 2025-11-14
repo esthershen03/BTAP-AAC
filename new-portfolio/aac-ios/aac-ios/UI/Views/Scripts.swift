@@ -51,19 +51,22 @@ struct Scripts: View {
 
         // Handle case where no saved scripts exist
         if categoryTexts.isEmpty {
-            self._categories = State(initialValue: ["Health", "Food", "Activities", "TV"])
+            // Use expanded default categories with sample scripts
+            self._categories = State(initialValue: SampleScripts.defaultCategories)
 
-            // Use strings for default SF Symbols
-            categoryImages = [
-                "Health": "heart.text.clipboard.fill",
-                "Food": "fork.knife",
-                "Activities": "figure.run",
-                "TV": "play.tv.fill"
-            ]
+            // Use category icons from SampleScripts
+            categoryImages = SampleScripts.categoryIcons
 
             var num = 1
             for category in self._categories.wrappedValue {
-                categoryTexts[category] = Array(repeating: "", count: 6)
+                // Pre-populate with curated sample scripts for each category
+                let sampleScripts = SampleScripts.getScripts(for: category)
+                // Ensure we have at least 6 slots (pad with empty strings if needed)
+                var scripts = sampleScripts
+                while scripts.count < 6 {
+                    scripts.append("")
+                }
+                categoryTexts[category] = Array(scripts.prefix(6))
                 categoryOrder[num] = category
                 num += 1
             }

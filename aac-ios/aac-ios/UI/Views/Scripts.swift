@@ -9,6 +9,7 @@ let scriptsViewModel = ScriptsViewModel() // currently only saves category title
 var currScriptLabel = "hi"
 
 
+
 var categoryOrder: [Int: String] = [:]
 var orderNum = 1
 
@@ -204,7 +205,6 @@ struct ScriptLineRow: View {
     }
 }
 
-
 struct ScriptTextScreen: View {
     @Binding var showScriptText: Bool
     @Environment(\.presentationMode) var presentationMode
@@ -213,8 +213,10 @@ struct ScriptTextScreen: View {
     private let minLines = 1
     let speechSynthesizer = AVSpeechSynthesizer()
 
-    // Start from saved values for the current category.
-    // Ensure at least 1 line and at most 8 on load.
+    @State private var isGenerating = false
+    @State private var scriptGenerator = ScriptGenerator()
+
+    // Load saved lines for the current category
     @State private var textValues: [String] =
         {
             let saved = categoryTexts[currScriptLabel] ?? [""]
@@ -222,16 +224,15 @@ struct ScriptTextScreen: View {
             return Array(nonEmpty.prefix(8))
         }()
 
-    @State private var searchText: String = ""   // (kept for parity with your original)
-
     var body: some View {
-        VStack(spacing: 20) {
-            // Header with title and quick actions
+        VStack(spacing: 25) {
+
+            // HEADER ROW
             HStack {
                 Text(currScriptLabel)
-                    .font(.system(size: 40))
+                    .font(.system(size: 40, weight: .bold))
                 Spacer()
-                // Add line button
+
                 Button {
                     addLine()
                 } label: {
@@ -239,10 +240,10 @@ struct ScriptTextScreen: View {
                         .font(.title2)
                 }
                 .disabled(textValues.count >= maxLines)
-
             }
+            .padding(.horizontal)
 
-            // Fields live in a ScrollView so the UI never overflows
+            // MAIN LINES EDITOR
             ScrollView {
                 VStack(spacing: 16) {
                     ForEach(Array(textValues.indices), id: \.self) { index in
@@ -254,21 +255,44 @@ struct ScriptTextScreen: View {
                         )
                     }
                 }
-                .padding(.vertical, 4)
+                .padding(.horizontal)
             }
 
-
-            // Add line button at bottom too (handy when many lines)
-            Button {
-                addLine()
-            } label: {
-                Label("Add line", systemImage: "plus.circle.fill")
-                    .font(.title3)
-                    .padding(.horizontal)
+            // GENERATE SCRIPT BUTTON
+            Button(action: {
+                Task {
+                    isGenerating = true
+                    do {
+                        let generated = try await scriptGenerator.generateScripts(for: currScriptLabel)
+                        textValues = generated.map { $0.text }
+                        categoryTexts[currScriptLabel] = textValues
+                        scriptsViewModel.saveScripts(categoryTexts)
+                    } catch {
+                        print("⚠️ Failed to generate scripts: \(error)")
+                    }
+                    isGenerating = false
+                }
+            }) {
+                if isGenerating {
+                    ProgressView("Generating scripts…")
+                        .progressViewStyle(CircularProgressViewStyle())
+                        .font(.system(size: 24))
+                        .padding()
+                } else {
+                    Text("✨ Generate Scripts")
+                        .font(.system(size: 28))
+                        .frame(width: 280, height: 60)
+                        .background(Color("AACBlue"))
+                        .foregroundColor(.black)
+                        .cornerRadius(10)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color.black, lineWidth: 2)
+                        )
+                }
             }
-            .disabled(textValues.count >= maxLines)
 
-            // Save
+            // SAVE BUTTON
             Button(action: save) {
                 Text("Save")
                     .font(.system(size: 30))
@@ -279,12 +303,13 @@ struct ScriptTextScreen: View {
                     .overlay(RoundedRectangle(cornerRadius: 10)
                         .stroke(Color.black, lineWidth: 2))
             }
-            .padding(.top, 4)
-        }
-        .padding(30)
+            .padding(.bottom, 20)
+
+        } // VStack
+        .padding(.top, 20)
     }
 
-    // MARK: - Actions
+    // MARK: - ACTIONS
 
     private func addLine() {
         guard textValues.count < maxLines else { return }
@@ -297,7 +322,6 @@ struct ScriptTextScreen: View {
     }
 
     private func save() {
-        // Clamp just in case and persist
         textValues = Array(textValues.prefix(maxLines))
         if textValues.isEmpty { textValues = [""] }
 
@@ -307,11 +331,12 @@ struct ScriptTextScreen: View {
     }
 
     private func speakText(text: String) {
-        let speechUtterance = AVSpeechUtterance(string: text)
-        speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
-        speechSynthesizer.speak(speechUtterance)
+        let utterance = AVSpeechUtterance(string: text)
+        utterance.rate = AVSpeechUtteranceDefaultSpeechRate
+        speechSynthesizer.speak(utterance)
     }
 }
+
 
 struct ScriptsMakePopUp: View {
     @Binding var visible: Bool //is the popup visible
@@ -323,6 +348,7 @@ struct ScriptsMakePopUp: View {
     @State private var iconImage: Image?
     @State private var imagePath: String = ""
     @State private var type: String = "Tiles"
+    @State private var scriptGenerator = ScriptGenerator()
     
     var body: some View {
         VStack {

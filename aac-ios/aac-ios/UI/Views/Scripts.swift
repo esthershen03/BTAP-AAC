@@ -205,7 +205,6 @@ struct ScriptLineRow: View {
     }
 }
 
-
 struct ScriptTextScreen: View {
     @Binding var showScriptText: Bool
     @Environment(\.presentationMode) var presentationMode
@@ -214,8 +213,10 @@ struct ScriptTextScreen: View {
     private let minLines = 1
     let speechSynthesizer = AVSpeechSynthesizer()
 
-    // Start from saved values for the current category.
-    // Ensure at least 1 line and at most 8 on load.
+    @State private var isGenerating = false
+    @State private var scriptGenerator = ScriptGenerator()
+
+    // Load saved lines for the current category
     @State private var textValues: [String] =
         {
             let saved = categoryTexts[currScriptLabel] ?? [""]
@@ -223,16 +224,15 @@ struct ScriptTextScreen: View {
             return Array(nonEmpty.prefix(8))
         }()
 
-    @State private var searchText: String = ""   // (kept for parity with your original)
-
     var body: some View {
-        VStack(spacing: 20) {
-            // Header with title and quick actions
+        VStack(spacing: 25) {
+
+            // HEADER ROW
             HStack {
                 Text(currScriptLabel)
-                    .font(.system(size: 40))
+                    .font(.system(size: 40, weight: .bold))
                 Spacer()
-                // Add line button
+
                 Button {
                     addLine()
                 } label: {
@@ -240,10 +240,10 @@ struct ScriptTextScreen: View {
                         .font(.title2)
                 }
                 .disabled(textValues.count >= maxLines)
-
             }
+            .padding(.horizontal)
 
-            // Fields live in a ScrollView so the UI never overflows
+            // MAIN LINES EDITOR
             ScrollView {
                 VStack(spacing: 16) {
                     ForEach(Array(textValues.indices), id: \.self) { index in
@@ -253,9 +253,12 @@ struct ScriptTextScreen: View {
                             onSpeak: { speakText(text: textValues[index]) },
                             onDelete: { removeLine(at: index) }
                         )
-        VStack(spacing:30) {
-            Text(currScriptLabel)
-                .font(.system(size: 40))
+                    }
+                }
+                .padding(.horizontal)
+            }
+
+            // GENERATE SCRIPT BUTTON
             Button(action: {
                 Task {
                     isGenerating = true
@@ -282,43 +285,15 @@ struct ScriptTextScreen: View {
                         .background(Color("AACBlue"))
                         .foregroundColor(.black)
                         .cornerRadius(10)
-                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 2))
-                }
-            }
-            ForEach(0..<textValues.count, id: \.self) { index in
-                HStack {
-                    
-                    HStack {
-                        TextField("Enter script here", text: $textValues[index], axis: .vertical).font(.system(size: 24))
-                            .padding(10)
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 2)
-                        ZStack{
+                        .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .frame(width: 30, height: 30)
-                            Ellipse()
-                                .frame(width: 20, height: 20)
-                                .foregroundColor(.white)
-                            Image(systemName: "speaker.wave.2.circle.fill")
-                                .resizable()
-                                .frame(width: 30, height: 30)
-                                .onTapGesture {
-                                    speakText(text: textValues[index])
-                                }
-                        }.padding()
-                    }.background(RoundedRectangle(cornerRadius: 10).fill(textValues[index].isEmpty ? .white : Color("AACBlue")))
-                    .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color(.black), lineWidth: 1))
-                    
+                                .stroke(Color.black, lineWidth: 2)
+                        )
                 }
             }
-            Button(action: {
-                self.showScriptText = false
-                for (index, text) in self.textValues.enumerated() {
-                    categoryTexts["Text\(index + 1)"]?.append(text)
-                }
-                categoryTexts[currScriptLabel] = textValues
-                scriptsViewModel.saveScripts(categoryTexts)
-            }) {
+
+            // SAVE BUTTON
+            Button(action: save) {
                 Text("Save")
                     .font(.system(size: 30))
                     .frame(width: 110, height: 60)
@@ -328,12 +303,13 @@ struct ScriptTextScreen: View {
                     .overlay(RoundedRectangle(cornerRadius: 10)
                         .stroke(Color.black, lineWidth: 2))
             }
-            .padding(.top, 4)
-        }
-        .padding(30)
+            .padding(.bottom, 20)
+
+        } // VStack
+        .padding(.top, 20)
     }
 
-    // MARK: - Actions
+    // MARK: - ACTIONS
 
     private func addLine() {
         guard textValues.count < maxLines else { return }
@@ -346,7 +322,6 @@ struct ScriptTextScreen: View {
     }
 
     private func save() {
-        // Clamp just in case and persist
         textValues = Array(textValues.prefix(maxLines))
         if textValues.isEmpty { textValues = [""] }
 
@@ -356,11 +331,12 @@ struct ScriptTextScreen: View {
     }
 
     private func speakText(text: String) {
-        let speechUtterance = AVSpeechUtterance(string: text)
-        speechUtterance.rate = AVSpeechUtteranceDefaultSpeechRate
-        speechSynthesizer.speak(speechUtterance)
+        let utterance = AVSpeechUtterance(string: text)
+        utterance.rate = AVSpeechUtteranceDefaultSpeechRate
+        speechSynthesizer.speak(utterance)
     }
 }
+
 
 struct ScriptsMakePopUp: View {
     @Binding var visible: Bool //is the popup visible
